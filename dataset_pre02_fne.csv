@@ -1,0 +1,27 @@
+Task_ID,Sub_Project,Task_Name,Planned_Duration_Days,Planned_Effort_Hours,Predecessor_Count,Resource_Utilization_Rate,Risk_Score,SPI_Value,Change_Request_Count,Status_Delay
+ACT-001,P-FNE-01,Infrastructure & K8s Cluster Setup,10,80,0,0.85,0.25,0.98,0,0
+ACT-002,P-FNE-01,IAM & SSO Implementation,20,160,1,1.1,0.36,0.88,2,1
+ACT-003,P-FNE-01,Master Data Management (MDM) 24 Entities,20,180,1,1.05,0.3,0.9,1,1
+ACT-004,P-FNE-01,API Gateway & Kafka Event Bus Setup,10,90,2,0.95,0.48,0.82,3,1
+ACT-005,P-FNE-02,Farm & Land Parcel Registration API,15,120,1,0.9,0.2,0.96,0,0
+ACT-006,P-FNE-02,Crop Cycle Planning & Tracking Service,20,160,2,1.15,0.36,0.86,2,1
+ACT-007,P-FNE-02,Harvest & Batch Quality Management,15,110,1,0.88,0.24,0.97,1,0
+ACT-008,P-FNE-02,Mobile Offline Sync Engine,15,130,2,1.2,0.4,0.8,2,1
+ACT-009,P-FNE-03,Supplier Portal & Performance Scorecard,15,100,1,0.85,0.18,0.98,0,0
+ACT-010,P-FNE-03,Procurement & Purchase Order Workflow,25,200,2,1.05,0.35,0.89,3,1
+ACT-011,P-FNE-03,Inventory & Warehouse Multi-Location API,25,190,2,1.12,0.42,0.84,2,1
+ACT-012,P-FNE-04,Production Planning & Multi-Level BOM Engine,20,160,3,1.1,0.36,0.87,2,1
+ACT-013,P-FNE-04,MRP Computation Engine,15,130,2,1.15,0.4,0.83,1,1
+ACT-014,P-FNE-04,Production Costing & Asset Maintenance,15,110,1,0.9,0.22,0.95,0,0
+ACT-015,P-FNE-05,Sales Order CRUD & Validation API,15,120,2,0.92,0.25,0.96,1,0
+ACT-016,P-FNE-05,Customer 360 View & CRM Integration,15,110,1,0.88,0.2,0.97,0,0
+ACT-017,P-FNE-05,Real-time Shipment & Logistics Tracking,20,150,2,1.08,0.38,0.88,2,1
+ACT-018,P-FNE-06,General Ledger & Auto Journal Ingestion,20,160,4,1.02,0.3,0.91,1,0
+ACT-019,P-FNE-06,Accounts Payable Three-Way Matching,15,120,2,0.95,0.28,0.94,1,0
+ACT-020,P-FNE-06,Payroll Engine & HCM Attendance Sync,20,170,1,1.1,0.36,0.85,2,1
+ACT-021,P-FNE-07,Data Lake & Warehouse CDC Ingestion Pipeline,25,200,5,1.15,0.45,0.82,3,1
+ACT-022,P-FNE-07,Executive BI Dashboard & KPI Alerting,20,150,2,0.9,0.22,0.96,1,0
+ACT-023,P-FNE-07,AI Demand & Crop Yield Forecasting Service,25,190,3,1.18,0.42,0.84,2,1
+ACT-024,P-FNE-08,IoT Telemetry Streaming & Threshold Alerting,20,160,2,1.2,0.48,0.81,2,1
+ACT-025,P-FNE-08,Digital Twin Farm & Machine State Sync,20,160,3,1.12,0.36,0.88,1,1
+ACT-026,P-FNE-08,What-If Simulation Engine & Autonomous Recommendation,25,200,4,1.25,0.5,0.79,4,1
