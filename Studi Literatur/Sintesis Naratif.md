@@ -26,4 +26,4 @@ Kelompok penelitian ini berfokus pada pengembangan arsitektur _Early Warning Sys
 
 ---
 
-💡 **Saran Langkah Selanjutnya:** Apakah Anda ingin saya bantu merancang **diagram kerangka konseptual/arsitektur sistem PRE-02** (menghubungkan fitur input dari Kelompok A–C ke model ML dan keluaran skor EWS Kelompok D) atau menyusun draft **Metodologi Pengujian Model**?
+tags #paper #uni #academic #mp #research #mp 

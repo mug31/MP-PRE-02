@@ -4,7 +4,7 @@ Karena target kalian adalah maju **sekali sekaligus untuk Progress 1–5 dalam 1
 
 ---
 
-- [ ] 
+- [x] 
 ### 🗓️ Roadmap Kerja Kamu (Lead Author) dalam 1 Minggu
 
 #### **Hari 1–2: Penguncian Bab 1 & Penyusunan Bab 2 (Studi Literatur)**
