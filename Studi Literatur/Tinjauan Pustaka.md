@@ -1,8 +1,14 @@
-Ini tabel matriks revisi final dengan semua koreksi diterapkan:
+# Tinjauan Pustaka — Matriks Literatur PRE-02
+## Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas
+
+Matriks gabungan: 20 paper matriks utama (No. 1–20) + 8 paper dari matriks teman (`Pertemuan2_Matriks_Literatur.md`, No. 21–28). Tidak ada paper yang tumpang tindih antara kedua matriks.
+
+> [!warning] Verifikasi metadata
+> Baris 21–28 diambil dari matriks teman yang tidak mencantumkan DOI. DOI yang diisi dan catatan judul/venue di kolom Status berasal dari ingatan, bukan dicek ke sumber — cocokkan dengan Google Scholar/Crossref sebelum dipakai di Bab II.
 
 ---
 
-## Tabel Matriks Literatur PRE-02 — Revisi Final v2
+## Tabel Matriks Literatur PRE-02 — Revisi Final v3 (Gabungan)
 
 |No|Judul|Penulis|Tahun|Venue|DOI|Model Utama|Model Pembanding|Target Prediksi|Jenis Output|Metrik Evaluasi|Variabel Input Signifikan|Kategori Fitur|Domain|Status Relevansi|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -26,6 +32,65 @@ Ini tabel matriks revisi final dengan semua koreksi diterapkan:
 |18|_Autonomous Resource Management in Construction Using Deep RL Based on IoT_|Soleymani, Bonyani & Attarzadeh|2022|arXiv preprint (arXiv:2208.08087)|arxiv.org/abs/2208.08087|Deep Reinforcement Learning (DRL) berbasis IoT|Heuristic Resource Allocation Rules|Alokasi & pemerataan sumber daya|Resource optimization|Resource Utilization Rate, Schedule Delay Reduction|Real-time IoT Sensor Data, Resource Availability, Activity Priority|Resource, Operasional|Construction Resource Management|**Peripheral** ⚠️ _relevansi hanya untuk justifikasi gap multi-resource constraint_|
 |19|_Pemanfaatan ML dalam Memperkirakan Durasi Waktu Pelaksanaan Proyek Konstruksi_|[Nama tidak tercantum]|2025|Abstrak Skripsi, Undip|[TIDAK TERSEDIA]|SVR|Linear Regression, RF Regression|Durasi waktu pelaksanaan proyek konstruksi (hari)|Regresi|R=0.957, MAE 136.57, RMSE 182.05|Jumlah Lantai, Luas Bangunan, Lokasi Proyek|Baseline jadwal|Konstruksi Bangunan Gedung|**Peripheral** ⚠️ _metadata tidak lengkap; jangan masukkan Bab II sebelum nama penulis terverifikasi_|
 |20|_Adaptive Production Planning Through ML and ERP-Connected Supply Chain Data_|Editorial IJACSEAI|2026|IJACSEAI Vol.3 Iss.2|ISSN 3143-438X|ERP-Integrated ML Adaptive Planning Framework|Conventional Fixed ERP Scheduling Rules|Estimasi kebutuhan produksi adaptif & optimasi jadwal manufaktur|Klasifikasi + Optimasi|Scheduling Accuracy, Resource Utilization Rate|Procurement Activities, Supplier Performance, Inventory Availability, Machine Utilization|Resource, Operasional|ERP-Connected Manufacturing|**Peripheral** ⚠️ _tidak ada nama penulis individual; DOI tidak tersedia; cek kredibilitas venue_|
+|21|_Evaluation of deterministic state-of-the-art forecasting approaches for project duration based on earned value management_|Batselier & Vanhoucke|2015|International Journal of Project Management (Elsevier)|10.1016/j.ijproman.2015.04.003 [PERLU DICEK ULANG]|Earned Value Management (EVM), Earned Schedule (ES), Earned Duration (ED)|Antar-metode forecasting EVM (PV/ED/ES-based)|Durasi akhir proyek|Regresi (estimasi titik deterministik)|MAPE, MPE|Planned Value (PV), Earned Value (EV), Actual Cost (AC), Actual Time (AT), SPI, SPI(t)|Baseline jadwal, Progres (EVM)|Manajemen Proyek Umum (EVM/ES)|**Supporting** [TAMBAHAN DARI TEMAN] ⚠️ _justifikasi SPI/SPI(t) sebagai fitur input; gap: deterministik, tanpa probabilitas_|
+|22|_A comparative study of Artificial Intelligence methods for project duration forecasting_|Wauters & Vanhoucke|2016|Expert Systems with Applications (Elsevier) — _teman menulis EJOR_|10.1016/j.eswa.2015.10.008 [PERLU DICEK ULANG]|SVR, ANN, KNN _(menurut matriks teman; cek apakah juga DT/Bagging/RF/Boosting)_|EVM Baseline|Durasi akhir proyek|Regresi|MAE, MSE|Metrik EVM berkala, durasi historis, topologi jaringan kerja|Baseline jadwal, Struktur jaringan|Manajemen Proyek Umum (ML vs EVM)|**Supporting** [TAMBAHAN DARI TEMAN] ⚠️ _bukti ML > EVM; gap: output durasi, bukan probabilitas delay; venue perlu diverifikasi_|
+|23|_Predicting the Delay of Issues with Links in Software Projects_ _(judul menurut teman)_|Choetkiertikul et al.|2017|IEEE Transactions on Software Engineering (menurut teman)|[PERLU DICEK ULANG]|Deep Learning (RNN/LSTM), Random Forest|— (tidak disebutkan)|Klasifikasi keterlambatan issue/task (Delay vs No Delay)|Klasifikasi|Precision, Recall, F-measure, AUC|Karakteristik issue/task, dependency link network, story points, developer workload|Dependensi, Resource developer|Agile Software|**Core** [TAMBAHAN DARI TEMAN] ⚠️ _judul/venue perlu dicocokkan — kemungkinan maksudnya karya Choetkiertikul et al. tentang networked classification (ASE 2015) atau issue delay (EMSE 2017); gap: output biner tanpa kalibrasi_|
+|24|_Machine Learning Alternative to Conventional Project Delay Analysis: Predicting Project Delay Risk_ _(judul menurut teman)_|Gondia et al.|2020|Journal of Construction Engineering and Management (ASCE)|10.1061/(ASCE)CO.1943-7862.0001736 [PERLU DICEK ULANG]|Naive Bayes, Decision Tree (C4.5/CART)|— (perbandingan antar kedua model)|Kelas risiko keterlambatan proyek (Low/Medium/High)|Klasifikasi|Overall Accuracy, Precision, Recall, Misclassification Rate|Skor risiko operasional, kualifikasi kontraktor, frekuensi change request|Operasional, Human factors|Construction Project Management|**Supporting** [TAMBAHAN DARI TEMAN] ⚠️ _judul resmi kemungkinan "Machine Learning Algorithms for Construction Projects Delay Risk Prediction"; gap: kelas diskrit, tanpa shared resource_|
+|25|_Managing a portfolio of projects: Identifying and mitigating resource bottlenecks_ _(judul menurut teman)_|Browning & Yassine|2010|IEEE Transactions on Engineering Management (menurut teman)|[PERLU DICEK ULANG]|Heuristic Priority Rules + Monte Carlo Simulation|— (antar priority rules)|Durasi portofolio & delay akibat bottleneck sumber daya bersama|Simulasi / Optimasi penjadwalan|Project Portfolio Duration, Resource Idle Time, Delay Variance|Resource Utilization Rate, batasan kapasitas, dependensi lintas proyek|Resource, Dependensi (lintas proyek)|Multi-Project Scheduling (RCMPSP)|**Core** [TAMBAHAN DARI TEMAN] ⚠️ _landasan "multi sumber daya terbatas" & cascading delay; judul/venue perlu dicek — karya Browning & Yassine 2010 yang dikenal: "Resource-constrained multi-project scheduling: Priority rule performance revisited", Int. J. Production Economics_|
+|26|_Predicting good probabilities with supervised learning_|Niculescu-Mizil & Caruana|2005|Proc. 22nd ICML|10.1145/1102351.1102430|Platt Scaling, Isotonic Regression (kalibrasi)|Logistic Regression, Random Forest, SVM, Naive Bayes (sebelum/sesudah kalibrasi)|Kualitas probabilitas prediksi (kalibrasi)|Probabilitas terkalibrasi|Brier Score, Log Loss, Reliability Diagram|Dataset benchmark lintas domain|Metodologis (kalibrasi)|Machine Learning (fondasi)|**Core** [TAMBAHAN DARI TEMAN] ⚠️ _fondasi utama evaluasi Brier Score & kalibrasi RF vs LR di PRE-02; bukan domain proyek_|
+|27|_On Calibration of Modern Neural Networks_|Guo et al.|2017|Proc. 34th ICML (PMLR 70)|arXiv:1706.04599|Temperature Scaling|Vector/Matrix Scaling, Histogram Binning, Isotonic Regression, Platt Scaling|Kalibrasi probabilitas output neural network|Probabilitas terkalibrasi|ECE, MCE, Negative Log-Likelihood|Logits / representasi non-linear|Metodologis (kalibrasi)|Computer Vision & NLP|**Supporting** [TAMBAHAN DARI TEMAN] ⚠️ _justifikasi metrik ECE & risiko overconfidence model MLP/ANN; bukan domain proyek_|
+|28|_Predictive Business Process Monitoring Framework for Schedule Risks_ _(judul menurut teman)_|Cabanillas et al.|2014|Springer LNCS (menurut teman: CAiSE)|[PERLU DICEK ULANG]|Constraint Programming + Time-aware Process Mining + Probabilistic Risk Engine|— (tidak disebutkan)|Probabilitas pelanggaran deadline proses|Probabilitas + Alert (EWS)|Alert Timeliness, False Alarm Rate, Brier Score|Sisa waktu, backlog task tersisa, alokasi sumber daya proses|Baseline jadwal, Resource, Progres|Business Process Management|**Supporting** [TAMBAHAN DARI TEMAN] ⚠️ _kuat untuk arsitektur EWS berbasis probabilitas; judul resmi kemungkinan "Predictive Task Monitoring for Business Processes" (BPM 2014, LNCS 8659)_|
 
 ---
-tags #paper #uni #academic #mp #research #mp 
+
+## Ringkasan Hierarki Relevansi
+
+### Core (8) — langsung menopang rumusan masalah & metode PRE-02
+| No | Paper | Peran untuk PRE-02 |
+|---|---|---|
+|1|Haekal et al. (2026)|RF + probabilitas pencapaian jadwal di proyek ERP; pembanding CPM/PERT|
+|2|Mandapatti (2026)|GB/RF untuk probabilitas delay software; fitur resource developer|
+|3|Kula et al. (2023)|Prediksi delay dinamis berbasis dependensi & workload (Agile, industri)|
+|5|Mirjalili et al. (2025)|Resource + struktur jaringan (GNN) & ECE; konteks RCPSP|
+|10|Balaji & Poyyamozhi (2026)|Probabilitas risiko + Brier Score + explainability di proyek software|
+|23|Choetkiertikul et al. (2017)|Dependensi antar-task meningkatkan deteksi delay; gap: tanpa kalibrasi|
+|25|Browning & Yassine (2010)|Landasan RCMPSP & cascading delay dari shared resource|
+|26|Niculescu-Mizil & Caruana (2005)|Fondasi kalibrasi probabilitas (Brier, reliability diagram, RF vs LR)|
+
+### Supporting (11) — memperkuat justifikasi fitur, metrik, atau arsitektur
+| No | Paper | Peran untuk PRE-02 |
+|---|---|---|
+|6|Impivaara (2025)|LightGBM probabilitas delay pada data ERP manufaktur|
+|8|Fitzsimmons et al. (2022)|Propagasi keterlambatan antar-task (float, concurrent task)|
+|9|Kumar & Shrivas (2025)|Arsitektur Early Warning System|
+|12|Bimantara et al. (2025)|Fitur workload (Queue Length, Complexity Index)|
+|16|Saurav & Shafi (2022)|Justifikasi EWS real-time berbasis historical schedule|
+|17|Khoshkonesh et al. (2026)|Pembaruan probabilitas jadwal secara dinamis (Bayesian)|
+|21|Batselier & Vanhoucke (2015)|SPI / SPI(t) sebagai fitur baseline jadwal|
+|22|Wauters & Vanhoucke (2016)|Bukti ML mengungguli EVM dalam forecasting durasi|
+|24|Gondia et al. (2020)|Klasifikasi risiko delay yang interpretable; gap output diskret|
+|27|Guo et al. (2017)|Metrik ECE & masalah overconfidence neural network|
+|28|Cabanillas et al. (2014)|Monitoring prediktif probabilistik untuk peringatan dini|
+
+### Peripheral (9) — relevansi metodologis saja / metadata lemah
+| No | Paper | Catatan |
+|---|---|---|
+|4|Sivakumar & Sobika R (2026)|DOI tidak tersedia; N kecil|
+|7|Kannan et al. (2022)|Domain quarry; hanya metodologi LR + MLP|
+|11|Grzelak et al. (2026)|Benchmark RF vs XGBoost vs LR|
+|13|Restrepo Ramirez & Rua Machado (2025)|Earned Value metrics sebagai input|
+|14|Ingole (2026)|SLR; justifikasi RF & XGBoost|
+|15|Purnomo et al. (2025)|Domain logistik; performa rendah|
+|18|Soleymani et al. (2022)|Gap multi-resource constraint|
+|19|[Nama tidak tercantum] (2025)|Metadata tidak lengkap — jangan masuk Bab II dulu|
+|20|Editorial IJACSEAI (2026)|Tanpa penulis individual; cek kredibilitas venue|
+
+**Cakupan per pilar PRE-02:**
+- **Multi sumber daya terbatas / dependensi:** 3, 5, 23, 25 (+ 8, 12)
+- **Output probabilitas & kalibrasi (Brier/ECE):** 10, 26, 27 (+ 5, 17)
+- **Early Warning System:** 9, 16, 28
+- **Fitur baseline jadwal (EVM/SPI):** 21, 22 (+ 13)
+- **Domain ERP/software:** 1, 2, 3, 10, 23 (+ 6)
+
+---
+tags #paper #uni #academic #mp #research #mp
