@@ -769,6 +769,14 @@ def run_pipeline():
     plt.close()
     print(f"[INFO] Plot Feature Importance tersimpan di: {fi_plot}")
 
+    fi_csv = os.path.join(output_dir, "tabel_feature_importance.csv")
+    with open(fi_csv, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Feature', 'Importance_MDI'])
+        for i in sorted_idx[::-1]:
+            writer.writerow([feature_names[i], f"{fi[i]:.4f}"])
+    print(f"[INFO] Tabel Feature Importance tersimpan di: {fi_csv}")
+
     # 5. Threshold Analysis (Youden J) & Tabel Prediksi Probabilitas per Aktivitas & Zonasi EWS
     theta, j_stat, sens, spec = youden_threshold(y_raw, best_probs)
     print(f"[INFO] Youden theta* = {theta:.4f} (J = {j_stat:.3f}, Sensitivity = {sens:.3f}, Specificity = {spec:.3f})")

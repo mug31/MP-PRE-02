@@ -1,4 +1,6 @@
 import os
+import sys
+import csv
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -204,9 +206,9 @@ steps = [
     ("Tahap 1", "Data Ingestion & Audit", "Pembacaan 26 modul FNE & verifikasi integritas 7 fitur input."),
     ("Tahap 2", "Partisi & Penskalaan", "Stratified 5-Fold CV & StandardScaler terisolasi per fold."),
     ("Tahap 3", "Pelatihan 4 Algoritma", "Eksekusi LR Baseline, Random Forest, Gradient Boosting, dan MLP."),
-    ("Tahap 4", "Kalibrasi Probabilitas", "Koreksi distorsi kurva probabilitas via Isotonic & Platt Scaling."),
+    ("Tahap 4", "Kalibrasi Probabilitas", "Platt Scaling & Isotonic Regression, dilatih pada inner 3-fold di dalam fold training (tanpa kebocoran data)."),
     ("Tahap 5", "Evaluasi Multi-Metrik", "Kalkulasi Brier Score, ROC-AUC, ECE, Log Loss, dan kurva keandalan."),
-    ("Tahap 6", "Early Warning EWS", "Translasi probabilitas ke 3 zona mitigasi risiko bagi Project Manager.")
+    ("Tahap 6", "Threshold & EWS", "Analisis ambang Youden J dan translasi probabilitas ke 3 zona mitigasi bagi Project Manager.")
 ]
 
 for i, (tag, title, desc) in enumerate(steps):
@@ -253,11 +255,11 @@ add_header(s4, "Desain Skenario", "5 Skenario Eksperimen Pemodelan Probabilitas"
 add_footer(s4, 4)
 
 scenarios = [
-    ("Skenario 1", "Logistic Regression", "Baseline Model", "Menghasilkan probabilitas terkalibrasi alami via fungsi sigmoid matematis. Berperan sebagai benchmark linear L2."),
-    ("Skenario 2", "Random Forest", "predict_proba Voting", "Menggabungkan 100 decision trees secara paralel. Mengukur frekuensi voting probabilitas dan mengekstraksi Feature Importance."),
-    ("Skenario 3", "Gradient Boosting", "Loss Optimization", "Membangun pohon secara berurutan dengan minimisasi log-loss residual. Menawarkan daya pemisahan margin yang tinggi."),
-    ("Skenario 4", "MLP Neural Network", "Deep Sigmoid Layer", "Arsitektur 2 lapis tersembunyi (16-8 neuron) dengan aktivasi ReLU dan output neuron sigmoid tunggal."),
-    ("Skenario 5", "Kalibrasi & ECE", "Isotonic / Platt Scaling", "Evaluasi Expected Calibration Error (ECE) dan Reliability Diagram guna menjamin akurasi probabilitas numerik.")
+    ("Skenario 1", "Logistic Regression", "Baseline Model", "Probabilitas via fungsi sigmoid; regularisasi L2 (C = 1.0) diselesaikan hingga konvergen. Berperan sebagai benchmark linear."),
+    ("Skenario 2", "Random Forest", "predict_proba", "100 pohon (max_depth 3). Probabilitas = rata-rata proporsi kelas delay di daun seluruh pohon; menghasilkan Feature Importance MDI."),
+    ("Skenario 3", "Gradient Boosting", "Loss Optimization", "100 pohon regresi berurutan pada pseudo-residual log-loss (learning rate 0.05, max_depth 2, subsample 0.8)."),
+    ("Skenario 4", "MLP Neural Network", "Deep Sigmoid Layer", "2 lapis tersembunyi (16-8 neuron, ReLU) dan output sigmoid; optimasi Adam (lr 0.01, 1000 iterasi, alpha 0.01)."),
+    ("Skenario 5", "Kalibrasi & ECE", "Platt / Isotonic", "Tiap model diuji Raw vs Platt vs Isotonic. Kombinasi dengan Brier Score terendah menjadi model rekomendasi.")
 ]
 
 for i, (tag, name, sub, desc) in enumerate(scenarios):
@@ -314,9 +316,9 @@ add_header(s5, "Validasi & Replikasi", "Protokol Kontrol Eksperimen & Penanganan
 add_footer(s5, 5)
 
 cards_s5 = [
-    ("Stratified 5-Fold CV", "Mengingat N=26, Stratified K-Fold membagi data menjadi 5 lipatan dengan menjaga rasio 61.5% Delay : 38.5% On-Time di setiap iterasi pelatihan dan pengujian.", "Strategi Evaluasi"),
-    ("Isolasi Standard Scaler", "Penskalaan fitur z-score (mean=0, std=1) dihitung HANYA dari data latih tiap fold, lalu diterapkan ke data uji. Mencegah fenomena data leakage.", "Pencegahan Leakage"),
-    ("Regularisasi & Fixed Seed", "• Penguncian random_state = 42 untuk seluruh model.\n• Pembatasan max_depth (3-4) pada tree models.\n• Penalti L2 pada Logistic Regression & MLP untuk kestabilan.", "Replikasi Terjamin")
+    ("Stratified 5-Fold CV", "Mengingat N=26, Stratified K-Fold membagi data menjadi 5 lipatan dengan menjaga rasio 61.5% Delay : 38.5% On-Time. Hold-out 80:20 (21:5 task) dijalankan sebagai pembanding indikatif.", "Strategi Evaluasi"),
+    ("Isolasi Standard Scaler", "Penskalaan z-score dan kalibrator dihitung HANYA dari data latih tiap fold (kalibrator via inner 3-fold), lalu diterapkan ke data uji. Mencegah data leakage.", "Pencegahan Leakage"),
+    ("Regularisasi & Fixed Seed", "• Penguncian random_state = 42 untuk seluruh model.\n• Pembatasan max_depth: 3 (RF) dan 2 (GB).\n• Penalti L2 pada Logistic Regression & MLP.\n• Implementasi diverifikasi terhadap scikit-learn.", "Replikasi Terjamin")
 ]
 
 for i, (title, body, tag) in enumerate(cards_s5):
@@ -382,7 +384,7 @@ tb = s6.shapes.add_textbox(Inches(1.10), Inches(2.80), Inches(5.00), Inches(3.60
 tf = tb.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
-p.text = "1. Brier Score (BS):\nMengukur rata-rata kuadrat deviasi antara probabilitas estimasi dan luaran aktual (0-1). Semakin mendekati 0, semakin presisi.\n\n2. Expected Calibration Error (ECE):\nMengukur kesenjangan absolut antara confidence level prediksi dan empirical accuracy dalam interval bin.\n\n3. Logarithmic Loss (Cross-Entropy):\nMemberikan penalti tajam terhadap prediksi probabilitas yang terlalu percaya diri (overconfident) namun salah."
+p.text = "1. Brier Score (BS):\nMengukur rata-rata kuadrat deviasi antara probabilitas estimasi dan luaran aktual (0-1). Semakin mendekati 0, semakin presisi.\n\n2. Expected Calibration Error (ECE):\nMengukur kesenjangan absolut antara confidence level prediksi dan empirical accuracy dalam 5 bin interval (N = 26).\n\n3. Logarithmic Loss (Cross-Entropy):\nMemberikan penalti tajam terhadap prediksi probabilitas yang terlalu percaya diri (overconfident) namun salah."
 p.font.name = FONT_BODY
 p.font.size = Pt(11.5)
 p.font.color.rgb = DARK_TEXT
@@ -405,7 +407,7 @@ tb = s6.shapes.add_textbox(Inches(7.10), Inches(2.80), Inches(5.10), Inches(3.60
 tf = tb.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
-p.text = "1. ROC-AUC (Area Under ROC Curve):\nMengukur kapasitas pemisahan modul terlambat vs tepat waktu di semua kemungkinan nilai threshold.\n\n2. Sensitivity (Recall) & Specificity:\nMenilai kemampuan sistem mendeteksi keterlambatan nyata sekaligus meminimalkan alarm palsu (false alarm).\n\n3. F1-Score & Accuracy:\nEvaluasi performa klasifikasi operasional pada titik threshold rekomendasi."
+p.text = "1. ROC-AUC (Area Under ROC Curve):\nMengukur kapasitas pemisahan modul terlambat vs tepat waktu di semua kemungkinan nilai threshold.\n\n2. Sensitivity (Recall) & Specificity:\nMenilai kemampuan sistem mendeteksi keterlambatan nyata sekaligus meminimalkan alarm palsu (false alarm).\n\n3. F1-Score & Accuracy:\nEvaluasi performa klasifikasi pada threshold 0.5, dilengkapi ambang optimal Youden J."
 p.font.name = FONT_BODY
 p.font.size = Pt(11.5)
 p.font.color.rgb = DARK_TEXT
@@ -475,7 +477,148 @@ for i, (title, rng, action, color_hex) in enumerate(zones):
     p_a.font.color.rgb = DARK_TEXT
 
 # ============================================================
-# SLIDE 8: SUMMARY & NEXT STEP MENUJU PERTEMUAN 5
+# DATA HASIL EKSPERIMEN (dibaca dari hasil_eksperimen/, jalankan experiment_pipeline.py terlebih dahulu)
+# ============================================================
+script_dir = os.path.dirname(os.path.abspath(__file__))
+result_dir = os.path.join(script_dir, "hasil_eksperimen")
+sys.path.insert(0, script_dir)
+import experiment_pipeline as ep
+
+def read_csv(name):
+    with open(os.path.join(result_dir, name), encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+metric_rows = read_csv("tabel_metrik_evaluasi.csv")
+for r in metric_rows:
+    for k in ("ROC_AUC", "Brier_Score", "Log_Loss", "ECE", "Accuracy"):
+        r[k] = float(r[k])
+best = min(metric_rows, key=lambda r: (round(r["Brier_Score"], 6), round(r["ECE"], 6), r["Log_Loss"]))
+best_label = best["Model"] + (" + " + best["Kalibrasi"] if best["Kalibrasi"] != "Raw" else " (tanpa kalibrasi)")
+
+pred_rows = read_csv("tabel_prediksi_probabilitas_task.csv")
+y_true = [int(r["Status_Delay_Aktual"]) for r in pred_rows]
+p_best = [float(r["P_Delay_Rekomendasi"]) for r in pred_rows]
+theta, j_stat, sens, spec = ep.youden_threshold(y_true, p_best)
+n_delay = sum(y_true)
+red_hit = sum(1 for y, p in zip(y_true, p_best) if p >= ep.EWS_HIGH and y == 1)
+red_false = sum(1 for y, p in zip(y_true, p_best) if p >= ep.EWS_HIGH and y == 0)
+green_miss = sum(1 for y, p in zip(y_true, p_best) if p < ep.EWS_LOW and y == 1)
+
+fi_rows = read_csv("tabel_feature_importance.csv")
+raw_rows = [r for r in metric_rows if r["Kalibrasi"] == "Raw"]
+max_auc = max(r["ROC_AUC"] for r in raw_rows)
+top_auc = [r["Model"] for r in raw_rows if abs(r["ROC_AUC"] - max_auc) < 1e-9]
+
+def brier_of(model, method):
+    return next(r["Brier_Score"] for r in metric_rows if r["Model"] == model and r["Kalibrasi"] == method)
+
+calib_helped = [r["Model"] for r in raw_rows
+                if min(brier_of(r["Model"], "Platt"), brier_of(r["Model"], "Isotonic")) < r["Brier_Score"]]
+
+def set_cell(cell, text, size=10.5, bold=False, color=DARK_TEXT, fill=None, align=PP_ALIGN.CENTER):
+    cell.text = text
+    p = cell.text_frame.paragraphs[0]
+    p.alignment = align
+    p.font.name = FONT_BODY
+    p.font.size = Pt(size)
+    p.font.bold = bold
+    p.font.color.rgb = color
+    cell.margin_top = cell.margin_bottom = Inches(0.03)
+    if fill is not None:
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = fill
+
+# ============================================================
+# SLIDE 8: HASIL EVALUASI 5-FOLD CV
+# ============================================================
+s8r = prs.slides.add_slide(blank_layout)
+add_header(s8r, "Hasil Eksperimen", "Kinerja 4 Algoritma × 3 Metode Kalibrasi (Stratified 5-Fold CV)",
+           f"Baris tebal = model rekomendasi (Brier Score terendah): {best_label}.")
+add_footer(s8r, 8)
+
+headers = ["Model", "Kalibrasi", "ROC-AUC", "Brier Score", "Log Loss", "ECE", "Akurasi"]
+col_widths = [3.70, 1.40, 1.30, 1.40, 1.30, 1.20, 1.40]
+table = s8r.shapes.add_table(len(metric_rows) + 1, len(headers), Inches(0.80), Inches(1.95),
+                             Inches(sum(col_widths)), Inches(0.33 * (len(metric_rows) + 1))).table
+for c, w in enumerate(col_widths):
+    table.columns[c].width = Inches(w)
+for c, h in enumerate(headers):
+    set_cell(table.cell(0, c), h, bold=True, color=WHITE, fill=DARK_GREEN)
+for i, r in enumerate(metric_rows, start=1):
+    is_best = r is best
+    fill = MINT_LIGHT if is_best else (CARD_BG if i % 2 else WHITE)
+    values = [r["Model"], r["Kalibrasi"], f"{r['ROC_AUC']:.3f}", f"{r['Brier_Score']:.4f}",
+              f"{r['Log_Loss']:.3f}", f"{r['ECE']:.3f}", f"{r['Accuracy'] * 100:.1f}%"]
+    for c, v in enumerate(values):
+        set_cell(table.cell(i, c), v, bold=is_best, fill=fill, align=PP_ALIGN.LEFT if c == 0 else PP_ALIGN.CENTER)
+
+tb = s8r.shapes.add_textbox(Inches(0.80), Inches(6.35), Inches(11.70), Inches(0.60))
+tf = tb.text_frame
+tf.word_wrap = True
+p = tf.paragraphs[0]
+p.text = ("Akurasi dihitung pada threshold 0.5. Log Loss Isotonic tinggi karena kalibrator menghasilkan probabilitas tepat 0/1 "
+          "pada sebagian task; ini wajar untuk kalibrator non-parametrik yang dilatih pada ±20 sampel per fold.")
+p.font.name = FONT_BODY
+p.font.size = Pt(10.0)
+p.font.color.rgb = MUTED_TEXT
+
+# ============================================================
+# SLIDE 9: TEMUAN KUNCI
+# ============================================================
+s9r = prs.slides.add_slide(blank_layout)
+add_header(s9r, "Temuan Kunci", "Apa yang Ditunjukkan Hasil Eksperimen?",
+           "Seluruh angka dibaca langsung dari keluaran experiment_pipeline.py.")
+add_footer(s9r, 9)
+
+card = s9r.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.80), Inches(1.95), Inches(6.30), Inches(3.55))
+card.fill.solid()
+card.fill.fore_color.rgb = CARD_BG
+card.line.color.rgb = BORDER_COL
+
+findings = [
+    ("Diskriminasi", f"ROC-AUC tertinggi {max_auc:.3f} dicapai {ep.fmt_models(top_auc)}."),
+    ("Model rekomendasi", f"{best_label}: Brier {best['Brier_Score']:.4f}, ECE {best['ECE']:.3f}."),
+    ("Efek kalibrasi", ("Kalibrasi menurunkan Brier Score pada " + ep.fmt_models(calib_helped) + "; model lain tidak membaik.")
+                       if calib_helped else "Kalibrasi tidak menurunkan Brier Score pada model mana pun; output mentah sudah terkalibrasi baik."),
+    ("Fitur dominan", f"{fi_rows[0]['Feature']} ({float(fi_rows[0]['Importance_MDI']):.3f}) dan "
+                      f"{fi_rows[1]['Feature']} ({float(fi_rows[1]['Importance_MDI']):.3f}) menurut MDI Random Forest."),
+    ("Youden J", f"θ* = {theta:.3f} (Sensitivity {sens:.2f}, Specificity {spec:.2f})."),
+    ("EWS", f"Zona Merah menangkap {red_hit}/{n_delay} task terlambat dengan {red_false} alarm palsu; "
+            f"{green_miss} task terlambat lolos ke zona Hijau."),
+]
+tb = s9r.shapes.add_textbox(Inches(1.10), Inches(2.15), Inches(5.80), Inches(3.20))
+tf = tb.text_frame
+tf.word_wrap = True
+for i, (label, text) in enumerate(findings):
+    p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+    p.space_after = Pt(7)
+    run = p.add_run()
+    run.text = label.upper() + "  "
+    run.font.name = FONT_BODY
+    run.font.size = Pt(10.0)
+    run.font.bold = True
+    run.font.color.rgb = MID_GREEN
+    run = p.add_run()
+    run.text = text
+    run.font.name = FONT_BODY
+    run.font.size = Pt(12.0)
+    run.font.color.rgb = DARK_TEXT
+
+s9r.shapes.add_picture(os.path.join(result_dir, "feature_importance_comparison.png"),
+                       Inches(7.35), Inches(2.10), width=Inches(5.20))
+tb = s9r.shapes.add_textbox(Inches(7.35), Inches(5.20), Inches(5.20), Inches(1.60))
+tf = tb.text_frame
+tf.word_wrap = True
+p = tf.paragraphs[0]
+p.text = ("Catatan: fitur multi sumber daya (Resource_Utilization_Rate, Predecessor_Count) bukan prediktor dominan pada data ini, "
+          "sehingga hipotesis kendala multi sumber daya perlu dikaji ulang pada Bab IV.")
+p.font.name = FONT_BODY
+p.font.size = Pt(10.5)
+p.font.italic = True
+p.font.color.rgb = MUTED_TEXT
+
+# ============================================================
+# SLIDE 10: SUMMARY & NEXT STEP MENUJU PERTEMUAN 5
 # ============================================================
 s8 = prs.slides.add_slide(blank_layout)
 s8.background.fill.solid()
@@ -493,16 +636,16 @@ tb = s8.shapes.add_textbox(Inches(0.80), Inches(1.70), Inches(11.50), Inches(1.2
 tf = tb.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
-p.text = "Capaian Pertemuan 4 Siap 100%:\nTransisi Mulus Menuju Eksekusi & Hasil (Pertemuan 5)"
+p.text = "Capaian Pertemuan 4:\nDesain Eksperimen Terimplementasi & Arah Pertemuan 5"
 p.font.name = FONT_TITLE
 p.font.size = Pt(26.0)
 p.font.bold = True
 p.font.color.rgb = WHITE
 
 cards_s8 = [
-    ("1. Flowchart & Skenario", "Dokumen alur pemodelan CRISP-DM dan 5 skenario algoritma telah dibakukan secara metodologis."),
-    ("2. Script Python ML Pipeline", "Script 'experiment_pipeline.py' siap mengeksekusi 4 model, kalibrasi, plotting kurva ROC, dan ECE."),
-    ("3. Draft Naskah Bab 3", "Bab III Metodologi Penelitian telah ditulis lengkap mengikuti standar publikasi jurnal bereputasi.")
+    ("1. Deliverables", "Flow & 5 skenario eksperimen, experiment_pipeline.py (4 model + kalibrasi Platt/Isotonic, diverifikasi terhadap scikit-learn), dan draft Bab III Metodologi."),
+    ("2. Keterbatasan", "N = 26 dan data empiris-simulatif: ROC-AUC ≈ 1.0 berarti kelas hampir terpisah sempurna, sehingga hasil belum dapat digeneralisasi."),
+    ("3. Pertemuan 5", "Validasi pada data proyek riil yang lebih besar, kaji ulang hipotesis multi sumber daya terhadap fitur dominan, dan susun Bab IV.")
 ]
 
 for i, (title, desc) in enumerate(cards_s8):
