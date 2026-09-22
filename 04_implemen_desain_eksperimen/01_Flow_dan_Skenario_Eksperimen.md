@@ -28,20 +28,20 @@ flowchart TD
     end
 
     subgraph S2["TAHAP 2: PREPROCESSING & DATA SPLIT"]
-        A3 --> B1["Stratified Splitting Protocol<br>(Train-Test 80:20 / Stratified 5-Fold CV)<br>random_state = 42"]
-        B1 --> B2["Feature Scaling:<br>StandardScaler / RobustScaler<br>(Fit pada Train fold, Transform pada Test fold)"]
+        A3 --> B1["Stratified Splitting Protocol<br>(Stratified 5-Fold CV (utama) / Hold-out 80:20 (pembanding))<br>random_state = 42"]
+        B1 --> B2["Feature Scaling:<br>StandardScaler (z-score)<br>(Fit pada Train fold, Transform pada Test fold)"]
     end
 
     subgraph S3["TAHAP 3: MODEL TRAINING (SKENARIO 1 - 4)"]
-        B2 --> C1["Skenario 1: Logistic Regression<br>(Baseline, L2 Regularization, L-BFGS)"]
+        B2 --> C1["Skenario 1: Logistic Regression<br>(Baseline, L2 Regularization C=1.0)"]
         B2 --> C2["Skenario 2: Random Forest Classifier<br>(n_estimators=100, predict_proba)"]
-        B2 --> C3["Skenario 3: Gradient Boosting<br>(n_estimators=100, lr=0.1, predict_proba)"]
+        B2 --> C3["Skenario 3: Gradient Boosting<br>(n_estimators=100, lr=0.05, subsample=0.8, predict_proba)"]
         B2 --> C4["Skenario 4: Multi-Layer Perceptron (MLP)<br>(Architecture: 16-8, Activation: ReLU, Sigmoid Output)"]
     end
 
     subgraph S4["TAHAP 4: KALIBRASI PROBABILITAS (SKENARIO 5)"]
         C1 & C2 & C3 & C4 --> D1["Probabilistic Inference<br>Ekstraksi P(Delay=1)"]
-        D1 --> D2["Calibration Techniques:<br>1. Raw Output (Uncalibrated)<br>2. Platt Scaling (Sigmoid Logistic)<br>3. Isotonic Regression (Non-parametric)"]
+        D1 --> D2["Calibration Techniques (nested inner 3-fold):<br>1. Raw Output (Uncalibrated)<br>2. Platt Scaling (Sigmoid Logistic)<br>3. Isotonic Regression (Non-parametric)"]
     end
 
     subgraph S5["TAHAP 5: EVALUASI KINERJA MULTI-DIMENSI"]
@@ -51,8 +51,8 @@ flowchart TD
     end
 
     subgraph S6["TAHAP 6: EARLY WARNING THRESHOLD OPTIMIZATION"]
-        E1 & E2 --> F1["Threshold Analysis:<br>Optimalisasi Ambang Batas Peringatan Dini (theta*)<br>(Youden's J Statistic vs Cost-Sensitive Weighting)"]
-        F1 --> F2["Decision Support Matrix untuk Project Manager:<br>• Low Risk: P < 0.30<br>• Moderate / Watchlist: 0.30 <= P < 0.65<br>• Critical Alert: P >= 0.65"]
+        E1 & E2 --> F1["Threshold Analysis:<br>Optimalisasi Ambang Batas Peringatan Dini (theta*)<br>(Youden's J Statistic pada model rekomendasi)"]
+        F1 --> F2["Decision Support Matrix untuk Project Manager:<br>• Low Risk: P < 0.35<br>• Moderate / Watchlist: 0.35 <= P < 0.65<br>• Critical Alert: P >= 0.65"]
     end
 ```
 
@@ -66,19 +66,21 @@ Sesuai arahan pada `Deskripsi_Penelitian.md`, eksperimen dirancang secara kompar
 - **Tujuan:** Membangun model pembanding dasar (*baseline*) yang secara matematis menghasilkan estimasi probabilitas terkalibrasi secara alami melalui fungsi sigmoid:
   $$P(Y=1|X) = \frac{1}{1 + e^{-(\beta_0 + \sum \beta_i X_i)}}$$
 - **Karakteristik:** Linier, transparan, koefisien dapat diinterpretasikan secara langsung sebagai *log-odds*.
-- **Parameter Utama:** `penalty='l2'`, `C=1.0`, `solver='lbfgs'`, `max_iter=1000`, `random_state=42`.
+- **Parameter Utama:** `penalty='l2'`, `C=1.0`, `max_iter=1000`, `random_state=42`.
+- **Implementasi:** Fungsi objektif konveks (log-loss + penalti L2) diselesaikan hingga konvergen dengan Newton-Raphson pada `experiment_pipeline.py`; karena optimumnya unik, solusinya setara dengan solver `lbfgs` scikit-learn (selisih probabilitas terverifikasi ≤ 0.0002).
 
 ### 3.2. Skenario 2 — Ensemble Tree: Random Forest (`predict_proba`)
 - **Tujuan:** Menangkap interaksi non-linier dan mengurangi varians prediksi dengan menggabungkan *decision trees*.
-- **Estimasi Probabilitas:** Dihitung dari frekuensi proporsi pohon keputusan (*ensemble voting*) yang memprediksi kelas delay:
-  $$P(Y=1|X) = \frac{1}{B} \sum_{b=1}^{B} I(T_b(X) = 1)$$
-- **Parameter Utama:** `n_estimators=100`, `max_depth=4`, `min_samples_split=2`, `criterion='gini'`, `random_state=42`.
+- **Estimasi Probabilitas:** Dihitung dari rata-rata proporsi kelas delay pada daun (*leaf*) tiap pohon keputusan (setara `RandomForestClassifier.predict_proba`):
+  $$P(Y=1|X) = \frac{1}{B} \sum_{b=1}^{B} P_b(Y=1|X)$$
+- **Parameter Utama:** `n_estimators=100`, `max_depth=3`, `min_samples_split=2`, `max_features='sqrt'`, `criterion='gini'`, `random_state=42`.
 - **Output Tambahan:** *MDI Feature Importance* untuk mengidentifikasi pemicu keterlambatan utama.
 
 ### 3.3. Skenario 3 — Boosting: Gradient Boosting (`predict_proba`)
 - **Tujuan:** Mengoptimalkan fungsi loss diferensiabel (*deviance / log-loss*) secara sekuensial guna meminimalkan bias residual.
 - **Karakteristik:** Cenderung menghasilkan pemisahan batas keputusan yang sangat tajam (*high discriminatory power*).
-- **Parameter Utama:** `learning_rate=0.05`, `n_estimators=100`, `max_depth=3`, `subsample=0.8`, `random_state=42`.
+- **Parameter Utama:** `learning_rate=0.05`, `n_estimators=100`, `max_depth=2`, `subsample=0.8`, `random_state=42`.
+- **Implementasi:** Pohon regresi (kriteria reduksi SSE) dilatih pada pseudo-residual $y - \hat{p}$; nilai daun menggunakan langkah Newton Friedman (2001) $\gamma = \sum r_i / \sum \hat{p}_i(1-\hat{p}_i)$.
 
 ### 3.4. Skenario 4 — Arsitektur Jaringan: Multi-Layer Perceptron (MLP)
 - **Tujuan:** Menangkap pemetaan fitur non-linier berdimensi tinggi melalui arsitektur jaringan saraf tiruan lapis tersembunyi dengan fungsi aktivasi output *logistic sigmoid*.
@@ -94,7 +96,9 @@ Sesuai arahan pada `Deskripsi_Penelitian.md`, eksperimen dirancang secara kompar
 - **Metode Kalibrasi:**
   1. *Platt Scaling (Sigmoid Calibration):* Melatih model regresi logistik univariat pada output logits model.
   2. *Isotonic Regression:* Transformasi non-parametrik monotonik naik.
-- **Evaluasi Kalibrasi:** Analisis *Reliability Diagram* (10 *equal-width bins*) dan perhitungan *Expected Calibration Error* (ECE).
+- **Protokol Tanpa Kebocoran Data:** Di dalam setiap fold training, prediksi *out-of-fold* diperoleh melalui *inner stratified 3-fold*; kalibrator dilatih pada prediksi tersebut, kemudian model dasar dilatih ulang pada seluruh fold training dan kalibrator diterapkan pada fold uji.
+- **Evaluasi Kalibrasi:** Analisis *Reliability Diagram* (5 *equal-width bins*; dengan $N = 26$, 10 bin menyisakan terlalu banyak bin kosong/berisi 1 sampel) dan perhitungan *Expected Calibration Error* (ECE).
+- **Luaran:** Rekomendasi model dengan kalibrasi terbaik, yaitu kombinasi model × metode kalibrasi dengan Brier Score terendah (tie-break: ECE, lalu Log Loss), sesuai Eksperimen Kelima pada `Deskripsi_Penelitian.md`.
 
 ---
 
@@ -119,7 +123,7 @@ Untuk menjamin asas keterulangan ilmiah (*reproducibility*) dan mencegah kebocor
 1. **Random Seed:** Seluruh komponen stokastik dikunci pada `random_state = 42`.
 2. **Data Partitioning Protocol:**
    - Karena dataset $N = 26$, strategi evaluasi utama menggunakan **Stratified 5-Fold Cross-Validation** (memastikan rasio kelas 16 Delay : 10 On-Time proporsional pada tiap fold).
-   - Sebagai pembanding operasional, disiapkan pula **Hold-out Train-Test Split (80% : 20%)** dengan stratifikasi.
+   - Sebagai pembanding operasional, dijalankan pula **Hold-out Train-Test Split (80% : 20%)** dengan stratifikasi (21 : 5 task). Karena data uji hanya 5 task, hasilnya bersifat indikatif dan tidak dipakai untuk pemilihan model.
 3. **Penskalaan Fitur Terisolasi:**
    - Penskalaan fitur numerik menggunakan `StandardScaler` ($\mu=0, \sigma=1$).
    - Penskalaan dihitung (*fit*) HANYA pada data training tiap fold, kemudian diterapkan (*transform*) pada data testing untuk mencegah kebocoran informasi masa depan (*data snooping*).
@@ -128,9 +132,9 @@ Untuk menjamin asas keterulangan ilmiah (*reproducibility*) dan mencegah kebocor
 
 | Model | Hyperparameter | Nilai yang Ditetapkan | Justifikasi Ilmiah |
 | :--- | :--- | :--- | :--- |
-| **Logistic Regression** | `penalty`<br>`C`<br>`solver`<br>`max_iter` | `'l2'`<br>`1.0`<br>`'lbfgs'`<br>`1000` | Mencegah overfitting pada sampel terbatas; konvergensi terjamin dengan solver lbfgs. |
-| **Random Forest** | `n_estimators`<br>`max_depth`<br>`min_samples_split`<br>`criterion` | `100`<br>`3` s.d `4`<br>`2`<br>`'gini'` | Pohon dibatasi kedalamannya agar tidak memorisasi data berukuran $N=26$. |
-| **Gradient Boosting** | `n_estimators`<br>`learning_rate`<br>`max_depth`<br>`subsample` | `100`<br>`0.05`<br>`2` s.d `3`<br>`0.8` | *Conservative shrinkage rate* (0.05) dengan subsampling untuk regularisasi stokastik. |
+| **Logistic Regression** | `penalty`<br>`C`<br>`solver`<br>`max_iter` | `'l2'`<br>`1.0`<br>`Newton-Raphson` (setara `'lbfgs'`)<br>`1000` | Mencegah overfitting pada sampel terbatas; objektif konveks menjamin konvergensi ke optimum global. |
+| **Random Forest** | `n_estimators`<br>`max_depth`<br>`min_samples_split`<br>`criterion` | `100`<br>`3`<br>`2`<br>`'gini'` | Pohon dibatasi kedalamannya agar tidak memorisasi data berukuran $N=26$. |
+| **Gradient Boosting** | `n_estimators`<br>`learning_rate`<br>`max_depth`<br>`subsample` | `100`<br>`0.05`<br>`2`<br>`0.8` | *Conservative shrinkage rate* (0.05) dengan subsampling untuk regularisasi stokastik. |
 | **MLP Neural Net** | `hidden_layer_sizes`<br>`activation`<br>`alpha`<br>`solver` | `(16, 8)`<br>`'relu'`<br>`0.01`<br>`'adam'` | Arsitektur piramida kecil yang mencegah ledakan parameter pada dataset tabular. |
 
 ---

@@ -76,24 +76,24 @@ Eksperimen dirancang secara komparatif melalui empat algoritma terkemuka dengan 
 #### 3.4.1 Skenario 1: Logistic Regression (Model Baseline)
 *Logistic Regression* bertindak sebagai model acuan dasar (*baseline*). Model ini memodelkan probabilitas kejadian sebagai transformasi linear melalui fungsi sigmoid standar:
 $$\hat{p}_{\text{LR}} = \sigma(\mathbf{w}^T \mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T \mathbf{x} + b)}}$$
-Optimasi bobot dilakukan dengan meminimalkan fungsi penalti $L_2$ (*Ridge regularization*) menggunakan algoritma optimasi quasi-Newton L-BFGS (*Limited-memory Broyden–Fletcher–Goldfarb–Shanno*).
+Bobot diestimasi dengan meminimalkan *log-loss* ditambah penalti $L_2$ (*Ridge regularization*, $C = 1.0$). Karena fungsi objektif ini konveks dan memiliki optimum tunggal, penelitian ini menyelesaikannya hingga konvergen dengan metode Newton-Raphson; solusi yang diperoleh setara dengan solver quasi-Newton L-BFGS (*Limited-memory Broyden–Fletcher–Goldfarb–Shanno*) pada pustaka scikit-learn.
 
 #### 3.4.2 Skenario 2: Random Forest
-*Random Forest* merupakan algoritma ensemble berbasis *bagging* (Bootstrap Aggregating) dari sekumpulan pohon keputusan acak (*de-correlated decision trees*). Estimasi probabilitas kelas diperoleh dari rata-rata proporsi pemungutan suara (*voting frequency*) di seluruh $B$ pohon:
+*Random Forest* merupakan algoritma ensemble berbasis *bagging* (Bootstrap Aggregating) dari sekumpulan pohon keputusan acak (*de-correlated decision trees*). Estimasi probabilitas kelas diperoleh dari rata-rata proporsi kelas delay pada simpul daun (*leaf*) di seluruh $B$ pohon:
 $$\hat{p}_{\text{RF}} = \frac{1}{B} \sum_{b=1}^{B} P_b(Y=1|\mathbf{x})$$
-Dalam konfigurasi ini, kedalaman pohon (*max_depth*) dibatasi secara ketat guna memitigasi risiko penghafalan varians pada dataset berukuran kecil.
+Dalam konfigurasi ini digunakan $B = 100$ pohon dengan kedalaman maksimum (*max_depth*) 3 dan $\lfloor\sqrt{7}\rfloor = 2$ fitur acak per percabangan, guna memitigasi risiko penghafalan varians pada dataset berukuran kecil.
 
 #### 3.4.3 Skenario 3: Gradient Tree Boosting
 *Gradient Boosting* membangun pohon keputusan secara aditif dan sekuensial dengan meminimalkan gradien residual dari fungsi deviance log-likelihood:
 $$F_m(\mathbf{x}) = F_{m-1}(\mathbf{x}) + \gamma_m h_m(\mathbf{x})$$
-Penerapan *learning rate (shrinkage)* kecil sebesar $\eta = 0.05$ dipadukan dengan *subsampling* baris (0.8) guna memastikan pemodelan tetap berada dalam batas kestabilan non-overfitting.
+Setiap pohon regresi $h_m$ (kedalaman maksimum 2) dilatih pada pseudo-residual $r_i = y_i - \hat{p}_i$, dan nilai daunnya dihitung dengan langkah Newton $\gamma = \sum r_i / \sum \hat{p}_i(1 - \hat{p}_i)$ (Friedman, 2001). Sebanyak $M = 100$ iterasi dengan *learning rate (shrinkage)* kecil sebesar $\eta = 0.05$ dipadukan dengan *subsampling* baris (0.8) guna memastikan pemodelan tetap berada dalam batas kestabilan non-overfitting.
 
 #### 3.4.4 Skenario 4: Multi-Layer Perceptron (MLP Neural Network)
 Model jaringan saraf tiruan lapis-banyak dirancang dengan arsitektur kompak dua lapis tersembunyi ($16 \to 8$). Transformasi non-linear dihitung menggunakan fungsi aktivasi ReLU pada lapis tersembunyi, dan diproyeksikan ke lapis luaran bersel tunggal menggunakan aktivasi sigmoid:
 $$\mathbf{h}_1 = \text{ReLU}(\mathbf{W}_1 \mathbf{x} + \mathbf{b}_1)$$
 $$\mathbf{h}_2 = \text{ReLU}(\mathbf{W}_2 \mathbf{h}_1 + \mathbf{b}_2)$$
 $$\hat{p}_{\text{MLP}} = \sigma(\mathbf{w}_3^T \mathbf{h}_2 + b_3)$$
-Optimasi bobot menggunakan algoritma Adam (*Adaptive Moment Estimation*) dengan koefisien regularisasi bobot $\alpha = 0.01$.
+Optimasi bobot menggunakan algoritma Adam (*Adaptive Moment Estimation*; laju belajar 0.01, 1000 iterasi *full-batch*) dengan koefisien regularisasi bobot $\alpha = 0.01$.
 
 ---
 
@@ -103,6 +103,7 @@ Untuk mencegah fenomena kebocoran data (*data leakage*) dan bias optimasi:
 1. **Stratified 5-Fold Cross-Validation:** Dataset disekat ke dalam 5 lipatan (*folds*) dengan mempertahankan proporsi kelas asli pada tiap lipatan (rasio $\approx 61.5\%$ kelas delay : $38.5\%$ kelas tepat waktu).
 2. **Transformasi Fitur Terisolasi:** Estimasi rata-rata ($\mu$) dan simpangan baku ($\sigma$) untuk standardisasi fitur dihitung murni pada lipatan data latih (*training fold*), lalu diterapkan pada lipatan data uji (*test fold*).
 3. **Replikasi Eksperimen:** Seluruh generator bilangan acak dikunci menggunakan *seed* bernilai 42 (`random_state=42`).
+4. **Validasi Pembanding (Hold-out 80:20):** Sebagai pembanding operasional, dilakukan satu kali pemisahan *stratified train-test* 80:20 (21 task latih : 5 task uji). Mengingat data uji hanya berisi 5 task, hasil ini diperlakukan sebagai indikasi dan tidak digunakan untuk pemilihan model.
 
 ---
 
@@ -113,6 +114,8 @@ Mengingat model ensemble seperti Random Forest cenderung menghasilkan probabilit
    $$\hat{p}_{\text{cal}} = \frac{1}{1 + \exp(A f(\mathbf{x}) + B)}$$
 2. **Isotonic Regression:** Metode non-parametrik yang memasang fungsi tangga monotonik naik (*piecewise constant non-decreasing function*) guna meminimalkan kuadrat selisih antara probabilitas terkalibrasi dan label empiris:
    $$\min \sum (y_i - m(f_i))^2 \quad \text{dengan syarat } m(f_i) \le m(f_j) \text{ untuk } f_i \le f_j$$
+
+Agar tidak terjadi kebocoran data, kalibrator tidak pernah dilatih pada data uji. Di dalam setiap fold training, prediksi *out-of-fold* terlebih dahulu dihasilkan melalui *inner stratified 3-fold cross-validation*; kalibrator dilatih pada prediksi tersebut, kemudian model dasar dilatih ulang pada seluruh fold training dan kalibrator diterapkan pada keluaran model untuk fold uji. Kombinasi model × metode kalibrasi (Raw, Platt, Isotonic) dengan *Brier Score* terendah ditetapkan sebagai **model rekomendasi**; jika terdapat nilai yang sama, digunakan ECE lalu *Log Loss* sebagai penentu.
 
 ---
 
@@ -129,7 +132,7 @@ Evaluasi performa dilakukan secara komprehensif mencakup dua dimensi:
    Mengukur penalti eksponensial terhadap estimasi probabilitas yang sangat yakin tetapi tidak sesuai dengan hasil aktual.
 3. **Expected Calibration Error (ECE):**
    $$ECE = \sum_{m=1}^{M} \frac{|B_m|}{N} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|$$
-   Dengan $M = 5$ atau $10$ bin interval probabilitas, mengukur deviasi absolut antara rata-rata akurasi faktual terhadap rata-rata estimasi keyakinan probabilitas model.
+   Dengan $M = 5$ bin interval probabilitas berlebar sama (jumlah bin dibatasi karena $N = 26$), mengukur deviasi absolut antara rata-rata akurasi faktual terhadap rata-rata estimasi keyakinan probabilitas model.
 
 #### 3.7.2 Dimensi Diskriminasi Klasifikasi
 1. **Area Under ROC Curve (ROC-AUC):**
@@ -143,10 +146,19 @@ Evaluasi performa dilakukan secara komprehensif mencakup dua dimensi:
 
 ### 3.8 Mekanisme Ambang Batas Peringatan Dini (Early Warning Decision Rule)
 
-Untuk menerjemahkan keluaran probabilitas numerik menjadi kebijakan manajerial yang dapat ditindaklanjuti (*actionable insight*), ambang batas optimal ditentukan melalui indeks Youden ($J = \text{Sensitivity} + \text{Specificity} - 1$). Luaran sistem dikelompokkan ke dalam tiga zona mitigasi:
+Untuk menerjemahkan keluaran probabilitas numerik menjadi kebijakan manajerial yang dapat ditindaklanjuti (*actionable insight*), dilakukan analisis ambang batas menggunakan indeks Youden ($J = \text{Sensitivity} + \text{Specificity} - 1$) pada model rekomendasi; ambang $\theta^* = \arg\max J$ dilaporkan sebagai titik potong biner optimal. Untuk keperluan operasional, luaran sistem dikelompokkan ke dalam tiga zona mitigasi dengan batas tetap:
 
 | Zona Peringatan | Rentang Probabilitas $P(\text{Delay})$ | Implikasi Risiko | Rekomendasi Manajerial bagi Project Manager |
 | :---: | :---: | :---: | :--- |
 | **Zona Hijau**<br>*(Low Risk)* | $0.00 \le \hat{p} < 0.35$ | Terkendali | Pemantauan rutin tanpa intervensi alokasi sumber daya tambahan. |
 | **Zona Kuning**<br>*(Moderate Risk / Watchlist)* | $0.35 \le \hat{p} < 0.65$ | Rawan Keterlambatan | Koordinasi intensif antar-pimpinan modul, pembekuan perubahan lingkup (*scope lock*), dan audit kesiapan dependensi pendahulu. |
 | **Zona Merah**<br>*(Critical Alert)* | $0.65 \le \hat{p} \le 1.00$ | Keterlambatan Sangat Pasti | Intervensi aktif: perbanyakan alokasi developer (*crashing*), penataan ulang jadwal (*fast-tracking*), atau pemotongan lingkup non-esensial ke rilis berikutnya. |
+
+---
+
+### 3.9 Keterbatasan Desain Penelitian
+
+1. **Ukuran sampel terbatas ($N = 26$).** Setiap fold uji pada *5-fold cross-validation* hanya memuat sekitar 5 task, sehingga estimasi metrik memiliki varians yang tinggi dan perbedaan kecil antar-model tidak dapat dianggap signifikan secara statistik.
+2. **Sifat data empiris-simulatif.** Data disusun dari dokumen perencanaan proyek FNE, bukan dari rekaman historis multi-proyek. Nilai ROC-AUC yang mendekati 1.0 mengindikasikan kelas hampir terpisah sempurna pada data ini, sehingga temuan perlu divalidasi ulang pada data proyek riil sebelum digeneralisasi.
+3. **Kalibrasi pada sampel kecil.** Kalibrator hanya dilatih pada sekitar 20 sampel per fold. *Isotonic Regression* rawan *overfitting* pada ukuran ini, sedangkan *Platt Scaling* lebih stabil karena hanya memiliki dua parameter (Niculescu-Mizil & Caruana, 2005).
+4. **Estimasi sedikit optimistis.** Pemilihan model rekomendasi dan ambang $\theta^*$ dilakukan pada prediksi *out-of-fold* yang sama dengan yang dilaporkan, tanpa lapisan validasi terpisah.
