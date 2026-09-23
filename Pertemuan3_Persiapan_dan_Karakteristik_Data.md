@@ -74,13 +74,15 @@ Dari total ratusan task mikro di 8 sub-proyek, dipilih **26 aktivitas inti (*cor
 
 | Variabel | Rata-rata ($\mu$) | Standar Deviasi ($\sigma$) | Nilai Minimum | Nilai Maksimum |
 | :--- | :---: | :---: | :---: | :---: |
-| `Planned_Duration_Days` | 18.46 | 5.00 | 10.00 | 25.00 |
-| `Planned_Effort_Hours` | 148.08 | 36.99 | 80.00 | 200.00 |
-| `Predecessor_Count` | 2.12 | 1.18 | 0.00 | 5.00 |
-| `Resource_Utilization_Rate` | 1.058 | 0.126 | 0.850 | 1.250 |
-| `Risk_Score` | 0.339 | 0.093 | 0.180 | 0.500 |
-| `SPI_Value` | 0.880 | 0.061 | 0.790 | 0.980 |
-| `Change_Request_Count` | 1.62 | 0.98 | 0.00 | 4.00 |
+| `Planned_Duration_Days` | 18.46 | 4.42 | 10.00 | 25.00 |
+| `Planned_Effort_Hours` | 146.54 | 35.55 | 80.00 | 200.00 |
+| `Predecessor_Count` | 2.00 | 1.13 | 0.00 | 5.00 |
+| `Resource_Utilization_Rate` | 1.038 | 0.125 | 0.850 | 1.250 |
+| `Risk_Score` | 0.335 | 0.095 | 0.180 | 0.500 |
+| `SPI_Value` | 0.890 | 0.062 | 0.790 | 0.980 |
+| `Change_Request_Count` | 1.50 | 1.07 | 0.00 | 4.00 |
+
+*Seluruh nilai pada tabel dihitung ulang langsung dari `dataset_pre02_fne.csv` (standar deviasi sampel, $ddof = 1$).*
 
 ### 4.2 Distribusi Variabel Terikat (Target Class Balance)
 - **Kelas Terlambat (`Status_Delay = 1`):** 16 modul (**61.54%**)
@@ -89,9 +91,10 @@ Dari total ratusan task mikro di 8 sub-proyek, dipilih **26 aktivitas inti (*cor
 
 ### 4.3 Karakteristik Hubungan Fitur terhadap Keterlambatan
 Analisis awal menunjukkan pola yang sangat konsisten dengan teori manajemen proyek PMBOK:
-1. **Dampak Overload Pengembang:** Semua aktivitas dengan `Resource_Utilization_Rate` $\ge 1.05$ mengalami status keterlambatan (`Status_Delay = 1`), membuktikan bahwa beban kerja melebihi 100% adalah pemicu utama kegagalan jadwal.
-2. **Efek Dependensi Jaringan:** Modul dengan `Predecessor_Count` $\ge 3$ (misal pada modul `P-FNE-04`, `P-FNE-06`, `P-FNE-07`, dan `P-FNE-08`) memiliki probabilitas keterlambatan lebih tinggi akibat akumulasi keterlambatan modul pendahulunya (*delay propagation*).
-3. **Korelasi SPI:** Modul dengan `SPI_Value` $\le 0.88$ hampir seluruhnya tergolong terlambat, menegaskan relevansi indikator *Earned Schedule* sebagai prediktor kuat.
+1. **Dampak Overload Pengembang:** Seluruh 15 aktivitas dengan `Resource_Utilization_Rate` $\ge 1.05$ berstatus terlambat (`Status_Delay = 1`), sedangkan dari 11 aktivitas di bawah ambang tersebut hanya 1 yang terlambat. Pola ini mengindikasikan beban kerja melebihi 100% sebagai pemicu utama kegagalan jadwal.
+2. **Efek Dependensi Jaringan:** Dari 6 modul dengan `Predecessor_Count` $\ge 3$ (pada `P-FNE-04`, `P-FNE-06`, `P-FNE-07`, dan `P-FNE-08`), 5 di antaranya terlambat akibat akumulasi keterlambatan modul pendahulunya (*delay propagation*).
+3. **Korelasi SPI:** Seluruh 14 modul dengan `SPI_Value` $\le 0.88$ tergolong terlambat, menegaskan relevansi indikator *Earned Schedule* sebagai prediktor kuat.
+4. **Catatan Kritis — Separabilitas `SPI_Value`:** Pada dataset ini `SPI_Value` nyaris memisahkan kedua kelas secara tunggal (modul terlambat berada pada rentang 0.79–0.90, modul tepat waktu pada 0.91–0.98). Konsekuensinya, metrik diskriminasi pada eksperimen P5 berpotensi mendekati nilai sempurna bukan semata karena keunggulan algoritma, melainkan karena keteraturan dokumen perencanaan yang menjadi sumber data (bersifat empiris-simulatif). Karakteristik ini dilaporkan secara terbuka sebagai keterbatasan penelitian dan menjadi dasar agenda validasi pada data proyek riil berukuran $N > 100$.
 
 ### 4.4 Implikasi Ukuran Data ($N = 26$) terhadap Desain Eksperimen
 Mengingat ukuran sampel yang kompak ($N = 26$):

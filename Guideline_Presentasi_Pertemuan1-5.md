@@ -76,7 +76,7 @@ Research gap, dalam bahasa lisan:
 3. **Proyek dilihat terisolasi:** sumber daya bersama dan dependensi antar-modul jarang dimodelkan bersama.
 4. **Level makro:** prediksi di level proyek atau epic, bukan modul ERP.
 
-**Hati-hati:** eksperimen P4–P5 menjawab gap 1 dan 2 secara penuh, gap 3 dan 4 hanya sebagian (lewat `Resource_Utilization_Rate` dan `Predecessor_Count` di level task). Paragraf penutup di [[Research gap]] masih menyebut XGBoost dan variabel *linked module delay deviation*; keduanya tidak ada di eksperimen, jadi jangan dijanjikan saat presentasi.
+**Hati-hati:** eksperimen P4–P5 menjawab gap 1 dan 2 secara penuh, gap 3 dan 4 hanya sebagian (lewat `Resource_Utilization_Rate` dan `Predecessor_Count` di level task). Paragraf penutup di [[Research gap]] sudah disinkronkan: algoritma yang disebut kini LR, RF, Gradient Boosting, dan MLP, serta variabel propagasi disebut sebagai *predecessor count* sesuai kolom dataset. Jangan menjanjikan XGBoost atau variabel *linked module delay deviation* saat presentasi.
 
 ## Pertemuan 3 — Persiapan data
 
@@ -103,7 +103,7 @@ Pola yang sudah dicek ulang terhadap dataset dan aman diucapkan:
 - Semua 14 task dengan SPI ≤ 0.88 terlambat.
 - SPI hampir memisahkan kelas sendirian: task terlambat punya SPI 0.79–0.90, task tepat waktu 0.91–0.98. Ini alasan utama hasil P5 bisa hampir sempurna.
 
-Koreksi kecil di dokumen P3: rata-rata utilisasi yang benar 1.038 (tertulis 1.058) dan rata-rata SPI 0.890 (tertulis 0.880). Kalau ditanya angka persisnya, pakai nilai yang benar.
+Tabel statistik deskriptif di [[Pertemuan3_Persiapan_dan_Karakteristik_Data]] sudah dihitung ulang dari CSV (ketujuh barisnya sempat meleset, bukan hanya utilisasi dan SPI). Angka yang benar dan aman diucapkan: durasi 18.46 ± 4.42 hari, effort 146.54 ± 35.55 jam, predecessor 2.00 ± 1.13, utilisasi 1.038 ± 0.125, risk score 0.335 ± 0.095, SPI 0.890 ± 0.062, change request 1.50 ± 1.07.
 
 ## Pertemuan 4 — Implementasi desain eksperimen
 
@@ -189,8 +189,8 @@ Tips: sebut keterbatasan sendiri di akhir P5 sebelum dosen menanyakannya. Itu te
 | Kenapa hanya 26 data? | Unit analisisnya task inti dari 8 PMP FNE; ratusan task mikro disaring jadi 26 yang punya durasi, jam kerja, developer bersama, dan dependensi. Karena itu dipakai 5-fold CV, bukan satu split. |
 | Data ini asli atau simulasi? | Empiris-simulatif: disusun dari dokumen perencanaan FNE (KAK, PMP, SRS), bukan log historis. Kami sebut ini sebagai keterbatasan. |
 | Kenapa kalibrasi tidak memperbaiki hasil? | Model yang sudah bagus (LR, MLP) outputnya sudah terkalibrasi; kalibrator yang dilatih dari ±20 sampel malah menambah noise. Kalibrasi hanya membantu Gradient Boosting. Ini sejalan dengan Niculescu-Mizil & Caruana (2005): isotonic butuh data banyak. |
-| Kenapa MLP yang dipilih, bukan LR yang lebih sederhana? | Aturan pemilihan ditetapkan sebelum eksperimen: Brier Score terendah. MLP 0.0127 vs LR 0.0273. Dengan N = 26 selisih ini belum tentu signifikan, jadi LR tetap kandidat kuat karena lebih mudah dijelaskan. |
-| Katanya multi sumber daya terbatas, tapi fitur dominannya SPI? | Betul, hasilnya belum mendukung hipotesis itu secara kuat. Utilisasi di peringkat 3 (0.156), dependensi hampir tidak berpengaruh (0.021). Ini akan dibahas jujur di pembahasan dan diuji ulang pada data yang lebih besar. |
+| Kenapa MLP yang dipilih, bukan LR yang lebih sederhana? | Aturan pemilihan ditetapkan sebelum eksperimen: Brier Score terendah. MLP 0.0127 vs LR 0.0273. Rekomendasinya disampaikan ganda: **MLP** untuk mesin EWS otomatis (deviasi probabilitas terkecil, ECE 0.0233), **LR** sebagai model pendamping saat PM butuh penjelasan kausal yang transparan ke manajemen (odds ratio, ROC-AUC tetap 1.000). Dengan N = 26 selisih Brier itu belum tentu signifikan. |
+| Katanya multi sumber daya terbatas, tapi fitur dominannya SPI? | Dua lapis jawaban. (1) Jujur: hasilnya belum mendukung hipotesis itu secara kuat — utilisasi peringkat 3 (0.156), dependensi hampir tidak berpengaruh (0.021), dan SPI + Risk Score menyumbang ±62%. (2) Interpretasi: keterbatasan sumber daya adalah penyebab, SPI adalah manifestasinya — semua 15 task dengan utilisasi ≥ 1.05 terlambat dan variansnya terserap ke penurunan SPI. Implikasi untuk PM: utilisasi jangan dipantau terpisah, tapi lewat kaskade dampaknya ke SPI. Pemisahan sebab-akibat ini baru bisa diuji pada data yang lebih besar. |
 | Apa bedanya Brier Score dengan akurasi? | Akurasi hanya melihat benar/salah di ambang 0.5. Brier mengukur seberapa dekat angka peluang dengan kenyataan: memprediksi 0.55 dan 0.99 untuk task yang terlambat dihitung beda. |
 | Kenapa ambang zona 0.35 dan 0.65? | Ambang operasional yang ditetapkan di desain (P4) untuk tiga tingkat tindakan PM. Ambang optimal statistik (Youden) dilaporkan terpisah: 0.779. |
 | Variabel di P1 kok beda dengan kolom dataset? | P1 masih konseptual. Saat ekstraksi data, sisa waktu dan backlog tidak tersedia di PMP, jadi diwakili durasi dan jam kerja rencana. Pemetaannya ada di bagian P1 dokumen ini. |

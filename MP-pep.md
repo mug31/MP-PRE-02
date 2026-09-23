@@ -12,6 +12,7 @@
 - **judul_dan_progres_penelitian**
 	- [[Deskripsi_Penelitian]]
 	- [[progres_penelitian_MP]]
+- [[Guideline_Presentasi_Pertemuan1-5]]
 - [[My timeline as head]]
 - [[p chek]]
 - [[Pertemuan2_Draft_Tinjauan_Pustaka]]

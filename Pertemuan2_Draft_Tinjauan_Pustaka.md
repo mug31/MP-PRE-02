@@ -71,6 +71,8 @@ Penerapan luaran probabilitas terkalibrasi menjadi fondasi krusial bagi perancan
 
 Melalui analisis kurva presisi-sensitivitas (*Precision-Recall Tradeoff*), nilai ambang batas $\tau$ dapat dioptimasi guna meminimalkan *false alarm rate* (alarm palsu yang membebani tim) sekaligus memaksimalkan deteksi dini sebelum batas waktu terlampaui.
 
+Pada penelitian PRE-02, ambang operasional tersebut ditetapkan secara konsisten di seluruh bab sebagai $\tau_{\text{low}} = 0.35$ dan $\tau_{\text{high}} = 0.65$, sehingga zonasi yang dipakai adalah **Hijau ($P < 0.35$)**, **Kuning ($0.35 \le P < 0.65$)**, dan **Merah ($P \ge 0.65$)**. Nilai ini merupakan ambang tindakan manajerial (*action threshold*) yang dirancang pada tahap desain eksperimen, dan dilaporkan terpisah dari ambang optimal statistik hasil analisis *Youden J* pada tahap evaluasi.
+
 ---
 
 ## 2.6. Perumusan *Research Gap* dan Posisi Penelitian PRE-02
