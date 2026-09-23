@@ -6,6 +6,7 @@
 - **04_implemen_desain_eksperimen**
 	- **hasil_eksperimen**
 		- [[00_RINGKASAN_TEMUAN_EKSPERIMEN]]
+		- [[log_pelaksanaan_eksperimen]]
 	- [[01_Flow_dan_Skenario_Eksperimen]]
 	- [[02_Draft_Metodologi_Eksperimen_Bab3]]
 	- [[README]]

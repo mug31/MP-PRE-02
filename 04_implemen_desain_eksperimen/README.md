@@ -38,6 +38,8 @@ Luaran yang akan otomatis digenerate ke sub-folder `hasil_eksperimen/`:
 6. `tabel_metrik_holdout_80_20.csv` (Validasi pembanding hold-out stratified 80:20).
 7. `00_RINGKASAN_TEMUAN_EKSPERIMEN.md` (Laporan ringkasan untuk Bab IV & V; seluruh kalimat temuan digenerate otomatis dari hasil).
 
+Catatan: `hasil_eksperimen/log_pelaksanaan_eksperimen.md` (luaran Pertemuan 5) ditulis manual dan mencatat identitas eksekusi, tahapan, checksum luaran, serta hasil verifikasi replikasi — perbarui bila pipeline dijalankan ulang dengan konfigurasi berbeda.
+
 ---
 
 ### 📋 Checklist Pemenuhan Silabus Pertemuan 4:

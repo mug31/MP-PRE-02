@@ -38,6 +38,7 @@ FONT_BODY  = "Calibri"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.dirname(BASE_DIR)
 HASIL_DIR = os.path.join(REPO_DIR, "04_implemen_desain_eksperimen", "hasil_eksperimen")
+REPO_URL = "https://github.com/mug31/MP-PRE-02"
 
 # ============================================================
 # PEMBACAAN DATA SUMBER
@@ -186,7 +187,7 @@ def bullets(slide, left, top, width, height, items, size=11.5, spacing=1.35, col
 
 
 def table(slide, data, left, top, width, height, col_widths, font_size=10.0,
-          align=None, highlight_rows=(), row_height=0.30):
+          align=None, highlight_rows=(), row_height=0.30, links=None):
     shape = slide.shapes.add_table(len(data), len(data[0]), Inches(left), Inches(top),
                                    Inches(width), Inches(height))
     tbl = shape.table
@@ -215,7 +216,19 @@ def table(slide, data, left, top, width, height, col_widths, font_size=10.0,
             p.font.color.rgb = WHITE if r == 0 else DARK_TEXT
             if align and c < len(align):
                 p.alignment = align[c]
+            if links and (r, c) in links and p.runs:
+                p.runs[0].hyperlink.address = links[(r, c)]
+                p.runs[0].font.color.rgb = MID_GREEN
+                p.runs[0].font.underline = True
     return tbl
+
+
+def link_text(slide, left, top, width, height, label, url, size=10.5, color=MID_GREEN):
+    tb = textbox(slide, left, top, width, height, label, size, color, bold=True)
+    run = tb.text_frame.paragraphs[0].runs[0]
+    run.hyperlink.address = url
+    run.font.underline = True
+    return tb
 
 
 CENTER = PP_ALIGN.CENTER
@@ -263,7 +276,7 @@ table(s, [
     ["P4 — Implementasi desain", "Flow eksperimen; script/tools; draft metodologi",
      "Flow + 5 skenario; experiment_pipeline.py; draft Bab III", "Selesai"],
     ["P5 — Pelaksanaan", "Dataset hasil eksperimen; log pelaksanaan",
-     "5 berkas hasil (metrik, prediksi, 3 grafik) + ringkasan temuan otomatis", "Selesai"],
+     "4 tabel + 3 grafik + ringkasan temuan otomatis; log pelaksanaan dan verifikasi replikasi", "Selesai"],
 ], 0.80, 2.05, 11.75, 3.80, [2.35, 3.30, 4.60, 1.50], font_size=10.5,
     align=[LEFT, LEFT, LEFT, CENTER], row_height=0.62)
 
@@ -306,9 +319,12 @@ kolom = [
         "Membangun model supervised learning yang memprediksi probabilitas keterlambatan pada fase monitoring & evaluation.",
         "Merancang early warning system berbasis ambang probabilitas untuk mendukung tindakan korektif dini.",
     ], MID_GREEN),
-    ("Manfaat", [
+    ("Manfaat dan Kontribusi Ilmiah", [
         "Praktis: PM dapat memprioritaskan task berisiko tinggi dan memulihkan jadwal lebih cepat.",
         "Akademis: kerangka predictive monitoring probabilistik yang diuji kalibrasinya, bukan sekadar akurasi.",
+        "Kontribusi 1: early warning system dengan probabilitas keterlambatan yang kuantitatif dan terkalibrasi.",
+        "Kontribusi 2: informasi probabilitas sebagai dasar pengambilan keputusan berbasis risiko.",
+        "Kontribusi 3: kerangka monitoring prediktif yang dapat diintegrasikan ke sistem manajemen proyek.",
     ], MID_GREEN),
     ("Batasan dan Ruang Lingkup", [
         "Hanya fase monitoring & evaluation, bukan perencanaan awal.",
@@ -348,28 +364,50 @@ textbox(s, 1.10, 6.05, 11.20, 0.60,
 # ============================================================
 # SLIDE 6 — P2: MATRIKS LITERATUR
 # ============================================================
-s = new_slide("Pertemuan 2 — Studi Literatur", "Matriks Literatur: Paper Inti dan Posisinya",
+s = new_slide("Pertemuan 2 — Studi Literatur", "Matriks Literatur: Delapan Paper Inti dan Posisinya",
               "28 referensi tertelaah; 8 paper inti berikut menjadi rujukan utama metodologi PRE-02")
-table(s, [
-    ["Penulis (Tahun)", "Metode", "Luaran", "Celah terhadap PRE-02"],
-    ["Batselier & Vanhoucke (2015)", "Earned Value / Earned Schedule", "Estimasi durasi deterministik",
-     "Tidak menghasilkan probabilitas"],
-    ["Wauters & Vanhoucke (2016)", "Machine learning vs EVM", "Prediksi durasi proyek",
-     "Luaran durasi, bukan peluang terlambat"],
-    ["Gondia et al. (2020)", "Decision tree, Naive Bayes", "Kelas risiko keterlambatan",
-     "Luaran kelas diskret, kalibrasi tidak diuji"],
-    ["Browning & Yassine (2010)", "Penjadwalan multi-proyek", "Prioritas alokasi sumber daya",
-     "Tidak prediktif berbasis data"],
-    ["Kula et al. (2023)", "Model prediksi pengiriman software", "Prediksi delay tingkat epic",
-     "Tiap unit diperlakukan independen"],
-    ["Niculescu-Mizil & Caruana (2005)", "Platt Scaling, Isotonic Regression", "Probabilitas terkalibrasi",
-     "Bukan konteks proyek ERP"],
-    ["Guo et al. (2017)", "Expected Calibration Error", "Diagnosis overconfidence",
-     "Bukan konteks manajemen proyek"],
-    ["Mirjalili et al. (2025)", "Graph Neural Network untuk RCPSP", "Durasi & biaya jaringan proyek",
-     "Luaran regresi, bukan probabilitas delay"],
-], 0.80, 2.05, 11.75, 4.30, [3.05, 2.70, 2.70, 3.30], font_size=9.5,
-    align=[LEFT, LEFT, LEFT, LEFT], row_height=0.44)
+
+SCHOLAR = "https://scholar.google.com/scholar?q="
+matriks = [
+    ("Batselier & Vanhoucke (2015)", "Earned Value / Earned Schedule", "Estimasi durasi deterministik",
+     "Tidak menghasilkan probabilitas", "DOI", "https://doi.org/10.1016/j.ijproman.2015.04.003"),
+    ("Wauters & Vanhoucke (2016)", "Decision tree, RF, boosting, SVM", "Prediksi durasi proyek",
+     "Luaran durasi, bukan peluang terlambat", "DOI", "https://doi.org/10.1016/j.eswa.2015.10.008"),
+    ("Choetkiertikul et al. (2017)", "Random Forest + dependency link", "Klasifikasi delay issue software",
+     "Luaran biner, kalibrasi tidak diuji", "DOI", "https://doi.org/10.1007/s10664-016-9496-7"),
+    ("Gondia et al. (2020)", "Naive Bayes, Decision Tree", "Kelas risiko Low / Medium / High",
+     "Kelas diskret; tanpa sumber daya bersama", "DOI",
+     "https://doi.org/10.1061/(ASCE)CO.1943-7862.0001736"),
+    ("Browning & Yassine (2010)", "20 priority rule RCMPSP", "Prioritas alokasi sumber daya",
+     "Heuristik statis, tidak prediktif", "Cari",
+     SCHOLAR + "Resource-constrained+multi-project+scheduling+priority+rule+performance+revisited"),
+    ("Niculescu-Mizil & Caruana (2005)", "Platt Scaling, Isotonic Regression", "Probabilitas terkalibrasi",
+     "Bukan konteks proyek ERP", "DOI", "https://doi.org/10.1145/1102351.1102430"),
+    ("Guo et al. (2017)", "Temperature Scaling, ECE", "Diagnosis overconfidence",
+     "Domain computer vision dan NLP", "arXiv", "https://arxiv.org/abs/1706.04599"),
+    ("Cabanillas et al. (2014)", "Predictive task monitoring", "Probabilitas pelanggaran deadline",
+     "Bergantung log proses sekuensial", "Cari",
+     SCHOLAR + "Predictive+Task+Monitoring+for+Business+Processes+Cabanillas"),
+]
+baris = [["Penulis (Tahun)", "Metode", "Luaran", "Celah terhadap PRE-02", "Sumber"]]
+tautan = {}
+for i, (penulis, metode, luaran, celah, label, url) in enumerate(matriks, start=1):
+    baris.append([penulis, metode, luaran, celah, f"{label} ↗"])
+    tautan[(i, 4)] = url
+table(s, baris, 0.80, 2.00, 11.75, 4.00, [2.75, 2.55, 2.45, 2.85, 1.15], font_size=9.5,
+      align=[LEFT, LEFT, LEFT, LEFT, CENTER], row_height=0.44, links=tautan)
+
+textbox(s, 0.80, 6.30, 3.10, 0.35, "Dokumen lengkap:", 10.5, MUTED_TEXT)
+link_text(s, 2.55, 6.30, 3.30, 0.35, "Matriks Literatur P2 (8 paper) ↗",
+          REPO_URL + "/blob/main/Pertemuan2_Matriks_Literatur.md")
+link_text(s, 6.00, 6.30, 3.10, 0.35, "Tinjauan Pustaka (28 referensi) ↗",
+          REPO_URL + "/blob/main/02_Studi%20Literatur/Tinjauan%20Pustaka.md")
+link_text(s, 9.40, 6.30, 3.15, 0.35, "Research Gap ↗",
+          REPO_URL + "/blob/main/02_Studi%20Literatur/Research%20gap.md")
+textbox(s, 0.80, 6.72, 11.75, 0.30,
+        "Catatan: DOI Gondia et al. (2020) dan kedua entri bertanda “Cari” belum diverifikasi ke penerbit; "
+        "gunakan tautan pencarian sebelum dikutip pada naskah akhir.",
+        9.0, MUTED_TEXT)
 
 # ============================================================
 # SLIDE 7 — P2: RESEARCH GAP
