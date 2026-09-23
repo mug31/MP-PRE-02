@@ -14,8 +14,10 @@
 | :--- | :--- |
 | `PRE02_Presentasi_Progres_Pertemuan1-5.pptx` | Dek presentasi 17 slide, format 16:9, gaya *Swiss Academic* mengikuti slide Pertemuan 4. |
 | `generate_presentasi_p1_p5.py` | Script generator dek tersebut. |
+| `Naskah_Presentasi_P1-P5.md` | Naskah bicara per slide (17 slide, ±15 menit) beserta pembagian peran dan kalimat transisi. |
 
-Naskah bicara, alokasi menit, dan persiapan tanya-jawab ada di [[Guideline_Presentasi_Pertemuan1-5]].
+Persiapan tanya-jawab, daftar istilah, dan rangkuman isi tiap pertemuan ada di
+[[Guideline_Presentasi_Pertemuan1-5]].
 
 ---
 
