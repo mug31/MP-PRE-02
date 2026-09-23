@@ -17,7 +17,7 @@ Karena target kalian adalah maju **sekali sekaligus untuk Progress 1–5 dalam 1
         - **Tuliskan _Research Gap_-nya**: Jelaskan bahwa penelitian PRE-02 kalian berfokus pada **probabilitas numerik terkalibrasi (0–1)** pada multiproyek ERP terintegrasi dengan keterbatasan sumber daya, bukan cuma klasifikasi biner biasa (Terlambat/Tidak).
 
 ---
-- [ ] 
+- [x] 
 #### **Hari 3–4: Penyusunan Bab 3 (Metodologi) & Memberi Instroksi ke Teman B**
 
 - **Yang Kamu Kerjakan**:
@@ -33,7 +33,7 @@ Karena target kalian adalah maju **sekali sekaligus untuk Progress 1–5 dalam 1
             - [ ] Gambar **Feature Importance** (grafik bar yang menunjukkan fitur mana yang paling memicu keterlambatan).
 
 ---
-- [ ] 
+- [x] 
 #### **Hari 5: Bab 4 (Pembahasan & Interpretasi Hasil Eksperimen)**
 
 - **Yang Kamu Kerjakan**:
