@@ -134,6 +134,26 @@ dependensi. ❞
 - Sumber: KAK proyek FNE 2026, 8 dokumen PMP, 8 dokumen SRS.
 - **Sebut sendiri sifat datanya:** empiris-simulatif — disusun dari dokumen perencanaan, bukan log
   historis banyak proyek.
+
+Ini pertanyaan yang paling sering muncul, jadi hafalkan pembagiannya:
+
+❝ Perlu kami bedakan dua lapis. Variabel struktur dan rencana — durasi, beban jam kerja, dan jumlah
+dependensi — kami turunkan dari WBS, tabel sprint, dan peta dependensi di dokumen PMP. Sedangkan
+variabel monitoring — utilisasi, skor risiko, SPI, dan jumlah change request — kami tetapkan lewat
+expert judgment mengikuti rumus dan ambang yang juga tertulis di PMP. Alasannya, proyek FNE 2026 masih
+tahap perencanaan, jadi dokumennya memang belum memuat hasil pemantauan. ❞
+
+Kalau ditanya contoh rumusnya, jawab konkret: ❝ Utilisasi adalah jam kerja dialokasikan dibagi
+kapasitas normal 160 jam per bulan, sesuai tabel Resource Utilization Plan pada Bab 7 PMP P-FNE-08.
+Kalau beban seorang developer 176 jam, utilisasinya 1,10. ❞
+
+Kalau ditanya kenapa utilisasi bisa di atas 1,0: ❝ Karena tiap PMP hanya mencatat alokasi di dalam
+sub-proyeknya sendiri, sedangkan developer yang sama menangani beberapa sub-proyek paralel. Utilisasi
+gabungan lintas sub-proyek tidak tercatat di dokumen mana pun — dan justru itu salah satu celah yang
+kami angkat. ❞
+
+Rincian lengkap 8 variabel ada di [[Penjelasan_Variabel_Dataset]]; siapkan dokumen itu terbuka saat
+presentasi.
 - Empat kartu bawah: 26 task × 7 fitur, distribusi 16 banding 10, nol missing value, dan penyeimbangan
   cukup dengan stratifikasi tanpa SMOTE.
 
@@ -152,10 +172,18 @@ uji yang bocor ke proses pelatihan. ❞
 
 **Bagian terpenting di seluruh presentasi** — ucapkan sendiri sebelum ditanya:
 
-❝ Ada satu hal yang perlu kami sampaikan terbuka. Pada dataset ini SPI hampir memisahkan kedua kelas
-sendirian: task yang terlambat punya SPI 0,79 sampai 0,90, yang tepat waktu 0,91 sampai 0,98. Jadi
-kalau nanti di hasil ada metrik yang mendekati sempurna, penyebab utamanya adalah keteraturan dokumen
-perencanaan ini, bukan semata keunggulan algoritmanya. ❞
+❝ Ada satu hal yang perlu kami sampaikan terbuka. Label keterlambatan kami tetapkan mengikuti kondisi
+SPI di bawah atau sama dengan 0,90 pada titik pantau, sehingga aturan itu berlaku untuk seluruh 26
+baris tanpa pengecualian: task terlambat punya SPI 0,79 sampai 0,90, yang tepat waktu 0,91 sampai
+0,98. Konsekuensinya, kalau nanti di hasil ada metrik yang mendekati sempurna, penyebab utamanya
+adalah keterkaitan itu, bukan semata keunggulan algoritmanya. Karena itu langkah kami berikutnya
+menguji model tanpa fitur SPI, supaya benar-benar prediktif. ❞
+
+Kalau dosen bertanya lebih jauh **"jadi labelnya dari mana?"**, jawab konsisten, jangan berubah:
+
+❝ Labelnya kami tetapkan sendiri berdasarkan aturan SPI tersebut, Pak/Bu, bukan dari catatan
+keterlambatan aktual — karena proyeknya memang belum berjalan. Yang benar-benar terdokumentasi adalah
+nama modul, sub-proyek, durasi rencana, dan dependensinya. ❞
 
 **Transisi:** ❝ Karena datanya hanya 26 task, desain eksperimennya harus hati-hati supaya hasilnya
 tidak menipu. ❞

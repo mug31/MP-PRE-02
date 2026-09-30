@@ -7,7 +7,14 @@
 
 ## 1. Identifikasi Sumber Data
 
-Data yang digunakan dalam penelitian ini merupakan data empiris-simulatif yang diekstraksi secara langsung dari repositori resmi proyek berskala korporat **Super ERP Farm Nation Enterprise (FNE) 2026** yang tersimpan pada folder `MP_sumber_data/`.
+Data yang digunakan dalam penelitian ini merupakan data **empiris-simulatif** yang disusun dari dokumen perencanaan resmi proyek berskala korporat **Super ERP Farm Nation Enterprise (FNE) 2026**, tersimpan pada folder `MP-datasetRaw/`.
+
+Penyusunannya menempuh dua jalur yang perlu dibedakan secara tegas:
+
+1. **Variabel struktur dan rencana** (`Sub_Project`, `Task_Name`, `Planned_Duration_Days`, `Planned_Effort_Hours`, `Predecessor_Count`) diekstraksi dan diturunkan dari WBS, tabel sprint, serta peta dependensi pada dokumen sumber.
+2. **Variabel monitoring dan label** (`Resource_Utilization_Rate`, `Risk_Score`, `SPI_Value`, `Change_Request_Count`, `Status_Delay`) ditetapkan melalui *expert judgment* mengikuti rumus dan ambang yang tercantum pada dokumen PMP. Nilai aktualnya belum tersedia karena proyek FNE 2026 masih berada pada tahap perencanaan dan belum memasuki eksekusi.
+
+Rincian asal, rumus, contoh perhitungan, dan status tiap variabel dipaparkan pada dokumen [[Penjelasan_Variabel_Dataset]] (folder `catatan_dosen/`).
 
 ### 1.1 Rincian Dokumen Sumber
 Ekstraksi data didasarkan pada integrasi informasi dari:
@@ -94,7 +101,7 @@ Analisis awal menunjukkan pola yang sangat konsisten dengan teori manajemen proy
 1. **Dampak Overload Pengembang:** Seluruh 15 aktivitas dengan `Resource_Utilization_Rate` $\ge 1.05$ berstatus terlambat (`Status_Delay = 1`), sedangkan dari 11 aktivitas di bawah ambang tersebut hanya 1 yang terlambat. Pola ini mengindikasikan beban kerja melebihi 100% sebagai pemicu utama kegagalan jadwal.
 2. **Efek Dependensi Jaringan:** Dari 6 modul dengan `Predecessor_Count` $\ge 3$ (pada `P-FNE-04`, `P-FNE-06`, `P-FNE-07`, dan `P-FNE-08`), 5 di antaranya terlambat akibat akumulasi keterlambatan modul pendahulunya (*delay propagation*).
 3. **Korelasi SPI:** Seluruh 14 modul dengan `SPI_Value` $\le 0.88$ tergolong terlambat, menegaskan relevansi indikator *Earned Schedule* sebagai prediktor kuat.
-4. **Catatan Kritis — Separabilitas `SPI_Value`:** Pada dataset ini `SPI_Value` nyaris memisahkan kedua kelas secara tunggal (modul terlambat berada pada rentang 0.79–0.90, modul tepat waktu pada 0.91–0.98). Konsekuensinya, metrik diskriminasi pada eksperimen P5 berpotensi mendekati nilai sempurna bukan semata karena keunggulan algoritma, melainkan karena keteraturan dokumen perencanaan yang menjadi sumber data (bersifat empiris-simulatif). Karakteristik ini dilaporkan secara terbuka sebagai keterbatasan penelitian dan menjadi dasar agenda validasi pada data proyek riil berukuran $N > 100$.
+4. **Catatan Kritis — Separabilitas `SPI_Value`:** Label `Status_Delay` ditetapkan mengikuti kondisi $SPI \le 0.90$ pada titik pantau, sehingga aturan tersebut berlaku untuk **seluruh 26 baris tanpa pengecualian** (modul terlambat berada pada rentang 0.79–0.90, modul tepat waktu pada 0.91–0.98). Konsekuensinya, metrik diskriminasi pada eksperimen P5 berpotensi mendekati nilai sempurna bukan semata karena keunggulan algoritma, melainkan karena keteraturan dokumen perencanaan yang menjadi sumber data (bersifat empiris-simulatif). Karakteristik ini dilaporkan secara terbuka sebagai keterbatasan penelitian dan menjadi dasar agenda validasi pada data proyek riil berukuran $N > 100$.
 
 ### 4.4 Implikasi Ukuran Data ($N = 26$) terhadap Desain Eksperimen
 Mengingat ukuran sampel yang kompak ($N = 26$):

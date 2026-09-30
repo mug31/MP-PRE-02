@@ -445,7 +445,7 @@ textbox(s, 1.10, 5.92, 11.20, 0.75,
 s = new_slide("Pertemuan 3 — Persiapan Data", "Sumber Data, Pengumpulan, dan Preprocessing",
               "Luaran: dataset siap pakai `dataset_pre02_fne.csv` beserta dokumentasi tahapannya")
 langkah = [
-    ("01", "Identifikasi sumber", "KAK proyek FNE 2026, 8 dokumen PMP, dan 8 dokumen SRS. Sifat data: empiris-simulatif."),
+    ("01", "Identifikasi sumber", "KAK proyek FNE 2026, 8 dokumen PMP, dan 8 dokumen SRS — seluruhnya dokumen perencanaan, belum memuat hasil eksekusi."),
     ("02", "Pengumpulan", "Ekstraksi task inti tiap sub-proyek yang memiliki durasi, effort, developer bersama, dan dependensi."),
     ("03", "Cleaning", "Verifikasi rentang nilai, tanpa missing value, dan pemisahan kolom metadata (ID, nama task)."),
     ("04", "Transformasi", "Standardisasi z-score dilatih hanya pada data latih di setiap fold untuk mencegah kebocoran data."),
@@ -467,6 +467,12 @@ stat_card(s, 6.80, 4.55, 2.75, 2.00, "Missing value", "0",
           "tidak diperlukan imputasi maupun SMOTE")
 stat_card(s, 9.80, 4.55, 2.75, 2.00, "Penyeimbangan", "Stratifikasi",
           "rasio kelas dijaga pada tiap fold cross-validation", accent=AMBER_GOLD)
+
+textbox(s, 0.80, 6.62, 11.75, 0.45,
+        "Asal nilai: durasi, effort, dan dependensi diturunkan dari WBS dan tabel sprint PMP; utilisasi, risk, SPI, "
+        "dan change request ditetapkan lewat expert judgment\nmengikuti rumus dan ambang PMP, karena proyek FNE belum "
+        "memasuki eksekusi — rincian per variabel ada di dokumen Penjelasan Variabel Dataset.",
+        9.0, MUTED_TEXT, spacing=1.25)
 
 # ============================================================
 # SLIDE 9 — P3: KARAKTERISTIK DATA
@@ -492,9 +498,10 @@ bullets(s, 8.30, 2.72, 3.95, 3.70, [
     "Seluruh 14 task dengan SPI ≤ 0.88 berstatus terlambat.",
     "5 dari 6 task dengan predecessor ≥ 3 mengalami keterlambatan.",
 ], size=10.5, spacing=1.25)
-textbox(s, 8.30, 5.50, 3.95, 1.00,
-        "Catatan kritis: SPI nyaris memisahkan kelas sendirian (terlambat 0.79–0.90; tepat waktu 0.91–0.98). "
-        "Ini alasan utama metrik pada P5 mendekati sempurna.",
+textbox(s, 8.30, 5.35, 3.95, 1.20,
+        "Catatan kritis: label ditetapkan mengikuti kondisi SPI ≤ 0.90, sehingga aturan itu berlaku untuk "
+        "26 dari 26 baris. Inilah alasan utama metrik pada P5 mendekati sempurna — karena itu eksperimen "
+        "lanjutan diuji tanpa fitur SPI.",
         10.0, RED_ALERT, spacing=1.2)
 
 textbox(s, 0.80, 5.30, 6.85, 1.30,

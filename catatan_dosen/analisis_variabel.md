@@ -1,3 +1,12 @@
+> [!warning] Catatan versi
+> Dokumen ini adalah draf awal dan **digantikan oleh** [[Penjelasan_Variabel_Dataset]], yang mencakup
+> seluruh 8 variabel beserta rumus, contoh perhitungan, dan status penelusurannya.
+> Dua nama tabel yang dikutip di bawah (*Activity Duration & Effort Estimates* dan
+> *Resource Utilization Report & Tracking Matrix*) tidak ditemukan pada 18 dokumen sumber di
+> `MP-datasetRaw/`, sehingga jangan dipakai sebagai rujukan saat presentasi.
+
+---
+
 Nilai-nilai variabel *resource* (sumber daya) di dalam dataset **`dataset_pre02_fne.csv`** diekstraksi dari **Bab 7 (Manajemen Sumber Daya Proyek / *Resource Management Plan*)** dan **Bab 4 (Manajemen Jadwal / *Schedule Management Plan*)** pada ke-8 dokumen **PMP (*Project Management Plan*)** Super ERP FNE (`P-FNE-01` s.d. `P-FNE-08`).
 
 Berikut adalah rincian dari mana dan bagaimana nilai-nilai *resource* tersebut diperoleh:
