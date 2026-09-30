@@ -13,6 +13,9 @@
 - **05_presentasi_progres**
 	- [[Naskah_Presentasi_P1-P5]]
 	- [[README]]
+- **catatan_dosen**
+	- [[analisis_variabel]]
+	- [[Penjelasan_Variabel_Dataset]]
 - **judul_dan_progres_penelitian**
 	- [[Deskripsi_Penelitian]]
 	- [[progres_penelitian_MP]]
