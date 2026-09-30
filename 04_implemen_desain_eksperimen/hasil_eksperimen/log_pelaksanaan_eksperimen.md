@@ -14,7 +14,7 @@ yang dihasilkan, serta hasil verifikasi replikasi.
 | Perintah | `python experiment_pipeline.py` |
 | Seed acak | 42 (dikunci pada partisi fold, bootstrap Random Forest, subsample Gradient Boosting, dan inisialisasi bobot MLP) |
 | Lingkungan verifikasi | Python 3.12.14, NumPy 2.5.3, Matplotlib 3.11.2 (Linux) |
-| Durasi eksekusi | ± 43 detik |
+| Durasi eksekusi | ± 22 detik |
 | Status akhir | Berhasil (exit code 0, tanpa keluaran galat) |
 | Tanggal verifikasi replikasi | 30 September 2026 (eksekusi ulang atas dataset v3) |
 

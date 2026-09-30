@@ -30,7 +30,7 @@ Objek penelitian ini adalah ekosistem pengembangan perangkat lunak berskala besa
 7. `P-FNE-07`: Intelligence & Decision Platform
 8. `P-FNE-08`: Advanced & Autonomous Enterprise
 
-Data historis dan rencana pelaksanaan diekstraksi secara langsung dari repositori resmi proyek (`dataset_pre02_fne_v3.csv`) yang mencakup 26 aktivitas/fitur modul tingkat operasional ($N = 26$). Setiap unit data merepresentasikan entitas modul perangkat lunak yang memiliki jadwal, alokasi jam kerja, dependensi arsitektural, dan catatan keterlambatan aktual pada fase monitoring & evaluasi.
+Dataset penelitian (`dataset_pre02_fne_v3.csv`) mencakup 26 aktivitas modul tingkat operasional ($N = 26$) dan disusun dari dokumen perencanaan resmi proyek melalui dua jalur: variabel struktur dan rencana ($X_1$, $X_2$, $X_3$) diturunkan dari WBS, tabel jadwal sprint, dan peta dependensi pada dokumen PMP, sedangkan variabel pemantauan ($X_4$ s.d. $X_7$) beserta label $Y$ ditetapkan melalui *expert judgment* mengikuti rumus dan ambang yang tercantum pada PMP, karena proyek belum memasuki tahap eksekusi sehingga nilai aktualnya belum tersedia. Rincian rumus, contoh perhitungan, dan status penelusuran tiap variabel dipaparkan pada dokumen *Penjelasan Variabel Dataset*. Setiap unit data merepresentasikan entitas modul perangkat lunak yang memiliki jadwal, alokasi jam kerja, dependensi arsitektural, serta status keterlambatan pada titik pantau fase monitoring & evaluasi.
 
 ---
 
@@ -63,6 +63,8 @@ Variabel bebas merepresentasikan kondisi faktual proyek pada fase pemantauan yan
 #### 3.3.2 Variabel Terikat (Dependent Variable)
 Variabel terikat adalah status keterlambatan akhir dari modul proyek:
 $$Y = \begin{cases} 1, & \text{jika modul mengalami keterlambatan jadwal penyelesaian} \\ 0, & \text{jika modul selesai tepat waktu atau lebih awal} \end{cases}$$
+
+Pada dataset ini, status tersebut ditetapkan mengikuti kondisi $SPI \le 0.90$ pada titik pantau, sehingga aturan itu berlaku untuk seluruh 26 baris. Konsekuensinya $X_6$ memiliki daya pisah yang sangat tinggi terhadap $Y$; pengujian lanjutan karena itu dijalankan dengan mengeluarkan $X_6$ dari himpunan fitur agar kemampuan prediksi dini terukur secara wajar.
 
 Model *machine learning* diinstruksikan untuk mempelajari fungsi pemetaan $f: \mathbf{x} \to [0, 1]$ yang menghasilkan taksiran peluang:
 $$\hat{p} = P(Y = 1 | \mathbf{x})$$
