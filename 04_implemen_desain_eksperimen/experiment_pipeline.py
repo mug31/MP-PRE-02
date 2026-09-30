@@ -610,9 +610,9 @@ def run_pipeline():
     set_seed(42)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     possible_paths = [
-        os.path.join(script_dir, "..", "dataset_pre02_fne.csv"),
-        os.path.join(script_dir, "dataset_pre02_fne.csv"),
-        os.path.abspath(os.path.join(script_dir, "..", "..", "MP-PRE-02-github", "dataset_pre02_fne.csv"))
+        os.path.join(script_dir, "..", "dataset_pre02_fne_v2.csv"),
+        os.path.join(script_dir, "dataset_pre02_fne_v2.csv"),
+        os.path.abspath(os.path.join(script_dir, "..", "..", "MP-PRE-02-github", "dataset_pre02_fne_v2.csv"))
     ]
 
     dataset_path = None
@@ -622,7 +622,7 @@ def run_pipeline():
             break
 
     if not dataset_path:
-        print("[ERROR] File 'dataset_pre02_fne.csv' tidak ditemukan.")
+        print("[ERROR] File 'dataset_pre02_fne_v2.csv' tidak ditemukan.")
         sys.exit(1)
 
     print(f"[INFO] Membaca dataset dari: {dataset_path}")

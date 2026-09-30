@@ -80,7 +80,7 @@ Research gap, dalam bahasa lisan:
 
 ## Pertemuan 3 — Persiapan data
 
-Intinya: dataset `dataset_pre02_fne.csv` berisi 26 task inti dari 8 sub-proyek FNE, 7 fitur numerik, dan 1 label (16 terlambat, 10 tepat waktu). Sumber: [[Pertemuan3_Persiapan_dan_Karakteristik_Data]].
+Intinya: dataset `dataset_pre02_fne_v2.csv` berisi 26 task inti dari 8 sub-proyek FNE, 7 fitur numerik, dan 1 label (16 terlambat, 10 tepat waktu). Sumber: [[Pertemuan3_Persiapan_dan_Karakteristik_Data]].
 
 - **Sumber data:** KAK proyek FNE 2026, 8 dokumen PMP, dan 8 dokumen SRS. Sifatnya *empiris-simulatif*: disusun dari dokumen perencanaan, bukan rekaman historis banyak proyek.
 - **Unit analisis:** satu task/modul yang punya durasi, jam kerja, developer bersama, dan dependensi.

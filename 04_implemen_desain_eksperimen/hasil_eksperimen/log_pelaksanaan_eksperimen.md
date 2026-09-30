@@ -10,7 +10,7 @@ yang dihasilkan, serta hasil verifikasi replikasi.
 | Butir | Keterangan |
 | :--- | :--- |
 | Skrip yang dijalankan | `04_implemen_desain_eksperimen/experiment_pipeline.py` |
-| Dataset masukan | `dataset_pre02_fne.csv` (26 baris × 7 fitur + 1 label) |
+| Dataset masukan | `dataset_pre02_fne_v2.csv` (26 baris × 7 fitur + 1 label) |
 | Perintah | `python experiment_pipeline.py` |
 | Seed acak | 42 (dikunci pada partisi fold, bootstrap Random Forest, subsample Gradient Boosting, dan inisialisasi bobot MLP) |
 | Lingkungan verifikasi | Python 3.12.14, NumPy 2.5.3, Matplotlib 3.11.2 (Linux) |

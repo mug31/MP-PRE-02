@@ -1,7 +1,7 @@
 # DOKUMENTASI PERSIAPAN & KARAKTERISTIK DATA (PERTEMUAN 3)
 ## Topik Riset: PRE-02 — Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas
 **Studi Kasus:** Portofolio Modul Super ERP Farm Nation Enterprise (FNE) 2026  
-**Berkas Data:** `MP-PRE-02-github/dataset_pre02_fne.csv`  
+**Berkas Data:** `MP-PRE-02-github/dataset_pre02_fne_v2.csv`  
 
 ---
 
@@ -89,7 +89,7 @@ Dari total ratusan task mikro di 8 sub-proyek, dipilih **26 aktivitas inti (*cor
 | `SPI_Value` | 0.890 | 0.062 | 0.790 | 0.980 |
 | `Change_Request_Count` | 1.50 | 1.07 | 0.00 | 4.00 |
 
-*Seluruh nilai pada tabel dihitung ulang langsung dari `dataset_pre02_fne.csv` (standar deviasi sampel, $ddof = 1$).*
+*Seluruh nilai pada tabel dihitung ulang langsung dari `dataset_pre02_fne_v2.csv` (standar deviasi sampel, $ddof = 1$).*
 
 ### 4.2 Distribusi Variabel Terikat (Target Class Balance)
 - **Kelas Terlambat (`Status_Delay = 1`):** 16 modul (**61.54%**)

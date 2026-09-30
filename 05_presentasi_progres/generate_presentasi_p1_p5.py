@@ -1,7 +1,7 @@
 """Generator slide presentasi gabungan Progres Pertemuan 1-5 PRE-02.
 
 Seluruh angka pada slide P3 dan P5 dibaca langsung dari berkas sumber
-(`dataset_pre02_fne.csv` dan folder `hasil_eksperimen/`) agar tidak pernah
+(`dataset_pre02_fne_v2.csv` dan folder `hasil_eksperimen/`) agar tidak pernah
 menyimpang dari hasil eksperimen yang sebenarnya.
 
 Jalankan:  uv run --with python-pptx python generate_presentasi_p1_p5.py
@@ -50,7 +50,7 @@ def read_csv_dicts(path):
 
 
 def hitung_statistik_dataset():
-    rows = read_csv_dicts(os.path.join(REPO_DIR, "dataset_pre02_fne.csv"))
+    rows = read_csv_dicts(os.path.join(REPO_DIR, "dataset_pre02_fne_v2.csv"))
     fitur = [
         "Planned_Duration_Days",
         "Planned_Effort_Hours",
@@ -272,7 +272,7 @@ table(s, [
     ["P2 — Studi literatur", "Matriks literatur 5–10 referensi; draft tinjauan pustaka",
      "Matriks 8 paper inti + tabel 28 referensi; draft Bab II + research gap", "Selesai"],
     ["P3 — Persiapan data", "Dataset siap pakai; dokumentasi preprocessing; deskripsi karakteristik data",
-     "dataset_pre02_fne.csv (N = 26 × 7 fitur); dokumen P3 lengkap", "Selesai"],
+     "dataset_pre02_fne_v2.csv (N = 26 × 7 fitur); dokumen P3 lengkap", "Selesai"],
     ["P4 — Implementasi desain", "Flow eksperimen; script/tools; draft metodologi",
      "Flow + 5 skenario; experiment_pipeline.py; draft Bab III", "Selesai"],
     ["P5 — Pelaksanaan", "Dataset hasil eksperimen; log pelaksanaan",
@@ -443,7 +443,7 @@ textbox(s, 1.10, 5.92, 11.20, 0.75,
 # SLIDE 8 — P3: SUMBER DATA & PREPROCESSING
 # ============================================================
 s = new_slide("Pertemuan 3 — Persiapan Data", "Sumber Data, Pengumpulan, dan Preprocessing",
-              "Luaran: dataset siap pakai `dataset_pre02_fne.csv` beserta dokumentasi tahapannya")
+              "Luaran: dataset siap pakai `dataset_pre02_fne_v2.csv` beserta dokumentasi tahapannya")
 langkah = [
     ("01", "Identifikasi sumber", "KAK proyek FNE 2026, 8 dokumen PMP, dan 8 dokumen SRS — seluruhnya dokumen perencanaan, belum memuat hasil eksekusi."),
     ("02", "Pengumpulan", "Ekstraksi task inti tiap sub-proyek yang memiliki durasi, effort, developer bersama, dan dependensi."),

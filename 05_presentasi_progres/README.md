@@ -44,7 +44,7 @@ Metrik evaluasi yang ditampilkan mengikuti Deskripsi Penelitian: Brier Score, Lo
 uv run --with python-pptx python generate_presentasi_p1_p5.py
 ```
 
-Seluruh angka pada slide P3 dan P5 dibaca langsung dari `dataset_pre02_fne.csv` dan folder
+Seluruh angka pada slide P3 dan P5 dibaca langsung dari `dataset_pre02_fne_v2.csv` dan folder
 `04_implemen_desain_eksperimen/hasil_eksperimen/` saat script dijalankan. Jadi bila eksperimen
 dijalankan ulang, cukup jalankan kembali script ini agar slide otomatis ikut terbarui — tidak ada
 angka hasil yang ditulis manual di dalam script.

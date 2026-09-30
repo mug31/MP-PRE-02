@@ -2,8 +2,9 @@
 
 Dokumen ini menjawab pertanyaan: **setiap variabel dalam dataset diperoleh dari mana, dengan rumus
 apa, dan bagaimana perhitungannya.** Berkas data yang dijelaskan: `dataset_pre02_fne_v2.csv`
-(26 aktivitas × 7 fitur + 1 label; isinya identik dengan `dataset_pre02_fne.csv`, penomoran versi
-dipakai agar sinkron dengan dokumen ini).
+(26 aktivitas × 7 fitur + 1 label). Berkas ini menjadi **satu-satunya rujukan resmi** dan dibaca
+langsung oleh pipeline eksperimen; versi sebelumnya disimpan sebagai arsip pada
+`dataset_pre02_fne_v1_arsip.csv` dengan isi yang identik.
 
 ## Ringkasan asal data
 
@@ -114,11 +115,18 @@ menjelaskan mengapa metrik evaluasi pada Pertemuan 5 mendekati sempurna. Tindak 
 diulang **tanpa** `SPI_Value` sebagai fitur, sehingga model diuji pada kemampuan prediksi dini yang
 sesungguhnya.
 
-**d. Butir yang masih perlu ditinjau ulang.**
+**d. Mengapa durasi aktivitas tidak selalu sama dengan panjang sprint.**
+Satuan pada dokumen PMP adalah *sprint*, sedangkan satuan pada dataset adalah *modul*. Keduanya tidak
+berkorespondensi satu-satu: sebuah sprint dapat memuat beberapa modul sekaligus, dan sebaliknya satu
+modul dapat dikerjakan menyeberangi beberapa sprint bersama pekerjaan lain. Durasi pada dataset
+mengacu pada rentang pengerjaan inti modul tersebut, bukan pada total panjang sprint yang memuatnya.
+Tiga aktivitas berikut menunjukkan selisih terbesar dan dicatat sebagai butir peninjauan.
+
+**e. Butir yang masih perlu ditinjau ulang.**
 
 | Butir | Kondisi saat ini | Rencana peninjauan |
 | :--- | :--- | :--- |
-| Durasi ACT-001 | Dataset 10 hari; PMP P-FNE-01 mencatat Sprint 0 selama 1 minggu | Sinkronkan atau jelaskan cakupan tambahannya |
+| Durasi ACT-001 | Dataset 10 hari; PMP P-FNE-01 mencatat Sprint 0 selama 1 minggu (5 hari) | Cakupan dataset mencakup penyiapan klaster K8s di luar Sprint 0; angka akan disinkronkan pada revisi dataset berikutnya |
 | Durasi ACT-010 & ACT-011 | Dataset 25 hari; pemetaan sprint PMP P-FNE-03 memberi rentang berbeda | Tinjau ulang agregasi sprint ke modul |
 | Basis `Planned_Effort_Hours` | Dihitung atas 1 FTE ekuivalen | Pertimbangkan basis ukuran tim penuh bila data alokasi per modul tersedia |
 
