@@ -3,8 +3,9 @@
 Dokumen ini menjawab pertanyaan: **setiap variabel dalam dataset diperoleh dari mana, dengan rumus
 apa, dan bagaimana perhitungannya.** Berkas data yang dijelaskan: `dataset_pre02_fne_v3.csv`
 (26 aktivitas × 7 fitur + 1 label). Berkas ini menjadi **satu-satunya rujukan resmi** dan dibaca
-langsung oleh pipeline eksperimen; versi sebelumnya disimpan sebagai arsip pada
-`dataset_pre02_fne_v1_arsip.csv` dengan isi yang identik.
+langsung oleh pipeline eksperimen. Dua versi sebelumnya disimpan sebagai arsip:
+`dataset_pre02_fne_v1_arsip.csv` dan `dataset_pre02_fne_v2.csv` (keduanya beridentik isi, memuat
+durasi dan effort sebelum revisi penelusuran ulang ke PMP pada 30 September 2026).
 
 ## Ringkasan asal data
 
@@ -35,7 +36,7 @@ utilisasi baru terisi ketika proyek berjalan. Bukti bahwa dokumen ini pra-ekseku
 | `Planned_Effort_Hours` | Beban kerja rencana (orang-jam) | $E = D \times 8\ \text{jam} \times 1{,}0\ FTE$ — satu aturan untuk seluruh baris | Basis 8 jam/hari kerja; kapasitas 160 jam/bulan pada Bab 7 PMP | Turunan |
 | `Predecessor_Count` | Jumlah modul pendahulu | Menghitung dependensi *finish-to-start* modul | Kolom Ketergantungan pada Dokumen Pemetaan + *Activity Sequencing* Bab 4 PMP | Terdokumentasi di level sub-proyek; estimasi ahli untuk dependensi internal |
 | `Resource_Utilization_Rate` | Rasio beban terhadap kapasitas developer | $U = \dfrac{\text{jam kerja dialokasikan}}{\text{kapasitas normal }(160\ \text{jam/bulan})}$ | Rumus & kapasitas: tabel *Resource Utilization Plan* Bab 7 PMP P-FNE-08 | Rumus terdokumentasi; nilai per aktivitas estimasi ahli |
-| `Risk_Score` | Indeks risiko ternormalisasi (0–1) | $R = P \times I$, dengan $P$ dan $I$ dikonversi ke skala 0–1 (skala register 1–5 dibagi 5) | Risk Register (kolom Prob, Impact, Score) pada Bab 9 / Lampiran E PMP | Rumus terdokumentasi; nilai per aktivitas estimasi ahli |
+| `Risk_Score` | Indeks risiko ternormalisasi (0–1) | $R = P \times I$, dengan $P$ dan $I$ memakai **skala desimal 0–1** sesuai *Probability Scale* dan *Impact Scale* PMP | Sub-bab 9.5.2 dan 9.5.4 PMP P-FNE-08 (*Risk Prioritization*) | Rumus dan skala terdokumentasi; 13 dari 26 nilai persis sama dengan skor pada register risiko |
 | `SPI_Value` | Schedule Performance Index | $SPI = \dfrac{EV}{PV}$ | Definisi & ambang $\ge 0.8$ pada Bab 4 dan Bab 7 PMP | Rumus terdokumentasi; nilai estimasi ahli (belum ada pengukuran aktual) |
 | `Change_Request_Count` | Jumlah change request disetujui | Menghitung CR yang lolos *Change Control Board* | Proses & formulir CR pada Bab 3 dan Bab 4 PMP | Proses terdokumentasi; jumlah per aktivitas estimasi ahli |
 | `Status_Delay` | Label target (0 = tepat waktu, 1 = terlambat) | Ditetapkan $1$ bila $SPI \le 0.90$ pada titik pantau | Konsisten dengan ambang kinerja jadwal PMP | Turunan dari `SPI_Value` |
@@ -105,10 +106,18 @@ $$U = \frac{176\ \text{jam}}{160\ \text{jam}} = 1{,}10$$
 
 Nilai $U > 1{,}0$ berarti *over-allocation*; $U < 1{,}0$ berarti beban masih di bawah kapasitas.
 
-**4. Skor risiko.** Risk register PMP menilai probabilitas dan dampak pada skala 1–5. Modul IAM dinilai
-$P = 3$ dan $I = 3$, lalu dikonversi ke skala 0–1:
+**4. Skor risiko.** Sub-bab 9.5.2 PMP P-FNE-08 menetapkan *Probability Scale* dan *Impact Scale* dalam
+bentuk desimal (Very High 0,8–1,0; High 0,6–0,8; Medium 0,4–0,6; Low 0,2–0,4), dan sub-bab 9.5.4
+menghitung skor risiko sebagai perkalian keduanya. Modul IAM dinilai berprobabilitas *Medium* dengan
+dampak *Very High*:
 
-$$R = \frac{3}{5} \times \frac{3}{5} = 0{,}6 \times 0{,}6 = 0{,}36$$
+$$R = P \times I = 0{,}4 \times 0{,}9 = 0{,}36$$
+
+Nilai 0,36 ini identik dengan skor risiko R-005 *ERP Integration Failure* pada register PMP P-FNE-08.
+Sebanyak 23 dari 26 nilai `Risk_Score` pada dataset dapat dibentuk dari perkalian skala tersebut, dan
+13 di antaranya persis sama dengan skor yang tercantum pada register (0,18; 0,24; 0,28; 0,35; 0,36;
+0,42; 0,48). Tiga nilai sisanya (0,22 pada ACT-014 dan ACT-022, serta 0,38 pada ACT-017) merupakan
+interpolasi peneliti di antara level skala.
 
 **5. SPI.** Pada titik pantau, nilai pekerjaan yang terselesaikan (*Earned Value*) mencapai 88% dari
 nilai pekerjaan yang direncanakan (*Planned Value*):
