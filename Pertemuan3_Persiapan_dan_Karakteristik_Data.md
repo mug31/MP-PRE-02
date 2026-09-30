@@ -1,7 +1,7 @@
 # DOKUMENTASI PERSIAPAN & KARAKTERISTIK DATA (PERTEMUAN 3)
 ## Topik Riset: PRE-02 — Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas
 **Studi Kasus:** Portofolio Modul Super ERP Farm Nation Enterprise (FNE) 2026  
-**Berkas Data:** `MP-PRE-02-github/dataset_pre02_fne_v2.csv`  
+**Berkas Data:** `MP-PRE-02-github/dataset_pre02_fne_v3.csv`  
 
 ---
 
@@ -65,7 +65,7 @@ Dari total ratusan task mikro di 8 sub-proyek, dipilih **26 aktivitas inti (*cor
 ### 3.2 Prosedur Preprocessing & Pembersihan Data
 1. **Audit Missing Values:** Tidak ditemukan nilai kosong (*zero missing values*) pada ke-26 baris dan 11 kolom.
 2. **Pengecekan Outlier & Range Sanitization:**
-   - Seluruh nilai `Planned_Duration_Days` berada dalam rentang wajar siklus *sprint* enterprise (10 hingga 25 hari).
+   - Nilai `Planned_Duration_Days` berkisar 5 hingga 60 hari kerja, mengikuti rentang sprint dan fase yang tercantum pada PMP tiap sub-proyek.
    - Nilai `SPI_Value` berkisar antara 0.79 hingga 0.98, mencerminkan variasi dinamika monitoring di mana tidak ada modul yang mengalami deviasi ekstrim abnormal.
 3. **Data Encoding & Separation:**
    - Kolom metadata (`Task_ID`, `Sub_Project`, `Task_Name`) dipisahkan sebagai atribut identifikasi dan tidak dimasukkan ke dalam matriks fitur pemodelan.
@@ -81,15 +81,15 @@ Dari total ratusan task mikro di 8 sub-proyek, dipilih **26 aktivitas inti (*cor
 
 | Variabel | Rata-rata ($\mu$) | Standar Deviasi ($\sigma$) | Nilai Minimum | Nilai Maksimum |
 | :--- | :---: | :---: | :---: | :---: |
-| `Planned_Duration_Days` | 18.46 | 4.42 | 10.00 | 25.00 |
-| `Planned_Effort_Hours` | 146.54 | 35.55 | 80.00 | 200.00 |
+| `Planned_Duration_Days` | 20.85 | 10.71 | 5.00 | 60.00 |
+| `Planned_Effort_Hours` | 166.77 | 85.68 | 40.00 | 480.00 |
 | `Predecessor_Count` | 2.00 | 1.13 | 0.00 | 5.00 |
 | `Resource_Utilization_Rate` | 1.038 | 0.125 | 0.850 | 1.250 |
 | `Risk_Score` | 0.335 | 0.095 | 0.180 | 0.500 |
 | `SPI_Value` | 0.890 | 0.062 | 0.790 | 0.980 |
 | `Change_Request_Count` | 1.50 | 1.07 | 0.00 | 4.00 |
 
-*Seluruh nilai pada tabel dihitung ulang langsung dari `dataset_pre02_fne_v2.csv` (standar deviasi sampel, $ddof = 1$).*
+*Seluruh nilai pada tabel dihitung ulang langsung dari `dataset_pre02_fne_v3.csv` (standar deviasi sampel, $ddof = 1$).*
 
 ### 4.2 Distribusi Variabel Terikat (Target Class Balance)
 - **Kelas Terlambat (`Status_Delay = 1`):** 16 modul (**61.54%**)

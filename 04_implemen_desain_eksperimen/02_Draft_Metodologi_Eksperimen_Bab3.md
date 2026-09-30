@@ -30,7 +30,7 @@ Objek penelitian ini adalah ekosistem pengembangan perangkat lunak berskala besa
 7. `P-FNE-07`: Intelligence & Decision Platform
 8. `P-FNE-08`: Advanced & Autonomous Enterprise
 
-Data historis dan rencana pelaksanaan diekstraksi secara langsung dari repositori resmi proyek (`dataset_pre02_fne_v2.csv`) yang mencakup 26 aktivitas/fitur modul tingkat operasional ($N = 26$). Setiap unit data merepresentasikan entitas modul perangkat lunak yang memiliki jadwal, alokasi jam kerja, dependensi arsitektural, dan catatan keterlambatan aktual pada fase monitoring & evaluasi.
+Data historis dan rencana pelaksanaan diekstraksi secara langsung dari repositori resmi proyek (`dataset_pre02_fne_v3.csv`) yang mencakup 26 aktivitas/fitur modul tingkat operasional ($N = 26$). Setiap unit data merepresentasikan entitas modul perangkat lunak yang memiliki jadwal, alokasi jam kerja, dependensi arsitektural, dan catatan keterlambatan aktual pada fase monitoring & evaluasi.
 
 ---
 

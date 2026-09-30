@@ -1,7 +1,7 @@
 """Generator slide presentasi gabungan Progres Pertemuan 1-5 PRE-02.
 
 Seluruh angka pada slide P3 dan P5 dibaca langsung dari berkas sumber
-(`dataset_pre02_fne_v2.csv` dan folder `hasil_eksperimen/`) agar tidak pernah
+(`dataset_pre02_fne_v3.csv` dan folder `hasil_eksperimen/`) agar tidak pernah
 menyimpang dari hasil eksperimen yang sebenarnya.
 
 Jalankan:  uv run --with python-pptx python generate_presentasi_p1_p5.py
@@ -9,6 +9,7 @@ Jalankan:  uv run --with python-pptx python generate_presentasi_p1_p5.py
 
 import csv
 import os
+import re
 import statistics
 
 from pptx import Presentation
@@ -50,7 +51,7 @@ def read_csv_dicts(path):
 
 
 def hitung_statistik_dataset():
-    rows = read_csv_dicts(os.path.join(REPO_DIR, "dataset_pre02_fne_v2.csv"))
+    rows = read_csv_dicts(os.path.join(REPO_DIR, "dataset_pre02_fne_v3.csv"))
     fitur = [
         "Planned_Duration_Days",
         "Planned_Effort_Hours",
@@ -93,10 +94,18 @@ def baca_prediksi():
     return read_csv_dicts(os.path.join(HASIL_DIR, "tabel_prediksi_probabilitas_task.csv"))
 
 
+def baca_ambang_youden():
+    """Ambil θ* dari ringkasan temuan agar tidak pernah tertinggal saat eksperimen dijalankan ulang."""
+    teks = open(os.path.join(HASIL_DIR, "00_RINGKASAN_TEMUAN_EKSPERIMEN.md"), encoding="utf-8").read()
+    cocok = re.search(r"θ\* = ([\d.]+)", teks)
+    return cocok.group(1) if cocok else "—"
+
+
 STAT = hitung_statistik_dataset()
 METRIK = baca_metrik()
 FEATURE_IMP = baca_feature_importance()
 PREDIKSI = baca_prediksi()
+YOUDEN = baca_ambang_youden()
 
 REKOMENDASI = min(METRIK, key=lambda r: r["Brier_Score"])
 RAW = [r for r in METRIK if r["Kalibrasi"] == "Raw"]
@@ -272,7 +281,7 @@ table(s, [
     ["P2 — Studi literatur", "Matriks literatur 5–10 referensi; draft tinjauan pustaka",
      "Matriks 8 paper inti + tabel 28 referensi; draft Bab II + research gap", "Selesai"],
     ["P3 — Persiapan data", "Dataset siap pakai; dokumentasi preprocessing; deskripsi karakteristik data",
-     "dataset_pre02_fne_v2.csv (N = 26 × 7 fitur); dokumen P3 lengkap", "Selesai"],
+     "dataset_pre02_fne_v3.csv (N = 26 × 7 fitur); dokumen P3 lengkap", "Selesai"],
     ["P4 — Implementasi desain", "Flow eksperimen; script/tools; draft metodologi",
      "Flow + 5 skenario; experiment_pipeline.py; draft Bab III", "Selesai"],
     ["P5 — Pelaksanaan", "Dataset hasil eksperimen; log pelaksanaan",
@@ -443,7 +452,7 @@ textbox(s, 1.10, 5.92, 11.20, 0.75,
 # SLIDE 8 — P3: SUMBER DATA & PREPROCESSING
 # ============================================================
 s = new_slide("Pertemuan 3 — Persiapan Data", "Sumber Data, Pengumpulan, dan Preprocessing",
-              "Luaran: dataset siap pakai `dataset_pre02_fne_v2.csv` beserta dokumentasi tahapannya")
+              "Luaran: dataset siap pakai `dataset_pre02_fne_v3.csv` beserta dokumentasi tahapannya")
 langkah = [
     ("01", "Identifikasi sumber", "KAK proyek FNE 2026, 8 dokumen PMP, dan 8 dokumen SRS — seluruhnya dokumen perencanaan, belum memuat hasil eksekusi."),
     ("02", "Pengumpulan", "Ekstraksi task inti tiap sub-proyek yang memiliki durasi, effort, developer bersama, dan dependensi."),
@@ -667,7 +676,7 @@ stat_card(s, 3.80, 2.05, 2.75, 1.95, "Zona Kuning", f"{len(KUNING)} task",
           "perlu peninjauan ulang sumber daya", accent=AMBER_GOLD)
 stat_card(s, 6.80, 2.05, 2.75, 1.95, "Zona Hijau", f"{len(HIJAU)} task",
           "tidak ada task terlambat yang lolos ke zona ini")
-stat_card(s, 9.80, 2.05, 2.75, 1.95, "Ambang Youden J", "θ* = 0.779",
+stat_card(s, 9.80, 2.05, 2.75, 1.95, "Ambang Youden J", f"θ* = {YOUDEN}",
           "ambang optimal statistik, dilaporkan terpisah dari ambang operasional")
 
 contoh = ["ACT-026", "ACT-002", "ACT-018", "ACT-019", "ACT-001"]

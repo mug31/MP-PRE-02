@@ -23,7 +23,7 @@ Alur eksperimen dirancang mengikuti metodologi saintifik standar CRISP-DM (*Cros
 ```mermaid
 flowchart TD
     subgraph S1["TAHAP 1: DATA INGESTION & VALIDATION"]
-        A1["Dataset FNE: dataset_pre02_fne_v2.csv<br>(N=26 Task, 8 Modul ERP P-FNE-01 s.d 08)"] --> A2["Data Type Casting & Integrity Audit<br>(Missing values check, range validation)"]
+        A1["Dataset FNE: dataset_pre02_fne_v3.csv<br>(N=26 Task, 8 Modul ERP P-FNE-01 s.d 08)"] --> A2["Data Type Casting & Integrity Audit<br>(Missing values check, range validation)"]
         A2 --> A3["Feature Separation:<br>Features X (7 variabel) vs Target Y (Status_Delay)"]
     end
 

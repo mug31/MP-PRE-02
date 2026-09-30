@@ -230,10 +230,10 @@ peluangnya tidak bisa dipercaya. ❞
 
 ## Slide 13 — P5: Hasil evaluasi 5-fold  ·  ±1,5 menit
 
-- Jangan bacakan 12 baris. Tunjuk baris yang disorot: **MLP tanpa kalibrasi**, Brier 0,0127, ECE 0,0233,
-  Log Loss 0,0341, ROC-AUC 1,000.
-- Sebut pembandingnya: Logistic Regression juga ROC-AUC 1,000 dengan Brier 0,0273; Gradient Boosting
-  paling rendah dengan ROC-AUC 0,9031.
+- Jangan bacakan 12 baris. Tunjuk baris yang disorot: **MLP tanpa kalibrasi**, Brier 0,0007, ECE 0,0075,
+  Log Loss 0,0079, ROC-AUC 1,000.
+- Sebut pembandingnya: Logistic Regression juga ROC-AUC 1,000 dengan Brier 0,0254; Gradient Boosting
+  paling rendah dengan ROC-AUC 0,9375.
 - Aturan pemilihan model ditetapkan **sebelum** eksperimen: Brier Score terendah.
 
 ❝ Kalau ditanya kenapa bukan Logistic Regression yang dipilih padahal lebih sederhana: rekomendasi
@@ -250,7 +250,7 @@ transparan ke manajemen. Dengan N = 26, selisih sekecil itu belum tentu signifik
 
 ❝ Temuan yang menarik, kalibrasi tambahan justru tidak membantu. Pada Logistic Regression, Random
 Forest, dan MLP, Brier Score-nya malah naik setelah dikalibrasi. Hanya Gradient Boosting yang membaik,
-dari 0,0973 menjadi 0,0936 dengan Platt. ❞
+dari 0,0931 menjadi 0,0889 dengan Platt. ❞
 
 ❝ Penjelasannya: model berbasis sigmoid seperti Logistic Regression dan MLP memang sudah menghasilkan
 probabilitas yang terkalibrasi secara alami. Sementara kalibrator yang dilatih hanya dari sekitar 20
@@ -261,13 +261,13 @@ Isotonic Regression butuh data besar. Jadi ini bukan kegagalan eksperimen, melai
 
 ## Slide 15 — P5: Feature importance  ·  ±1,5 menit
 
-- Urutan bobot: `SPI_Value` 0,310 dan `Risk_Score` 0,307 di dua teratas, `Resource_Utilization_Rate`
-  0,156 di posisi ketiga, dan `Predecessor_Count` hanya 0,021.
+- Urutan bobot: `SPI_Value` 0,335 dan `Risk_Score` 0,274 di dua teratas, `Resource_Utilization_Rate`
+  0,187 di posisi ketiga, dan `Predecessor_Count` hanya 0,024.
 
 Ini titik rawan, karena judul penelitian menyoroti keterbatasan sumber daya. Jawab dua lapis:
 
 ❝ Pertama, secara jujur hasil ini belum mendukung kuat hipotesis kami: dua fitur teratas adalah fitur
-jadwal dan risiko, menyumbang sekitar 62 persen. ❞
+jadwal dan risiko, menyumbang sekitar 61 persen. ❞
 
 ❝ Kedua, interpretasinya begini. Keterbatasan sumber daya adalah penyebab, sedangkan penurunan SPI
 adalah manifestasinya. Faktanya seluruh 15 task dengan utilisasi di atas 1,05 berakhir terlambat —
@@ -281,13 +281,13 @@ akibat ini yang akan kami uji pada data yang lebih besar. ❞
 
 - Zonasi operasional: Hijau di bawah 0,35, Kuning 0,35 sampai 0,65, Merah 0,65 ke atas.
 - Hasil pada model rekomendasi: zona Merah berisi 16 task dan menangkap **16 dari 16** task yang
-  benar-benar terlambat, tanpa alarm palsu. Zona Kuning berisi 1 task tepat waktu, yaitu ACT-018
-  General Ledger dengan peluang 0,57. Tidak ada task terlambat yang lolos ke zona Hijau.
-- Ambang optimal statistik dari analisis Youden J adalah 0,779, dilaporkan terpisah dari ambang
+  benar-benar terlambat, tanpa alarm palsu. Sepuluh task tepat waktu seluruhnya berada di zona Hijau,
+  dan zona Kuning kosong.
+- Ambang optimal statistik dari analisis Youden J adalah 0,483, dilaporkan terpisah dari ambang
   operasional.
 
 ❝ Ambang 0,35 dan 0,65 adalah ambang tindakan manajerial yang kami tetapkan di tahap desain, bukan
-hasil optimasi setelah melihat data. Ambang statistik 0,779 kami laporkan terpisah supaya jelas mana
+hasil optimasi setelah melihat data. Ambang statistik 0,483 kami laporkan terpisah supaya jelas mana
 yang keputusan desain dan mana yang temuan. ❞
 
 - Tutup dengan tindakan tiap zona: Hijau pantau rutin, Kuning tinjau ulang alokasi developer, Merah

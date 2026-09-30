@@ -10,13 +10,13 @@ yang dihasilkan, serta hasil verifikasi replikasi.
 | Butir | Keterangan |
 | :--- | :--- |
 | Skrip yang dijalankan | `04_implemen_desain_eksperimen/experiment_pipeline.py` |
-| Dataset masukan | `dataset_pre02_fne_v2.csv` (26 baris × 7 fitur + 1 label) |
+| Dataset masukan | `dataset_pre02_fne_v3.csv` (26 baris × 7 fitur + 1 label; revisi durasi & effort hasil penelusuran ulang ke PMP) |
 | Perintah | `python experiment_pipeline.py` |
 | Seed acak | 42 (dikunci pada partisi fold, bootstrap Random Forest, subsample Gradient Boosting, dan inisialisasi bobot MLP) |
 | Lingkungan verifikasi | Python 3.12.14, NumPy 2.5.3, Matplotlib 3.11.2 (Linux) |
 | Durasi eksekusi | ± 43 detik |
 | Status akhir | Berhasil (exit code 0, tanpa keluaran galat) |
-| Tanggal verifikasi replikasi | 23 September 2026 |
+| Tanggal verifikasi replikasi | 30 September 2026 (eksekusi ulang atas dataset v3) |
 
 ---
 
@@ -31,8 +31,8 @@ yang dihasilkan, serta hasil verifikasi replikasi.
    menghasilkan 12 kombinasi model × kalibrasi.
 6. **Evaluasi out-of-fold** — ROC-AUC, Brier Score, Log Loss, ECE (5 bin), akurasi, recall, specificity, F1.
 7. **Pemilihan model rekomendasi** — kombinasi dengan Brier Score terendah:
-   **MLP Neural Network tanpa kalibrasi** (Brier 0.0127).
-8. **Threshold analysis** — ambang optimal Youden `θ* = 0.7789` (J = 1.000; sensitivity 1.000;
+   **MLP Neural Network tanpa kalibrasi** (Brier 0.0007).
+8. **Threshold analysis** — ambang optimal Youden `θ* = 0.4830` (J = 1.000; sensitivity 1.000;
    specificity 1.000).
 9. **Validasi pembanding** — hold-out stratified 80:20 (n_train = 21, n_test = 5), bersifat indikatif.
 10. **Ekspor luaran** — 4 tabel CSV, 3 grafik PNG, dan 1 dokumen ringkasan temuan.
@@ -41,18 +41,18 @@ yang dihasilkan, serta hasil verifikasi replikasi.
 
 | Model | Kalibrasi | ROC-AUC | Brier | Log Loss | ECE | Akurasi | F1 |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Logistic Regression (Baseline) | Raw | 1.0000 | 0.0273 | 0.1158 | 0.0570 | 96.2% | 0.9697 |
-| Logistic Regression (Baseline) | Platt | 1.0000 | 0.0317 | 0.1427 | 0.0749 | 96.2% | 0.9697 |
-| Logistic Regression (Baseline) | Isotonic | 0.9656 | 0.0724 | 1.4366 | 0.0746 | 92.3% | 0.9375 |
-| Random Forest | Raw | 0.9875 | 0.0421 | 0.1446 | 0.0812 | 92.3% | 0.9375 |
-| Random Forest | Platt | 1.0000 | 0.0696 | 0.2418 | 0.1224 | 96.2% | 0.9697 |
-| Random Forest | Isotonic | 0.9156 | 0.0801 | 2.6700 | 0.0881 | 92.3% | 0.9375 |
-| Gradient Boosting | Raw | 0.9031 | 0.0973 | 0.4888 | 0.1011 | 88.5% | 0.9032 |
-| Gradient Boosting | Platt | 0.8656 | 0.0936 | 0.3491 | 0.0714 | 88.5% | 0.9032 |
-| Gradient Boosting | Isotonic | 0.8781 | 0.1007 | 2.7513 | 0.0592 | 88.5% | 0.9032 |
-| **MLP Neural Network** | **Raw** | **1.0000** | **0.0127** | **0.0341** | **0.0233** | **96.2%** | **0.9697** |
-| MLP Neural Network | Platt | 1.0000 | 0.0216 | 0.1150 | 0.0990 | 96.2% | 0.9697 |
-| MLP Neural Network | Isotonic | 1.0000 | 0.0138 | 0.0356 | 0.0234 | 96.2% | 0.9697 |
+| Logistic Regression (Baseline) | Raw | 1.0000 | 0.0254 | 0.1133 | 0.0943 | 96.2% | 0.9697 |
+| Logistic Regression (Baseline) | Platt | 0.9938 | 0.0290 | 0.1336 | 0.0798 | 96.2% | 0.9697 |
+| Logistic Regression (Baseline) | Isotonic | 0.9156 | 0.0772 | 2.6603 | 0.0736 | 92.3% | 0.9375 |
+| Random Forest | Raw | 0.9938 | 0.0391 | 0.1367 | 0.0640 | 92.3% | 0.9375 |
+| Random Forest | Platt | 0.9938 | 0.0459 | 0.1780 | 0.1040 | 92.3% | 0.9375 |
+| Random Forest | Isotonic | 0.9188 | 0.0769 | 2.6569 | 0.0769 | 92.3% | 0.9375 |
+| Gradient Boosting | Raw | 0.9375 | 0.0931 | 0.4789 | 0.0977 | 88.5% | 0.9032 |
+| Gradient Boosting | Platt | 0.8813 | 0.0889 | 0.3278 | 0.0709 | 88.5% | 0.9032 |
+| Gradient Boosting | Isotonic | 0.8625 | 0.1120 | 2.7878 | 0.0749 | 88.5% | 0.9091 |
+| **MLP Neural Network** | **Raw** | **1.0000** | **0.0007** | **0.0079** | **0.0075** | **100.0%** | **1.0000** |
+| MLP Neural Network | Platt | 1.0000 | 0.0164 | 0.1049 | 0.0947 | 100.0% | 1.0000 |
+| MLP Neural Network | Isotonic | 1.0000 | 0.0016 | 0.0114 | 0.0106 | 100.0% | 1.0000 |
 
 ---
 
@@ -60,20 +60,20 @@ yang dihasilkan, serta hasil verifikasi replikasi.
 
 | Berkas | Isi | SHA-256 (16 karakter awal) |
 | :--- | :--- | :--- |
-| `tabel_metrik_evaluasi.csv` | Metrik 12 kombinasi model × kalibrasi (5-fold CV) | `e442386a63d3a801` |
-| `tabel_metrik_holdout_80_20.csv` | Metrik pembanding hold-out 80:20 | `b0af5c1e032f2b5e` |
-| `tabel_feature_importance.csv` | Bobot MDI 7 fitur dari Random Forest | `58076aab26e85ad6` |
-| `tabel_prediksi_probabilitas_task.csv` | P(Delay) per task dan zona EWS | `4cc680f8bb878199` |
-| `kurva_roc_perbandingan.png` | Kurva ROC 4 algoritma | `02cf64a20b8b2210` |
-| `kurva_kalibrasi_probabilitas.png` | Diagram reliabilitas (5 bin) | `97f72398451dc135` |
-| `feature_importance_comparison.png` | Diagram batang feature importance | `05dae53133e8ac4a` |
-| `00_RINGKASAN_TEMUAN_EKSPERIMEN.md` | Ringkasan temuan yang digenerate dari angka hasil | `0574413500bea603` |
+| `tabel_metrik_evaluasi.csv` | Metrik 12 kombinasi model × kalibrasi (5-fold CV) | `4dfc4d131ac93e33` |
+| `tabel_metrik_holdout_80_20.csv` | Metrik pembanding hold-out 80:20 | `670eaf192e5b7fd4` |
+| `tabel_feature_importance.csv` | Bobot MDI 7 fitur dari Random Forest | `69ed9addfaaa492d` |
+| `tabel_prediksi_probabilitas_task.csv` | P(Delay) per task dan zona EWS | `8ccde14365256982` |
+| `kurva_roc_perbandingan.png` | Kurva ROC 4 algoritma | `5d2f2cfca4e686ab` |
+| `kurva_kalibrasi_probabilitas.png` | Diagram reliabilitas (5 bin) | `d41795c1e733b259` |
+| `feature_importance_comparison.png` | Diagram batang feature importance | `f8a9a4bb72f10a0b` |
+| `00_RINGKASAN_TEMUAN_EKSPERIMEN.md` | Ringkasan temuan yang digenerate dari angka hasil | `70e620bdd96330da` |
 
 ---
 
 ## 4. Verifikasi Replikasi
 
-Pipeline dijalankan ulang pada 23 September 2026 di direktori terpisah menggunakan salinan skrip dan
+Pipeline dijalankan ulang pada 30 September 2026 di direktori terpisah menggunakan salinan skrip dan
 dataset yang sama. Kedelapan berkas luaran dibandingkan terhadap berkas yang tersimpan di repositori:
 
 - Empat berkas CSV dan dokumen ringkasan: **identik** (perbandingan isi).
