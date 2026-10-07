@@ -4,6 +4,8 @@
 	- [[Sintesis Naratif]]
 	- [[Tinjauan Pustaka]]
 - **04_implemen_desain_eksperimen**
+	- **__pycache__**
+
 	- **hasil_eksperimen**
 		- [[00_RINGKASAN_TEMUAN_EKSPERIMEN]]
 		- [[log_pelaksanaan_eksperimen]]
@@ -15,7 +17,10 @@
 	- [[README]]
 - **catatan_dosen**
 	- [[analisis_variabel]]
+	- [[contoh_mengambil_data]]
+	- [[Kode_P-FNE-01]]
 	- [[Penjelasan_Variabel_Dataset]]
+	- [[sumber_data_variabel]]
 - **judul_dan_progres_penelitian**
 	- [[Deskripsi_Penelitian]]
 	- [[progres_penelitian_MP]]
