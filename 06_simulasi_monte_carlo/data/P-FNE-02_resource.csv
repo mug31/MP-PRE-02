@@ -1,0 +1,16 @@
+Orang,Role,Hari_Mulai,Hari_Selesai,Sumber
+PM,PM,1,,PMP-02 §7.3.1 Team Structure
+PO,PO,1,,PMP-02 §7.3.1 Team Structure
+Tech Lead,Tech Lead,1,,PMP-02 §7.3.1 Team Structure
+QA Lead,QA Lead,1,,PMP-02 §7.3.1 Team Structure
+BA,BA,1,,PMP-02 §7.3.1 Team Structure
+Backend 1,Backend,1,,PMP-02 §7.3.1 Team Structure
+Backend 2,Backend,1,,PMP-02 §7.3.1 Team Structure
+Backend 3,Backend,1,,PMP-02 §7.3.1 Team Structure
+Backend 4,Backend,1,,PMP-02 §7.3.1 Team Structure
+Frontend 1,Frontend,1,,PMP-02 §7.3.1 Team Structure
+Frontend 2,Frontend,1,,PMP-02 §7.3.1 Team Structure
+Mobile,Mobile,1,,PMP-02 §7.3.1 Team Structure
+DevOps,DevOps,1,,PMP-02 §7.3.1 Team Structure
+QA 1,QA,1,,PMP-02 §7.3.1 Team Structure
+QA 2,QA,1,,PMP-02 §7.3.1 Team Structure

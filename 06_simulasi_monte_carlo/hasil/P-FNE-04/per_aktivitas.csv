@@ -1,0 +1,25 @@
+Subproyek,Skenario_CR,Kebijakan,ID,Aktivitas,Kebutuhan_Resource,P_Kena_CR,Rata2_Delay_Sendiri_CR_Hari,Rata2_Pergeseran_Mulai_Hari,dari_Predecessor_Hari,dari_Antrian_Resource_Hari,Indeks_Kekritisan,P_Selesai_Lewat_Rencana
+P-FNE-04,dosen,FCFS,M2,S1–S2: Planning & BOM Complete,Tim Scrum:1,0.093,0.468,0.0,0.0,0.0,1.0,0.093
+P-FNE-04,dosen,FCFS,M3,S3–S6: Execution Module Complete,Tim Scrum:1,0.12,1.096,0.468,0.468,0.0,1.0,0.202
+P-FNE-04,dosen,FCFS,M4,S7–S9: Costing & Asset Complete,Tim Scrum:1,0.094,0.629,1.564,1.564,0.0,1.0,0.279
+P-FNE-04,dosen,FCFS,M5,S10: Integration Complete,Tim Scrum:1,0.108,0.257,2.193,2.193,0.0,1.0,0.356
+P-FNE-04,dosen,FCFS,M6,S11: UAT Complete,Tim Scrum:1,0.086,0.195,2.451,2.451,0.0,1.0,0.409
+P-FNE-04,dosen,FCFS,M7,S12: Deployment & Go-Live + Project Closure,Tim Scrum:1,0.102,0.241,2.646,2.646,0.0,1.0,0.471
+P-FNE-04,dosen,SPT,M2,S1–S2: Planning & BOM Complete,Tim Scrum:1,0.093,0.468,0.0,0.0,0.0,1.0,0.093
+P-FNE-04,dosen,SPT,M3,S3–S6: Execution Module Complete,Tim Scrum:1,0.12,1.096,0.468,0.468,0.0,1.0,0.202
+P-FNE-04,dosen,SPT,M4,S7–S9: Costing & Asset Complete,Tim Scrum:1,0.094,0.629,1.564,1.564,0.0,1.0,0.279
+P-FNE-04,dosen,SPT,M5,S10: Integration Complete,Tim Scrum:1,0.108,0.257,2.193,2.193,0.0,1.0,0.356
+P-FNE-04,dosen,SPT,M6,S11: UAT Complete,Tim Scrum:1,0.086,0.195,2.451,2.451,0.0,1.0,0.409
+P-FNE-04,dosen,SPT,M7,S12: Deployment & Go-Live + Project Closure,Tim Scrum:1,0.102,0.241,2.646,2.646,0.0,1.0,0.471
+P-FNE-04,pmp,FCFS,M2,S1–S2: Planning & BOM Complete,Tim Scrum:1,0.093,0.205,0.0,0.0,0.0,1.0,0.093
+P-FNE-04,pmp,FCFS,M3,S3–S6: Execution Module Complete,Tim Scrum:1,0.12,0.414,0.205,0.205,0.0,1.0,0.202
+P-FNE-04,pmp,FCFS,M4,S7–S9: Costing & Asset Complete,Tim Scrum:1,0.094,0.225,0.619,0.619,0.0,1.0,0.279
+P-FNE-04,pmp,FCFS,M5,S10: Integration Complete,Tim Scrum:1,0.108,0.102,0.844,0.844,0.0,1.0,0.356
+P-FNE-04,pmp,FCFS,M6,S11: UAT Complete,Tim Scrum:1,0.086,0.078,0.947,0.947,0.0,1.0,0.409
+P-FNE-04,pmp,FCFS,M7,S12: Deployment & Go-Live + Project Closure,Tim Scrum:1,0.102,0.093,1.025,1.025,0.0,1.0,0.471
+P-FNE-04,pmp,SPT,M2,S1–S2: Planning & BOM Complete,Tim Scrum:1,0.093,0.205,0.0,0.0,0.0,1.0,0.093
+P-FNE-04,pmp,SPT,M3,S3–S6: Execution Module Complete,Tim Scrum:1,0.12,0.414,0.205,0.205,0.0,1.0,0.202
+P-FNE-04,pmp,SPT,M4,S7–S9: Costing & Asset Complete,Tim Scrum:1,0.094,0.225,0.619,0.619,0.0,1.0,0.279
+P-FNE-04,pmp,SPT,M5,S10: Integration Complete,Tim Scrum:1,0.108,0.102,0.844,0.844,0.0,1.0,0.356
+P-FNE-04,pmp,SPT,M6,S11: UAT Complete,Tim Scrum:1,0.086,0.078,0.947,0.947,0.0,1.0,0.409
+P-FNE-04,pmp,SPT,M7,S12: Deployment & Go-Live + Project Closure,Tim Scrum:1,0.102,0.093,1.025,1.025,0.0,1.0,0.471

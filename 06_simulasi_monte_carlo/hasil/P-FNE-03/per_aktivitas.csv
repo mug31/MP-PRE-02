@@ -1,0 +1,65 @@
+Subproyek,Skenario_CR,Kebijakan,ID,Aktivitas,Kebutuhan_Resource,P_Kena_CR,Rata2_Delay_Sendiri_CR_Hari,Rata2_Pergeseran_Mulai_Hari,dari_Predecessor_Hari,dari_Antrian_Resource_Hari,Indeks_Kekritisan,P_Selesai_Lewat_Rencana
+P-FNE-03,dosen,FCFS,A01,Sprint 0: Setup & Design,Tim Scrum:1,0.094,0.224,0.0,0.0,0.0,1.0,0.094
+P-FNE-03,dosen,FCFS,A02,Sprint 1-2: Foundation,Tim Scrum:1,0.098,0.421,0.224,0.224,0.0,1.0,0.182
+P-FNE-03,dosen,FCFS,A03,Sprint 3: Supplier Management,Tim Scrum:1,0.104,0.238,0.646,0.646,0.0,1.0,0.271
+P-FNE-03,dosen,FCFS,A04,Sprint 4-5: Procurement I,Tim Scrum:1,0.099,0.466,0.884,0.646,0.238,1.0,0.35
+P-FNE-03,dosen,FCFS,A05,Sprint 6: Procurement II,Tim Scrum:1,0.12,0.283,1.804,1.35,0.453,1.0,0.489
+P-FNE-03,dosen,FCFS,A06,Sprint 7-8: Inventory I,Tim Scrum:1,0.108,0.453,1.35,0.646,0.705,1.0,0.414
+P-FNE-03,dosen,FCFS,A07,Sprint 9: Inventory II,Tim Scrum:1,0.125,0.298,2.087,1.804,0.283,1.0,0.559
+P-FNE-03,dosen,FCFS,A08,Sprint 10-11: Warehouse I,Tim Scrum:1,0.109,0.514,2.385,1.804,0.582,1.0,0.61
+P-FNE-03,dosen,FCFS,A09,Sprint 12: Warehouse II,Tim Scrum:1,0.087,0.198,3.358,2.899,0.459,1.0,0.674
+P-FNE-03,dosen,FCFS,A10,Sprint 13-14: Quality I,Tim Scrum:1,0.094,0.459,2.899,1.804,1.096,1.0,0.642
+P-FNE-03,dosen,FCFS,A11,Sprint 15: Quality II,Tim Scrum:1,0.097,0.243,3.556,3.358,0.198,1.0,0.696
+P-FNE-03,dosen,FCFS,A12,Sprint 16: Traceability,Tim Scrum:1,0.096,0.207,3.799,3.799,0.0,1.0,0.72
+P-FNE-03,dosen,FCFS,A13,Sprint 17: Integration,Tim Scrum:1,0.107,0.235,4.006,4.006,0.0,1.0,0.746
+P-FNE-03,dosen,FCFS,A14,Sprint 18-19: Frontend & Dashboard,Tim Scrum:1,0.103,0.46,4.241,4.241,0.0,1.0,0.772
+P-FNE-03,dosen,FCFS,A15,Sprint 20: UAT & Bug Fixing,Tim Scrum:1,0.087,0.192,4.701,4.701,0.0,1.0,0.792
+P-FNE-03,dosen,FCFS,A16,Sprint 21: Deployment & Go-Live,Tim Scrum:1,0.11,0.229,4.893,4.893,0.0,1.0,0.814
+P-FNE-03,dosen,SPT,A01,Sprint 0: Setup & Design,Tim Scrum:1,0.094,0.224,0.0,0.0,0.0,1.0,0.094
+P-FNE-03,dosen,SPT,A02,Sprint 1-2: Foundation,Tim Scrum:1,0.098,0.421,0.224,0.224,0.0,1.0,0.182
+P-FNE-03,dosen,SPT,A03,Sprint 3: Supplier Management,Tim Scrum:1,0.104,0.238,0.646,0.646,0.0,1.0,0.271
+P-FNE-03,dosen,SPT,A04,Sprint 4-5: Procurement I,Tim Scrum:1,0.099,0.466,10.166,0.646,9.52,1.0,0.35
+P-FNE-03,dosen,SPT,A05,Sprint 6: Procurement II,Tim Scrum:1,0.12,0.283,10.632,10.632,0.0,1.0,0.431
+P-FNE-03,dosen,SPT,A06,Sprint 7-8: Inventory I,Tim Scrum:1,0.108,0.453,-1.696,0.646,-2.342,1.0,0.394
+P-FNE-03,dosen,SPT,A07,Sprint 9: Inventory II,Tim Scrum:1,0.125,0.298,-1.243,-1.243,0.0,1.0,0.464
+P-FNE-03,dosen,SPT,A08,Sprint 10-11: Warehouse I,Tim Scrum:1,0.109,0.514,2.335,-1.243,3.578,1.0,0.527
+P-FNE-03,dosen,SPT,A09,Sprint 12: Warehouse II,Tim Scrum:1,0.087,0.198,2.85,2.85,0.0,1.0,0.563
+P-FNE-03,dosen,SPT,A10,Sprint 13-14: Quality I,Tim Scrum:1,0.094,0.459,-3.66,-1.243,-2.417,1.0,0.492
+P-FNE-03,dosen,SPT,A11,Sprint 15: Quality II,Tim Scrum:1,0.097,0.243,-3.201,-3.201,0.0,1.0,0.514
+P-FNE-03,dosen,SPT,A12,Sprint 16: Traceability,Tim Scrum:1,0.096,0.207,0.738,0.738,0.0,1.0,0.633
+P-FNE-03,dosen,SPT,A13,Sprint 17: Integration,Tim Scrum:1,0.107,0.235,4.006,4.006,0.0,1.0,0.746
+P-FNE-03,dosen,SPT,A14,Sprint 18-19: Frontend & Dashboard,Tim Scrum:1,0.103,0.46,4.241,4.241,0.0,1.0,0.772
+P-FNE-03,dosen,SPT,A15,Sprint 20: UAT & Bug Fixing,Tim Scrum:1,0.087,0.192,4.701,4.701,0.0,1.0,0.792
+P-FNE-03,dosen,SPT,A16,Sprint 21: Deployment & Go-Live,Tim Scrum:1,0.11,0.229,4.893,4.893,0.0,1.0,0.814
+P-FNE-03,pmp,FCFS,A01,Sprint 0: Setup & Design,Tim Scrum:1,0.094,0.089,0.0,0.0,0.0,1.0,0.094
+P-FNE-03,pmp,FCFS,A02,Sprint 1-2: Foundation,Tim Scrum:1,0.098,0.143,0.089,0.089,0.0,1.0,0.182
+P-FNE-03,pmp,FCFS,A03,Sprint 3: Supplier Management,Tim Scrum:1,0.104,0.096,0.232,0.232,0.0,1.0,0.271
+P-FNE-03,pmp,FCFS,A04,Sprint 4-5: Procurement I,Tim Scrum:1,0.099,0.182,0.328,0.232,0.096,1.0,0.35
+P-FNE-03,pmp,FCFS,A05,Sprint 6: Procurement II,Tim Scrum:1,0.12,0.105,0.665,0.51,0.155,1.0,0.489
+P-FNE-03,pmp,FCFS,A06,Sprint 7-8: Inventory I,Tim Scrum:1,0.108,0.155,0.51,0.232,0.278,1.0,0.414
+P-FNE-03,pmp,FCFS,A07,Sprint 9: Inventory II,Tim Scrum:1,0.125,0.118,0.77,0.665,0.105,1.0,0.559
+P-FNE-03,pmp,FCFS,A08,Sprint 10-11: Warehouse I,Tim Scrum:1,0.109,0.196,0.888,0.665,0.223,1.0,0.61
+P-FNE-03,pmp,FCFS,A09,Sprint 12: Warehouse II,Tim Scrum:1,0.087,0.074,1.271,1.084,0.187,1.0,0.674
+P-FNE-03,pmp,FCFS,A10,Sprint 13-14: Quality I,Tim Scrum:1,0.094,0.187,1.084,0.665,0.419,1.0,0.642
+P-FNE-03,pmp,FCFS,A11,Sprint 15: Quality II,Tim Scrum:1,0.097,0.097,1.345,1.271,0.074,1.0,0.696
+P-FNE-03,pmp,FCFS,A12,Sprint 16: Traceability,Tim Scrum:1,0.096,0.072,1.442,1.442,0.0,1.0,0.72
+P-FNE-03,pmp,FCFS,A13,Sprint 17: Integration,Tim Scrum:1,0.107,0.083,1.515,1.515,0.0,1.0,0.746
+P-FNE-03,pmp,FCFS,A14,Sprint 18-19: Frontend & Dashboard,Tim Scrum:1,0.103,0.159,1.597,1.597,0.0,1.0,0.772
+P-FNE-03,pmp,FCFS,A15,Sprint 20: UAT & Bug Fixing,Tim Scrum:1,0.087,0.074,1.757,1.757,0.0,1.0,0.792
+P-FNE-03,pmp,FCFS,A16,Sprint 21: Deployment & Go-Live,Tim Scrum:1,0.11,0.075,1.831,1.831,0.0,1.0,0.814
+P-FNE-03,pmp,SPT,A01,Sprint 0: Setup & Design,Tim Scrum:1,0.094,0.089,0.0,0.0,0.0,1.0,0.094
+P-FNE-03,pmp,SPT,A02,Sprint 1-2: Foundation,Tim Scrum:1,0.098,0.143,0.089,0.089,0.0,1.0,0.182
+P-FNE-03,pmp,SPT,A03,Sprint 3: Supplier Management,Tim Scrum:1,0.104,0.096,0.232,0.232,0.0,1.0,0.271
+P-FNE-03,pmp,SPT,A04,Sprint 4-5: Procurement I,Tim Scrum:1,0.099,0.182,9.56,0.232,9.328,1.0,0.35
+P-FNE-03,pmp,SPT,A05,Sprint 6: Procurement II,Tim Scrum:1,0.12,0.105,9.742,9.742,0.0,1.0,0.431
+P-FNE-03,pmp,SPT,A06,Sprint 7-8: Inventory I,Tim Scrum:1,0.108,0.155,-2.426,0.232,-2.658,1.0,0.394
+P-FNE-03,pmp,SPT,A07,Sprint 9: Inventory II,Tim Scrum:1,0.125,0.118,-2.271,-2.271,0.0,1.0,0.464
+P-FNE-03,pmp,SPT,A08,Sprint 10-11: Warehouse I,Tim Scrum:1,0.109,0.196,1.046,-2.271,3.317,1.0,0.527
+P-FNE-03,pmp,SPT,A09,Sprint 12: Warehouse II,Tim Scrum:1,0.087,0.074,1.242,1.242,0.0,1.0,0.563
+P-FNE-03,pmp,SPT,A10,Sprint 13-14: Quality I,Tim Scrum:1,0.094,0.187,-5.014,-2.271,-2.743,1.0,0.492
+P-FNE-03,pmp,SPT,A11,Sprint 15: Quality II,Tim Scrum:1,0.097,0.097,-4.827,-4.827,0.0,1.0,0.514
+P-FNE-03,pmp,SPT,A12,Sprint 16: Traceability,Tim Scrum:1,0.096,0.072,-1.385,-1.385,0.0,1.0,0.632
+P-FNE-03,pmp,SPT,A13,Sprint 17: Integration,Tim Scrum:1,0.107,0.083,1.515,1.515,0.0,1.0,0.746
+P-FNE-03,pmp,SPT,A14,Sprint 18-19: Frontend & Dashboard,Tim Scrum:1,0.103,0.159,1.597,1.597,0.0,1.0,0.772
+P-FNE-03,pmp,SPT,A15,Sprint 20: UAT & Bug Fixing,Tim Scrum:1,0.087,0.074,1.757,1.757,0.0,1.0,0.792
+P-FNE-03,pmp,SPT,A16,Sprint 21: Deployment & Go-Live,Tim Scrum:1,0.11,0.075,1.831,1.831,0.0,1.0,0.814

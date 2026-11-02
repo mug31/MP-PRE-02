@@ -1,0 +1,20 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+ACT-004,IoT DB — Database Schema Design (iot_devices),IoT Lead:1,3,,1,3,IoT Lead,1,1,3,0,IoT Lead,1,1,3,0
+ACT-005,Reg API — Device Registration API Development,IoT Eng 1:1,3,ACT-004,4,6,IoT Eng 1,4,4,6,0,IoT Eng 1,4,4,6,0
+ACT-008,Telemetry API — Telemetry Ingestion API Development,IoT Eng 2:1,4,ACT-005,7,10,IoT Eng 2,7,7,10,0,IoT Eng 2,7,7,10,0
+ACT-012,Alert Engine — Alert Engine Implementation,IoT Eng 2:1,4,ACT-008,11,14,IoT Eng 2,11,11,14,0,IoT Eng 2,11,11,14,0
+ACT-019,IoT Dashboard — Device List View,Frontend 1:1,3,ACT-012,15,17,Frontend 1,15,15,17,0,Frontend 1,15,15,17,0
+ACT-023,Twin DB — Twin Database Schema (digital_twins),Twin Lead:1,3,ACT-019,18,20,Twin Lead,18,18,20,0,Twin Lead,18,18,20,0
+ACT-024,Twin CRUD — Twin CRUD API Development,Twin Eng 1:1,4,ACT-023,21,24,Twin Eng 1,21,21,24,0,Twin Eng 1,21,21,24,0
+ACT-030,State Sync — State Update Engine,Twin Eng 2:1,4,ACT-024,25,28,Twin Eng 2,25,25,28,0,Twin Eng 2,25,25,28,0
+ACT-035,What-If — What-If API Development,Twin Eng 2:1,4,ACT-030,29,32,Twin Eng 2,29,29,32,0,Twin Eng 2,29,29,32,0
+ACT-047,Crop Sim — Crop Yield Simulation Development,Sim Eng 1:1,5,ACT-035,33,37,Sim Eng 1,33,33,37,0,Sim Eng 1,33,33,37,0
+ACT-066,Rule Engine — Rule Evaluation Engine (Drools),Auto Eng 1:1,4,ACT-047,38,41,Auto Eng 1,38,38,41,0,Auto Eng 1,38,38,41,0
+ACT-070,Recommendation — Recommendation Engine Development,Auto Eng 2:1,3,ACT-066,42,44,Auto Eng 2,42,42,44,0,Auto Eng 2,42,42,44,0
+ACT-075,Approval — Approval Workflow Implementation,Auto Eng 1:1,4,ACT-070,45,48,Auto Eng 1,45,45,48,0,Auto Eng 1,45,45,48,0
+ACT-086,IoT Dashboard — IoT Dashboard Development,Frontend 1:1,4,ACT-075,49,52,Frontend 1,49,49,52,0,Frontend 1,49,49,52,0
+ACT-107,Integration Test — Service Integration Tests,QA:1,3,ACT-086,53,55,QA,53,53,55,0,QA,53,53,55,0
+ACT-109,Performance Test — IoT Throughput Test,QA:1,2,ACT-107,56,57,QA,56,56,57,0,QA,56,56,57,0
+ACT-114,UAT Execution — UAT Test Plan Preparation,Business Analyst:1;QA:1,2,ACT-109,58,59,Business Analyst;QA,58,58,59,0,Business Analyst;QA,58,58,59,0
+ACT-116,Bug Fixing — Bug Fixing & Retesting,,2,ACT-114,60,61,,60,60,61,0,,60,60,61,0
+ACT-117,UAT Sign-off,Business Analyst:1;Project Manager:1,1,ACT-116,62,62,Business Analyst;Project Manager,62,62,62,0,Business Analyst;Project Manager,62,62,62,0

@@ -1,0 +1,57 @@
+Subproyek,Skenario_CR,Kebijakan,ID,Aktivitas,Kebutuhan_Resource,P_Kena_CR,Rata2_Delay_Sendiri_CR_Hari,Rata2_Pergeseran_Mulai_Hari,dari_Predecessor_Hari,dari_Antrian_Resource_Hari,Indeks_Kekritisan,P_Selesai_Lewat_Rencana
+P-FNE-05,dosen,FCFS,S0,Sprint 0: Setup & Foundation,Tim Scrum:1,0.108,0.253,0.0,0.0,0.0,1.0,0.108
+P-FNE-05,dosen,FCFS,S1,Sprint 1: Sales Module - Part 1,Tim Scrum:1,0.092,0.22,0.253,0.253,0.0,1.0,0.187
+P-FNE-05,dosen,FCFS,S2,Sprint 2: Sales Module - Part 2,Tim Scrum:1,0.107,0.255,0.473,0.473,0.0,1.0,0.272
+P-FNE-05,dosen,FCFS,S3,Sprint 3: CRM Module,Tim Scrum:1,0.09,0.202,0.728,0.728,0.0,1.0,0.337
+P-FNE-05,dosen,FCFS,S4,Sprint 4: Marketplace - Part 1,Tim Scrum:1,0.105,0.239,0.93,0.93,0.0,1.0,0.406
+P-FNE-05,dosen,FCFS,S5,Sprint 5: Marketplace - Part 2,Tim Scrum:1,0.105,0.238,1.169,1.169,0.0,1.0,0.473
+P-FNE-05,dosen,FCFS,S6,Sprint 6: Logistics Module,Tim Scrum:1,0.103,0.223,1.407,1.407,0.0,1.0,0.521
+P-FNE-05,dosen,FCFS,S7,Sprint 7: Portal Module,Tim Scrum:1,0.099,0.23,1.631,1.631,0.0,1.0,0.578
+P-FNE-05,dosen,FCFS,S8,Sprint 8: Integration,Tim Scrum:1,0.081,0.185,1.86,1.86,0.0,1.0,0.615
+P-FNE-05,dosen,FCFS,S9,Sprint 9: Testing & UAT,Tim Scrum:1,0.102,0.228,2.045,2.045,0.0,1.0,0.661
+P-FNE-05,dosen,FCFS,M8,Integration & Testing Complete,Tim Scrum:1,0.098,0.072,2.274,2.274,0.0,1.0,0.697
+P-FNE-05,dosen,FCFS,M9,UAT Complete,Tim Scrum:1,0.09,0.204,2.346,2.346,0.0,1.0,0.728
+P-FNE-05,dosen,FCFS,M10,Production Deployment,Tim Scrum:1,0.11,0.127,2.55,2.55,0.0,1.0,0.761
+P-FNE-05,dosen,FCFS,M11,Project Closure,Tim Scrum:1,0.105,0.123,2.677,2.677,0.0,1.0,0.785
+P-FNE-05,dosen,SPT,S0,Sprint 0: Setup & Foundation,Tim Scrum:1,0.108,0.253,0.0,0.0,0.0,1.0,0.108
+P-FNE-05,dosen,SPT,S1,Sprint 1: Sales Module - Part 1,Tim Scrum:1,0.092,0.22,0.253,0.253,0.0,1.0,0.187
+P-FNE-05,dosen,SPT,S2,Sprint 2: Sales Module - Part 2,Tim Scrum:1,0.107,0.255,0.473,0.473,0.0,1.0,0.272
+P-FNE-05,dosen,SPT,S3,Sprint 3: CRM Module,Tim Scrum:1,0.09,0.202,0.728,0.728,0.0,1.0,0.337
+P-FNE-05,dosen,SPT,S4,Sprint 4: Marketplace - Part 1,Tim Scrum:1,0.105,0.239,0.93,0.93,0.0,1.0,0.406
+P-FNE-05,dosen,SPT,S5,Sprint 5: Marketplace - Part 2,Tim Scrum:1,0.105,0.238,1.169,1.169,0.0,1.0,0.473
+P-FNE-05,dosen,SPT,S6,Sprint 6: Logistics Module,Tim Scrum:1,0.103,0.223,1.407,1.407,0.0,1.0,0.521
+P-FNE-05,dosen,SPT,S7,Sprint 7: Portal Module,Tim Scrum:1,0.099,0.23,1.631,1.631,0.0,1.0,0.578
+P-FNE-05,dosen,SPT,S8,Sprint 8: Integration,Tim Scrum:1,0.081,0.185,1.86,1.86,0.0,1.0,0.615
+P-FNE-05,dosen,SPT,S9,Sprint 9: Testing & UAT,Tim Scrum:1,0.102,0.228,2.045,2.045,0.0,1.0,0.661
+P-FNE-05,dosen,SPT,M8,Integration & Testing Complete,Tim Scrum:1,0.098,0.072,2.274,2.274,0.0,1.0,0.697
+P-FNE-05,dosen,SPT,M9,UAT Complete,Tim Scrum:1,0.09,0.204,2.346,2.346,0.0,1.0,0.728
+P-FNE-05,dosen,SPT,M10,Production Deployment,Tim Scrum:1,0.11,0.127,2.55,2.55,0.0,1.0,0.761
+P-FNE-05,dosen,SPT,M11,Project Closure,Tim Scrum:1,0.105,0.123,2.677,2.677,0.0,1.0,0.785
+P-FNE-05,pmp,FCFS,S0,Sprint 0: Setup & Foundation,Tim Scrum:1,0.108,0.1,0.0,0.0,0.0,1.0,0.108
+P-FNE-05,pmp,FCFS,S1,Sprint 1: Sales Module - Part 1,Tim Scrum:1,0.092,0.085,0.1,0.1,0.0,1.0,0.187
+P-FNE-05,pmp,FCFS,S2,Sprint 2: Sales Module - Part 2,Tim Scrum:1,0.107,0.113,0.185,0.185,0.0,1.0,0.272
+P-FNE-05,pmp,FCFS,S3,Sprint 3: CRM Module,Tim Scrum:1,0.09,0.074,0.298,0.298,0.0,1.0,0.337
+P-FNE-05,pmp,FCFS,S4,Sprint 4: Marketplace - Part 1,Tim Scrum:1,0.105,0.089,0.372,0.372,0.0,1.0,0.406
+P-FNE-05,pmp,FCFS,S5,Sprint 5: Marketplace - Part 2,Tim Scrum:1,0.105,0.096,0.461,0.461,0.0,1.0,0.473
+P-FNE-05,pmp,FCFS,S6,Sprint 6: Logistics Module,Tim Scrum:1,0.103,0.075,0.557,0.557,0.0,1.0,0.521
+P-FNE-05,pmp,FCFS,S7,Sprint 7: Portal Module,Tim Scrum:1,0.099,0.083,0.632,0.632,0.0,1.0,0.578
+P-FNE-05,pmp,FCFS,S8,Sprint 8: Integration,Tim Scrum:1,0.081,0.069,0.715,0.715,0.0,1.0,0.615
+P-FNE-05,pmp,FCFS,S9,Sprint 9: Testing & UAT,Tim Scrum:1,0.102,0.077,0.784,0.784,0.0,1.0,0.661
+P-FNE-05,pmp,FCFS,M8,Integration & Testing Complete,Tim Scrum:1,0.098,0.03,0.861,0.861,0.0,1.0,0.697
+P-FNE-05,pmp,FCFS,M9,UAT Complete,Tim Scrum:1,0.09,0.075,0.891,0.891,0.0,1.0,0.728
+P-FNE-05,pmp,FCFS,M10,Production Deployment,Tim Scrum:1,0.11,0.052,0.966,0.966,0.0,1.0,0.761
+P-FNE-05,pmp,FCFS,M11,Project Closure,Tim Scrum:1,0.105,0.049,1.018,1.018,0.0,1.0,0.785
+P-FNE-05,pmp,SPT,S0,Sprint 0: Setup & Foundation,Tim Scrum:1,0.108,0.1,0.0,0.0,0.0,1.0,0.108
+P-FNE-05,pmp,SPT,S1,Sprint 1: Sales Module - Part 1,Tim Scrum:1,0.092,0.085,0.1,0.1,0.0,1.0,0.187
+P-FNE-05,pmp,SPT,S2,Sprint 2: Sales Module - Part 2,Tim Scrum:1,0.107,0.113,0.185,0.185,0.0,1.0,0.272
+P-FNE-05,pmp,SPT,S3,Sprint 3: CRM Module,Tim Scrum:1,0.09,0.074,0.298,0.298,0.0,1.0,0.337
+P-FNE-05,pmp,SPT,S4,Sprint 4: Marketplace - Part 1,Tim Scrum:1,0.105,0.089,0.372,0.372,0.0,1.0,0.406
+P-FNE-05,pmp,SPT,S5,Sprint 5: Marketplace - Part 2,Tim Scrum:1,0.105,0.096,0.461,0.461,0.0,1.0,0.473
+P-FNE-05,pmp,SPT,S6,Sprint 6: Logistics Module,Tim Scrum:1,0.103,0.075,0.557,0.557,0.0,1.0,0.521
+P-FNE-05,pmp,SPT,S7,Sprint 7: Portal Module,Tim Scrum:1,0.099,0.083,0.632,0.632,0.0,1.0,0.578
+P-FNE-05,pmp,SPT,S8,Sprint 8: Integration,Tim Scrum:1,0.081,0.069,0.715,0.715,0.0,1.0,0.615
+P-FNE-05,pmp,SPT,S9,Sprint 9: Testing & UAT,Tim Scrum:1,0.102,0.077,0.784,0.784,0.0,1.0,0.661
+P-FNE-05,pmp,SPT,M8,Integration & Testing Complete,Tim Scrum:1,0.098,0.03,0.861,0.861,0.0,1.0,0.697
+P-FNE-05,pmp,SPT,M9,UAT Complete,Tim Scrum:1,0.09,0.075,0.891,0.891,0.0,1.0,0.728
+P-FNE-05,pmp,SPT,M10,Production Deployment,Tim Scrum:1,0.11,0.052,0.966,0.966,0.0,1.0,0.761
+P-FNE-05,pmp,SPT,M11,Project Closure,Tim Scrum:1,0.105,0.049,1.018,1.018,0.0,1.0,0.785

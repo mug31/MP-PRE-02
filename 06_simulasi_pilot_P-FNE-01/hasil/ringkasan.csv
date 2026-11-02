@@ -1,5 +1,0 @@
-Skenario_CR,Kebijakan,N_Iterasi,Selesai_Rencana_Hari,P_Telat,SE_P_Telat,P_Telat_lebih_5_Hari,P_Telat_lebih_10_Persen,Rata2_Keterlambatan_Hari,SD_Keterlambatan_Hari,P50_Hari,P80_Hari,P90_Hari,Maks_Hari,Rata2_Jumlah_CR,Rata2_Tambahan_CR_di_Rantai_Hari,Rata2_Tunggu_Resource_di_Rantai_Hari
-dosen,FCFS,1000,131,0.922,0.0085,0.267,0.006,4.17,2.96,4.0,6.0,8.0,19,3.92,4.17,0.0
-dosen,SPT,1000,131,0.922,0.0085,0.267,0.006,4.17,2.96,4.0,6.0,8.0,19,3.92,4.17,0.0
-pmp,FCFS,1000,131,0.922,0.0085,0.111,0.0,2.9,2.0,3.0,4.0,6.0,12,3.92,2.9,0.0
-pmp,SPT,1000,131,0.922,0.0085,0.111,0.0,2.9,2.0,3.0,4.0,6.0,12,3.92,2.9,0.0

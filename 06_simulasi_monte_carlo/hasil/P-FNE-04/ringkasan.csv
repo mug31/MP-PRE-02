@@ -1,0 +1,5 @@
+Subproyek,Skenario_CR,Kebijakan,N_Iterasi,Jumlah_Aktivitas,Selesai_Tanpa_Resource_Hari,Selesai_Rencana_Hari,P_Telat,SE_P_Telat,P_Telat_lebih_5_Hari,P_Telat_lebih_10_Persen,Rata2_Keterlambatan_Hari,SD_Keterlambatan_Hari,P50_Hari,P80_Hari,P90_Hari,Maks_Hari,Rata2_Jumlah_CR,Rata2_Tambahan_CR_di_Rantai_Hari,Tunggu_Resource_di_Rantai_Rencana_Hari,Rata2_Tunggu_Resource_di_Rantai_Hari,Iterasi_Lebih_Cepat_dari_Rencana
+P-FNE-04,dosen,FCFS,1000,6,120,120,0.471,0.0158,0.2,0.047,2.89,4.6,0.0,5.02,9.0,31.8,0.6,2.89,0,0.0,0
+P-FNE-04,dosen,SPT,1000,6,120,120,0.471,0.0158,0.2,0.047,2.89,4.6,0.0,5.02,9.0,31.8,0.6,2.89,0,0.0,0
+P-FNE-04,pmp,FCFS,1000,6,120,120,0.471,0.0158,0.067,0.012,1.12,2.56,0.0,1.4,3.79,24.29,0.6,1.12,0,0.0,0
+P-FNE-04,pmp,SPT,1000,6,120,120,0.471,0.0158,0.067,0.012,1.12,2.56,0.0,1.4,3.79,24.29,0.6,1.12,0,0.0,0

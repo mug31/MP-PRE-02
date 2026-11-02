@@ -1,0 +1,7 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+M2,S1–S2: Planning & BOM Complete,Tim Scrum:1,20,,1,20,Tim Scrum,1,1,20,0,Tim Scrum,1,1,20,0
+M3,S3–S6: Execution Module Complete,Tim Scrum:1,40,M2,21,60,Tim Scrum,21,21,60,0,Tim Scrum,21,21,60,0
+M4,S7–S9: Costing & Asset Complete,Tim Scrum:1,30,M3,61,90,Tim Scrum,61,61,90,0,Tim Scrum,61,61,90,0
+M5,S10: Integration Complete,Tim Scrum:1,10,M4,91,100,Tim Scrum,91,91,100,0,Tim Scrum,91,91,100,0
+M6,S11: UAT Complete,Tim Scrum:1,10,M5,101,110,Tim Scrum,101,101,110,0,Tim Scrum,101,101,110,0
+M7,S12: Deployment & Go-Live + Project Closure,Tim Scrum:1,10,M6,111,120,Tim Scrum,111,111,120,0,Tim Scrum,111,111,120,0

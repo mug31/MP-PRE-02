@@ -1,0 +1,49 @@
+Subproyek,Skenario_CR,Kebijakan,ID,Aktivitas,Kebutuhan_Resource,P_Kena_CR,Rata2_Delay_Sendiri_CR_Hari,Rata2_Pergeseran_Mulai_Hari,dari_Predecessor_Hari,dari_Antrian_Resource_Hari,Indeks_Kekritisan,P_Selesai_Lewat_Rencana
+P-FNE-06,dosen,FCFS,M0,Project Initiation,Tim Inti:1,0.117,0.13,0.0,0.0,0.0,1.0,0.117
+P-FNE-06,dosen,FCFS,M1,Analysis Complete,Tim Inti:1,0.093,0.241,0.13,0.13,0.0,1.0,0.202
+P-FNE-06,dosen,FCFS,M2,Design Complete,Tim Inti:1,0.099,0.23,0.371,0.371,0.0,1.0,0.279
+P-FNE-06,dosen,FCFS,M3,Sprint 1-2 Complete,Tim Inti:1,0.085,0.382,0.601,0.601,0.0,1.0,0.339
+P-FNE-06,dosen,FCFS,M4,Sprint 3-4 Complete,Tim Inti:1,0.099,0.434,0.984,0.984,0.0,1.0,0.403
+P-FNE-06,dosen,FCFS,M5,Sprint 5-6 Complete,Tim Inti:1,0.107,0.489,1.418,1.418,0.0,1.0,0.463
+P-FNE-06,dosen,FCFS,M6,Frontend Complete,Tim Frontend:1,0.1,0.449,0.601,0.601,0.0,0.0,0.351
+P-FNE-06,dosen,FCFS,M7,Integration Complete,Tim Inti:1,0.101,0.237,1.907,1.907,0.0,1.0,0.517
+P-FNE-06,dosen,FCFS,M8,Testing Complete,Tim Inti:1,0.101,0.249,2.144,2.144,0.0,1.0,0.564
+P-FNE-06,dosen,FCFS,M9,UAT Complete,Tim Inti:1,0.096,0.111,2.393,2.393,0.0,1.0,0.607
+P-FNE-06,dosen,FCFS,M10,Deployment & Go-Live,Tim Inti:1,0.083,0.095,2.505,2.505,0.0,1.0,0.637
+P-FNE-06,dosen,FCFS,M11,Project Closure,Tim Inti:1,0.087,0.1,2.599,2.599,0.0,1.0,0.666
+P-FNE-06,dosen,SPT,M0,Project Initiation,Tim Inti:1,0.117,0.13,0.0,0.0,0.0,1.0,0.117
+P-FNE-06,dosen,SPT,M1,Analysis Complete,Tim Inti:1,0.093,0.241,0.13,0.13,0.0,1.0,0.202
+P-FNE-06,dosen,SPT,M2,Design Complete,Tim Inti:1,0.099,0.23,0.371,0.371,0.0,1.0,0.279
+P-FNE-06,dosen,SPT,M3,Sprint 1-2 Complete,Tim Inti:1,0.085,0.382,0.601,0.601,0.0,1.0,0.339
+P-FNE-06,dosen,SPT,M4,Sprint 3-4 Complete,Tim Inti:1,0.099,0.434,0.984,0.984,0.0,1.0,0.403
+P-FNE-06,dosen,SPT,M5,Sprint 5-6 Complete,Tim Inti:1,0.107,0.489,1.418,1.418,0.0,1.0,0.463
+P-FNE-06,dosen,SPT,M6,Frontend Complete,Tim Frontend:1,0.1,0.449,0.601,0.601,0.0,0.0,0.351
+P-FNE-06,dosen,SPT,M7,Integration Complete,Tim Inti:1,0.101,0.237,1.907,1.907,0.0,1.0,0.517
+P-FNE-06,dosen,SPT,M8,Testing Complete,Tim Inti:1,0.101,0.249,2.144,2.144,0.0,1.0,0.564
+P-FNE-06,dosen,SPT,M9,UAT Complete,Tim Inti:1,0.096,0.111,2.393,2.393,0.0,1.0,0.607
+P-FNE-06,dosen,SPT,M10,Deployment & Go-Live,Tim Inti:1,0.083,0.095,2.505,2.505,0.0,1.0,0.637
+P-FNE-06,dosen,SPT,M11,Project Closure,Tim Inti:1,0.087,0.1,2.599,2.599,0.0,1.0,0.666
+P-FNE-06,pmp,FCFS,M0,Project Initiation,Tim Inti:1,0.117,0.047,0.0,0.0,0.0,1.0,0.117
+P-FNE-06,pmp,FCFS,M1,Analysis Complete,Tim Inti:1,0.093,0.113,0.047,0.047,0.0,1.0,0.202
+P-FNE-06,pmp,FCFS,M2,Design Complete,Tim Inti:1,0.099,0.091,0.16,0.16,0.0,1.0,0.279
+P-FNE-06,pmp,FCFS,M3,Sprint 1-2 Complete,Tim Inti:1,0.085,0.136,0.251,0.251,0.0,1.0,0.339
+P-FNE-06,pmp,FCFS,M4,Sprint 3-4 Complete,Tim Inti:1,0.099,0.15,0.388,0.388,0.0,1.0,0.403
+P-FNE-06,pmp,FCFS,M5,Sprint 5-6 Complete,Tim Inti:1,0.107,0.182,0.538,0.538,0.0,1.0,0.463
+P-FNE-06,pmp,FCFS,M6,Frontend Complete,Tim Frontend:1,0.1,0.169,0.251,0.251,0.0,0.0,0.351
+P-FNE-06,pmp,FCFS,M7,Integration Complete,Tim Inti:1,0.101,0.09,0.72,0.72,0.0,1.0,0.517
+P-FNE-06,pmp,FCFS,M8,Testing Complete,Tim Inti:1,0.101,0.101,0.81,0.81,0.0,1.0,0.564
+P-FNE-06,pmp,FCFS,M9,UAT Complete,Tim Inti:1,0.096,0.042,0.911,0.911,0.0,1.0,0.607
+P-FNE-06,pmp,FCFS,M10,Deployment & Go-Live,Tim Inti:1,0.083,0.038,0.953,0.953,0.0,1.0,0.637
+P-FNE-06,pmp,FCFS,M11,Project Closure,Tim Inti:1,0.087,0.04,0.99,0.99,0.0,1.0,0.666
+P-FNE-06,pmp,SPT,M0,Project Initiation,Tim Inti:1,0.117,0.047,0.0,0.0,0.0,1.0,0.117
+P-FNE-06,pmp,SPT,M1,Analysis Complete,Tim Inti:1,0.093,0.113,0.047,0.047,0.0,1.0,0.202
+P-FNE-06,pmp,SPT,M2,Design Complete,Tim Inti:1,0.099,0.091,0.16,0.16,0.0,1.0,0.279
+P-FNE-06,pmp,SPT,M3,Sprint 1-2 Complete,Tim Inti:1,0.085,0.136,0.251,0.251,0.0,1.0,0.339
+P-FNE-06,pmp,SPT,M4,Sprint 3-4 Complete,Tim Inti:1,0.099,0.15,0.388,0.388,0.0,1.0,0.403
+P-FNE-06,pmp,SPT,M5,Sprint 5-6 Complete,Tim Inti:1,0.107,0.182,0.538,0.538,0.0,1.0,0.463
+P-FNE-06,pmp,SPT,M6,Frontend Complete,Tim Frontend:1,0.1,0.169,0.251,0.251,0.0,0.0,0.351
+P-FNE-06,pmp,SPT,M7,Integration Complete,Tim Inti:1,0.101,0.09,0.72,0.72,0.0,1.0,0.517
+P-FNE-06,pmp,SPT,M8,Testing Complete,Tim Inti:1,0.101,0.101,0.81,0.81,0.0,1.0,0.564
+P-FNE-06,pmp,SPT,M9,UAT Complete,Tim Inti:1,0.096,0.042,0.911,0.911,0.0,1.0,0.607
+P-FNE-06,pmp,SPT,M10,Deployment & Go-Live,Tim Inti:1,0.083,0.038,0.953,0.953,0.0,1.0,0.637
+P-FNE-06,pmp,SPT,M11,Project Closure,Tim Inti:1,0.087,0.04,0.99,0.99,0.0,1.0,0.666

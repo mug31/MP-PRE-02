@@ -1,0 +1,78 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+1.1,Project Charter Development,PM:1,5,,1,5,PM,1,1,5,0,PM,1,4,8,3
+1.2,PMP Development,PM:1;Tech Lead:1,10,1.1,6,15,PM;Tech Lead,6,9,18,3,PM;Tech Lead,9,12,21,3
+1.3,Stakeholder Analysis,PM:1;BA:1,3,,1,3,PM;BA,1,6,8,5,PM;BA,1,1,3,0
+1.4,Requirement Finalization,BA:1,5,1.2,16,20,BA,19,19,23,0,BA,22,22,26,0
+1.5,Architecture Design,Tech Lead:1,8,1.2,16,23,Tech Lead,19,19,26,0,Tech Lead,22,22,29,0
+1.6,Infrastructure Setup Planning,DevOps:1,3,1.5,24,26,DevOps,27,27,29,0,DevOps,30,30,32,0
+1.7,Team Onboarding,PM:1,3,1.1,6,8,PM,6,19,21,13,PM,9,9,11,0
+1.8,Kick-off Meeting,PM:1,1,1.1;1.2;1.3;1.4;1.5;1.6;1.7,27,27,PM,30,30,30,0,PM,33,33,33,0
+2.1,Cloud Infrastructure Setup,DevOps:1,5,1.6,27,31,DevOps,30,30,34,0,DevOps,33,33,37,0
+2.2,Data Lake Setup (MinIO/S3),Data Engineer:1,3,2.1,32,34,Data Engineer 1,35,35,37,0,Data Engineer 1,38,38,40,0
+2.3,Data Warehouse Setup (Snowflake),Data Engineer:1,5,2.1,32,36,Data Engineer 2,35,35,39,0,Data Engineer 2,38,38,42,0
+2.4,Database Schema Design,Data Engineer:1,4,1.5;2.2,35,38,Data Engineer 1,38,38,41,0,Data Engineer 1,41,41,44,0
+2.5,CDC Setup (Debezium + Kafka),Data Engineer:1,5,2.1,32,36,Data Engineer 3,35,35,39,0,Data Engineer 3,38,38,42,0
+2.6,ETL Pipeline Development,Data Engineer:1,8,2.3;2.4,39,46,Data Engineer 1,42,42,49,0,Data Engineer 1,45,45,52,0
+2.7,Data Quality Rules Definition,Data Engineer:1,3,2.6,47,49,Data Engineer 1,50,50,52,0,Data Engineer 1,53,53,55,0
+2.8,Data Quality Monitoring,Data Engineer:1,3,2.7,50,52,Data Engineer 2,53,53,55,0,Data Engineer 2,56,56,58,0
+2.9,Metadata Management,Data Engineer:1,3,2.6,47,49,Data Engineer 2,50,50,52,0,Data Engineer 2,53,53,55,0
+2.10,Data Lineage Tracking,Data Engineer:1,3,2.9,50,52,Data Engineer 1,53,53,55,0,Data Engineer 1,56,56,58,0
+2.11,Integration Testing (Data),Data Engineer:1;QA:1,3,2.5;2.6;2.7;2.8;2.9;2.10,53,55,Data Engineer 1;QA 1,56,56,58,0,Data Engineer 1;QA 1,59,59,61,0
+3.1,Dashboard Framework Setup,Frontend:1;Backend:1,3,2.11,56,58,Frontend 1;Backend 1,59,59,61,0,Frontend 1;Backend 1,62,62,64,0
+3.2,KPI Definition & Management,Backend:1;Frontend:1,5,2.11,56,60,Backend 2;Frontend 2,59,59,63,0,Backend 2;Frontend 2,62,62,66,0
+3.3,Executive Dashboard,Frontend:1;Backend:1,5,3.1;3.2,61,65,Frontend 1;Backend 1,64,69,73,5,Frontend 2;Backend 2,67,82,86,15
+3.4,Farm Dashboard,Frontend:1;Backend:1,4,3.1;3.2,61,64,Frontend 2;Backend 2,64,70,73,6,Frontend 2;Backend 2,67,70,73,3
+3.5,Production Dashboard,Frontend:1;Backend:1,4,3.1;3.2,61,64,Frontend 1;Backend 1,64,74,77,10,Frontend 1;Backend 1,67,72,75,5
+3.6,Supply Chain Dashboard,Frontend:1;Backend:1,4,3.1;3.2,61,64,Frontend 2;Backend 2,64,74,77,10,Frontend 2;Backend 2,67,74,77,7
+3.7,Sales Dashboard,Frontend:1;Backend:1,4,3.1;3.2,61,64,Frontend 1;Backend 1,64,78,81,14,Frontend 1;Backend 1,67,76,79,9
+3.8,Financial Dashboard,Frontend:1;Backend:1,4,3.1;3.2,61,64,Frontend 2;Backend 2,64,78,81,14,Frontend 2;Backend 2,67,78,81,11
+3.9,HCM Dashboard,Frontend:1;Backend:1,3,3.1;3.2,61,63,Frontend 1;Backend 1,64,82,84,18,Frontend 1;Backend 1,67,69,71,2
+3.10,Quality Dashboard,Frontend:1;Backend:1,3,3.1;3.2,61,63,Frontend 1;Backend 1,64,66,68,2,Frontend 2;Backend 2,67,67,69,0
+3.11,KPI Alert System,Backend:1,4,3.2,61,64,Backend 3,64,64,67,0,Backend 3,67,67,70,0
+3.12,Scheduled Report System,Backend:1;Frontend:1,4,3.1,59,62,Backend 1;Frontend 1,62,62,65,0,Backend 1;Frontend 1,65,65,68,0
+3.13,Ad-Hoc Report Builder,Frontend:1;Backend:1,6,3.1,59,64,Frontend 2;Backend 2,62,64,69,2,Frontend 1;Backend 3,65,84,89,19
+3.14,Dashboard Integration Testing,QA:1,3,3.3;3.4;3.5;3.6;3.7;3.8;3.9;3.10;3.11;3.12;3.13,66,68,QA 1,85,85,87,0,QA 1,90,90,92,0
+4.1,MLOps Infrastructure Setup,ML Engineer:1,3,2.11,56,58,ML Engineer,59,59,61,0,ML Engineer,62,62,64,0
+4.2,Feature Store Setup,Data Engineer:1,3,4.1,59,61,Data Engineer 1,62,62,64,0,Data Engineer 1,65,65,67,0
+4.3,Model #1: Demand Forecasting,Data Scientist:1,10,4.1;4.2,62,71,Data Scientist 1,65,65,74,0,Data Scientist 1,68,76,85,8
+4.4,Model #2: Crop Yield Prediction,Data Scientist:1,10,4.1;4.2,62,71,Data Scientist 2,65,65,74,0,Data Scientist 2,68,76,85,8
+4.5,Model #3: Inventory Forecasting,Data Scientist:1,8,4.1;4.2,62,69,Data Scientist 1,65,75,82,10,Data Scientist 1,68,68,75,0
+4.6,Model #4: Predictive Maintenance,Data Scientist:1,10,4.1;4.2,62,71,Data Scientist 2,65,75,84,10,Data Scientist 1,68,86,95,18
+4.7,Model #5: Anomaly Detection,Data Scientist:1,8,4.1;4.2,62,69,Data Scientist 1,65,83,90,18,Data Scientist 2,68,68,75,0
+4.8,Model Registry & Versioning,ML Engineer:1,4,4.1,59,62,ML Engineer,62,62,65,0,ML Engineer,65,65,68,0
+4.9,Model Monitoring & Drift,ML Engineer:1,5,4.1,59,63,ML Engineer,62,66,70,4,ML Engineer,65,69,73,4
+4.10,Explainable AI (SHAP/LIME),Data Scientist:1,5,4.3;4.4;4.5;4.6;4.7,72,76,Data Scientist 1,91,91,95,0,Data Scientist 1,96,96,100,0
+4.11,Model Integration Testing,QA:1,3,4.3;4.4;4.5;4.6;4.7;4.8;4.9;4.10,77,79,QA 1,96,96,98,0,QA 1,101,101,103,0
+5.1,Ontology Definition,Knowledge Engineer:1,3,2.11,56,58,Knowledge Engineer,59,59,61,0,Knowledge Engineer,62,62,64,0
+5.2,Entity/Relationship Definition,Knowledge Engineer:1,3,5.1,59,61,Knowledge Engineer,62,62,64,0,Knowledge Engineer,65,65,67,0
+5.3,Neo4j Setup & Configuration,Knowledge Engineer:1,2,2.1,32,33,Knowledge Engineer,35,35,36,0,Knowledge Engineer,38,38,39,0
+5.4,Graph Ingestion,Knowledge Engineer:1,5,5.2;5.3,62,66,Knowledge Engineer,65,65,69,0,Knowledge Engineer,68,68,72,0
+5.5,Graph Query Engine (GraphQL),Backend:1,5,5.4,67,71,Backend 3,70,70,74,0,Backend 3,73,73,77,0
+5.6,Graph Visualization,Frontend:1,4,5.5,72,75,Frontend 2,75,82,85,7,Frontend 1,78,80,83,2
+5.7,Path Discovery & Impact Analysis,Backend:1,5,5.5,72,76,Backend 3,75,75,79,0,Backend 1,78,80,84,2
+5.8,Semantic Search,Backend:1,4,5.5,72,75,Backend 3,75,80,83,5,Backend 3,78,78,81,0
+5.9,What-If Analysis Engine,Backend:1,5,2.11;4.3,72,76,Backend 2,75,82,86,7,Backend 1,86,86,90,0
+5.10,Scenario Comparison,Backend:1,3,5.9,77,79,Backend 1,87,87,89,0,Backend 1,91,91,93,0
+5.11,Optimization Engine (LP),Backend:1,5,5.9,77,81,Backend 2,87,87,91,0,Backend 3,91,91,95,0
+5.12,Decision Log & Outcome Tracking,Backend:1;Frontend:1,3,5.9,77,79,Backend 3;Frontend 1,87,87,89,0,Backend 2;Frontend 1,91,91,93,0
+5.13,Graph & Decision Testing,QA:1,3,5.4;5.5;5.6;5.7;5.8;5.9;5.10;5.11;5.12,82,84,QA 1,92,92,94,0,QA 1,96,96,98,0
+6.1,Integration with P-FNE-01,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 1;Data Engineer 1,95,95,97,0,Backend 1;Data Engineer 1,99,99,101,0
+6.2,Integration with P-FNE-02,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 2;Data Engineer 2,95,95,97,0,Backend 2;Data Engineer 2,99,99,101,0
+6.3,Integration with P-FNE-03,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 3;Data Engineer 3,95,95,97,0,Backend 3;Data Engineer 3,99,99,101,0
+6.4,Integration with P-FNE-04,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 1;Data Engineer 1,95,98,100,3,Backend 1;Data Engineer 1,99,102,104,3
+6.5,Integration with P-FNE-05,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 2;Data Engineer 2,95,98,100,3,Backend 2;Data Engineer 2,99,102,104,3
+6.6,Integration with P-FNE-06,Backend:1;Data Engineer:1,3,5.13,85,87,Backend 3;Data Engineer 3,95,98,100,3,Backend 3;Data Engineer 3,99,102,104,3
+6.7,API Gateway & BFF Setup,Backend:1,3,5.13,85,87,Backend 1,95,101,103,6,Backend 1,99,105,107,6
+6.8,System Integration Testing,QA:1,5,6.1;6.2;6.3;6.4;6.5;6.6;6.7,88,92,QA 1,104,104,108,0,QA 1,108,108,112,0
+6.9,Performance Testing,QA:1,3,6.8,93,95,QA 1,109,112,114,3,QA 2,113,113,115,0
+6.10,Security Testing,DevOps:1;QA:1,3,6.8,93,95,DevOps;QA 1,109,109,111,0,DevOps;QA 1,113,113,115,0
+6.11,User Acceptance Testing,QA:1,5,6.8,93,97,QA 2,109,109,113,0,QA 1,113,116,120,3
+6.12,Documentation Finalization,PM:1,3,6.8,93,95,PM,109,109,111,0,PM,113,113,115,0
+7.1,Pre-Deployment Checklist,PM:1;DevOps:1,1,6.12,96,96,PM;DevOps,112,112,112,0,PM;DevOps,116,116,116,0
+7.2,Production Deployment,DevOps:1,2,7.1,97,98,DevOps,113,113,114,0,DevOps,117,117,118,0
+7.3,Go-Live Verification,QA:1;DevOps:1,2,7.2,99,100,QA 1;DevOps,115,115,116,0,QA 2;DevOps,119,119,120,0
+7.4,User Training,BA:1;PM:1,2,7.3,101,102,BA;PM,117,117,118,0,BA;PM,121,121,122,0
+7.5,Hypercare Support,PM:1,5,7.3,101,105,PM,117,119,123,2,PM,121,123,127,2
+7.6,Project Closure Report,PM:1,2,7.5,106,107,PM,124,124,125,0,PM,128,128,129,0
+7.7,Handover to Operations,PM:1;DevOps:1,2,7.5,106,107,PM;DevOps,124,126,127,2,PM;DevOps,128,131,132,3
+7.8,Lessons Learned Session,PM:1,1,7.6,108,108,PM,126,128,128,2,PM,130,130,130,0

@@ -1,0 +1,17 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+A01,Sprint 0: Setup & Design,Tim Scrum:1,10,,1,10,Tim Scrum,1,1,10,0,Tim Scrum,1,1,10,0
+A02,Sprint 1-2: Foundation,Tim Scrum:1,20,A01,11,30,Tim Scrum,11,11,30,0,Tim Scrum,11,11,30,0
+A03,Sprint 3: Supplier Management,Tim Scrum:1,10,A02,31,40,Tim Scrum,31,31,40,0,Tim Scrum,31,31,40,0
+A04,Sprint 4-5: Procurement I,Tim Scrum:1,20,A02,31,50,Tim Scrum,31,41,60,10,Tim Scrum,31,41,60,10
+A05,Sprint 6: Procurement II,Tim Scrum:1,10,A04,51,60,Tim Scrum,61,81,90,20,Tim Scrum,61,61,70,0
+A06,Sprint 7-8: Inventory I,Tim Scrum:1,20,A02,31,50,Tim Scrum,31,61,80,30,Tim Scrum,31,71,90,40
+A07,Sprint 9: Inventory II,Tim Scrum:1,10,A06,51,60,Tim Scrum,81,91,100,10,Tim Scrum,91,91,100,0
+A08,Sprint 10-11: Warehouse I,Tim Scrum:1,20,A06,51,70,Tim Scrum,81,101,120,20,Tim Scrum,91,101,120,10
+A09,Sprint 12: Warehouse II,Tim Scrum:1,10,A08,71,80,Tim Scrum,121,141,150,20,Tim Scrum,121,121,130,0
+A10,Sprint 13-14: Quality I,Tim Scrum:1,20,A02;A06,51,70,Tim Scrum,81,121,140,40,Tim Scrum,91,131,150,40
+A11,Sprint 15: Quality II,Tim Scrum:1,10,A10,71,80,Tim Scrum,141,151,160,10,Tim Scrum,151,151,160,0
+A12,Sprint 16: Traceability,Tim Scrum:1,10,A07;A09;A11,81,90,Tim Scrum,161,161,170,0,Tim Scrum,161,161,170,0
+A13,Sprint 17: Integration,Tim Scrum:1,10,A02;A03;A04;A05;A06;A07;A08;A09;A10;A11;A12,91,100,Tim Scrum,171,171,180,0,Tim Scrum,171,171,180,0
+A14,Sprint 18-19: Frontend & Dashboard,Tim Scrum:1,20,A03;A04;A05;A06;A07;A08;A09;A10;A11;A12;A13,101,120,Tim Scrum,181,181,200,0,Tim Scrum,181,181,200,0
+A15,Sprint 20: UAT & Bug Fixing,Tim Scrum:1,10,A13;A14,121,130,Tim Scrum,201,201,210,0,Tim Scrum,201,201,210,0
+A16,Sprint 21: Deployment & Go-Live,Tim Scrum:1,10,A15,131,140,Tim Scrum,211,211,220,0,Tim Scrum,211,211,220,0

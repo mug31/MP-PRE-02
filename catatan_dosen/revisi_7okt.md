@@ -30,6 +30,17 @@
 **Urutan kerja dari dosen:** coba **satu subproyek dulu** sampai jalan (4 → 5 → 6 → 7–9 → 10–11), baru
 diterapkan ke 8 subproyek ([35:48] "satu dulu… kalau tahu cara kerjanya baru nanti semuanya dimasukkan").
 
+### Status pengerjaan (3 November 2026)
+
+| No | Status | Keterangan |
+|---|---|---|
+| 1 | ❌ Belum | Bahan dari hasil simulasi sudah ada (CR, rambatan, antrian, rantai kritis); belum ditulis ke paper |
+| 2 | ❌ Belum | Ditanyakan pada bimbingan berikutnya |
+| 3 | ✅ 8 subproyek | `06_simulasi_monte_carlo/ekstraksi_pmp.py` membaca tabel asli PMP; tiap baris punya kolom sumber & catatan. Dataset lama `dataset_pre02_fne*.csv` belum disentuh (menunggu no. 2) |
+| 4–6 | ✅ 8 subproyek | Jadwal aktivitas, resource, antrian FCFS/SPT. Import ke MS Project belum dicoba |
+| 7–11 | ✅ 8 subproyek | 1000 iterasi × 2 skenario CR × 2 antrian; ringkasan di `06_simulasi_monte_carlo/hasil/00_RINGKASAN_SEMUA.md` |
+| 12 | ❌ Belum | Model saat ini: dependensi selalu dipatuhi |
+
 ---
 
 ## 2. Gambaran Besar: Apa yang Berubah
@@ -49,7 +60,8 @@ revisi 5–6 (antrian resource) yang membuat bagian "sumber daya terbatas" benar
 
 ## 3. Mulai dari Mana: Pilot P-FNE-01
 
-> Status: pilot langkah A–G sudah dibuat di `06_simulasi_pilot_P-FNE-01/` (lihat README di folder tersebut).
+> Status: langkah A–G sudah dibuat untuk P-FNE-01 lalu diterapkan ke 8 subproyek di `06_simulasi_monte_carlo/`
+> (lihat README di folder tersebut). Rincian di bawah adalah rencana awal untuk pilot P-FNE-01.
 
 Semua bahan pilot sudah ada di `MP-datasetRaw/2026 PMP Super ERP Farm Nation Enterprise Foundation & Core Platform.docx`.
 

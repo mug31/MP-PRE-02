@@ -1,0 +1,7 @@
+ID,Fase,Aktivitas,Durasi_Hari,Predecessor,Kebutuhan_Resource,Prioritas,Durasi_Dokumen,Dependensi_Dokumen,Resource_Dokumen,Sumber,Catatan
+M2,Milestone,S1–S2: Planning & BOM Complete,20,,Tim Scrum:1,-,"2 sprint (S2, 28 Okt 2026)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,
+M3,Milestone,S3–S6: Execution Module Complete,40,M2,Tim Scrum:1,-,"4 sprint (S6, 23 Des 2026)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,
+M4,Milestone,S7–S9: Costing & Asset Complete,30,M3,Tim Scrum:1,-,"3 sprint (S9, 3 Feb 2027)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,
+M5,Milestone,S10: Integration Complete,10,M4,Tim Scrum:1,-,"1 sprint (S10, 17 Feb 2027)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,
+M6,Milestone,S11: UAT Complete,10,M5,Tim Scrum:1,-,"1 sprint (S11, 3 Mar 2027)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,
+M7,Milestone,S12: Deployment & Go-Live + Project Closure,10,M6,Tim Scrum:1,-,"1 sprint (S12, 17 Mar 2027)",urutan milestone,tim sprint §4.7.1,PMP-04 §4.5.1 Milestone Schedule,M8 (31 Mar 2027) tercatat di sprint S12 yang sama dengan milestone sebelumnya; digabung (tanggal 31 Mar berselisih 2 minggu dari akhir S12)

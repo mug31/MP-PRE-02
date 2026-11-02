@@ -1,0 +1,17 @@
+ID,Fase,Aktivitas,Durasi_Hari,Predecessor,Kebutuhan_Resource,Prioritas,Durasi_Dokumen,Dependensi_Dokumen,Resource_Dokumen,Sumber,Catatan
+A01,Sprint,Sprint 0: Setup & Design,10,,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),-,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A02,Sprint,Sprint 1-2: Foundation,20,A01,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 0,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A03,Sprint,Sprint 3: Supplier Management,10,A02,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 1-2,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A04,Sprint,Sprint 4-5: Procurement I,20,A02,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 1-2,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A05,Sprint,Sprint 6: Procurement II,10,A04,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 4-5,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A06,Sprint,Sprint 7-8: Inventory I,20,A02,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 1-2,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A07,Sprint,Sprint 9: Inventory II,10,A06,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 7-8,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A08,Sprint,Sprint 10-11: Warehouse I,20,A06,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 7-8,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A09,Sprint,Sprint 12: Warehouse II,10,A08,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 10-11,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A10,Sprint,Sprint 13-14: Quality I,20,A02;A06,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),"Sprint 1-2, Sprint 7-8",tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A11,Sprint,Sprint 15: Quality II,10,A10,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 13-14,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A12,Sprint,Sprint 16: Traceability,10,A07;A09;A11,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),"Sprint 9, Sprint 12, Sprint 15",tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A13,Sprint,Sprint 17: Integration,10,A02;A03;A04;A05;A06;A07;A08;A09;A10;A11;A12,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 1-16,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A14,Sprint,Sprint 18-19: Frontend & Dashboard,20,A03;A04;A05;A06;A07;A08;A09;A10;A11;A12;A13,Tim Scrum:1,-,2 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 3-17 (paralel),tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,"jenis ""Overlap"" dimodelkan Finish-to-Start (tim yang sama mengerjakan sprint berurutan)"
+A15,Sprint,Sprint 20: UAT & Bug Fixing,10,A13;A14,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),"Sprint 17, Sprint 18-19",tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,
+A16,Sprint,Sprint 21: Deployment & Go-Live,10,A15,Tim Scrum:1,-,1 sprint × 10 hari (§4.2.1.3 Sprint Calendar),Sprint 20,tim sprint §4.3.1,PMP-03 §4.2.2.2; dependensi §4.2.3.2,

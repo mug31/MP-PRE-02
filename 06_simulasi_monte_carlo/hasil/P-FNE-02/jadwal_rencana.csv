@@ -1,0 +1,154 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+1.1.1,Penyusunan Project Charter,PM:1;PO:1;BA:1,2,,1,2,PM;PO;BA,1,1,2,0,PM;PO;BA,1,1,2,0
+1.1.2,Kick-off Meeting,PM:1,1,1.1.1,3,3,PM,3,3,3,0,PM,3,3,3,0
+1.1.3,Setup Environment & Infrastructure,DevOps:1,5,1.1.2,4,8,DevOps,4,4,8,0,DevOps,4,4,8,0
+1.1.4,Finalisasi Requirement,BA:1;PO:1,3,1.1.2,4,6,BA;PO,4,4,6,0,BA;PO,4,4,6,0
+1.1.5,Penyusunan PMP,PM:1,5,1.1.4,7,11,PM,7,7,11,0,PM,7,7,11,0
+2.1.1,Database Schema Design - ERD,Backend:1,3,1.1.5,12,14,Backend 1,12,12,14,0,Backend 2,12,12,14,0
+2.1.2,Database Schema Design - DDL,Backend:1,2,2.1.1,15,16,Backend 1,15,15,16,0,Backend 1,15,15,16,0
+2.1.3,Migration Scripts,Backend:1,2,2.1.2,17,18,Backend 1,17,17,18,0,Backend 1,17,17,18,0
+2.2.1,Project Structure Setup,Backend:1;Frontend:1,2,1.1.5,12,13,Backend 2;Frontend 1,12,12,13,0,Backend 1;Frontend 1,12,12,13,0
+2.2.2,Dependency Management,Backend:1,1,2.2.1,14,14,Backend 2,14,14,14,0,Backend 1,14,14,14,0
+2.2.3,Configuration Management,Backend:1;DevOps:1,2,2.2.2,15,16,Backend 2;DevOps,15,15,16,0,Backend 2;DevOps,15,15,16,0
+2.3.1,CI/CD - Build Pipeline,DevOps:1,3,2.2.3,17,19,DevOps,17,17,19,0,DevOps,17,17,19,0
+2.3.2,CI/CD - Test Pipeline,DevOps:1;QA:1,2,2.3.1,20,21,DevOps;QA 1,20,20,21,0,DevOps;QA 1,20,20,21,0
+2.3.3,CI/CD - Deployment Pipeline,DevOps:1,2,2.3.2,22,23,DevOps,22,22,23,0,DevOps,22,22,23,0
+2.4.1,Integration dengan IAM Service,Backend:1,3,2.3.3,24,26,Backend 1,24,24,26,0,Backend 1,24,24,26,0
+2.4.2,Role-Based Access Control,Backend:1,2,2.4.1,27,28,Backend 1,27,27,28,0,Backend 1,27,27,28,0
+3.1.1.1,Register Farm,Backend:2,2,2.4.2,29,30,Backend 1;Backend 2,29,29,30,0,Backend 1;Backend 2,29,29,30,0
+3.1.1.2,Update Farm,Backend:2,1,3.1.1.1,31,31,Backend 1;Backend 2,31,31,31,0,Backend 1;Backend 2,31,31,31,0
+3.1.1.3,Get Farm Details,Backend:2,1,3.1.1.2,32,32,Backend 1;Backend 2,32,32,32,0,Backend 1;Backend 2,32,32,32,0
+3.1.1.4,List Farms,Backend:2,1,3.1.1.3,33,33,Backend 1;Backend 2,33,33,33,0,Backend 1;Backend 2,33,33,33,0
+3.1.2.1,Register Land Parcel,Backend:2,3,3.1.1.4,34,36,Backend 1;Backend 2,34,34,36,0,Backend 1;Backend 2,34,34,36,0
+3.1.2.2,Update Land Parcel,Backend:2,1,3.1.2.1,37,37,Backend 1;Backend 2,37,37,37,0,Backend 1;Backend 2,37,37,37,0
+3.1.2.3,Get Land Parcel Details,Backend:2,1,3.1.2.2,38,38,Backend 1;Backend 2,38,38,38,0,Backend 1;Backend 2,38,38,38,0
+3.1.2.4,Map Integration,Backend:1;Frontend:1,3,3.1.2.3,39,41,Backend 1;Frontend 1,39,39,41,0,Backend 1;Frontend 1,39,39,41,0
+3.1.3.1,Record Soil Analysis,Backend:1,2,3.1.2.4,42,43,Backend 1,42,42,43,0,Backend 2,42,42,43,0
+3.1.3.2,Generate Recommendations,Backend:1,1,3.1.3.1,44,44,Backend 1,44,44,44,0,Backend 1,44,44,44,0
+3.1.3.3,View Analysis History,Backend:1;Frontend:1,1,3.1.3.2,45,45,Backend 2;Frontend 2,45,45,45,0,Backend 2;Frontend 2,45,45,45,0
+3.1.4.1,Register Facility,Backend:1,1,3.1.2.4,42,42,Backend 2,42,42,42,0,Backend 1,42,42,42,0
+3.1.4.2,Manage Facilities,Backend:1;Frontend:1,1,3.1.4.1,43,43,Backend 1;Frontend 1,43,45,45,2,Backend 1;Frontend 1,43,45,45,2
+3.1.5.1,Farm Management UI,Frontend:2,3,3.1.1.4,34,36,Frontend 1;Frontend 2,34,34,36,0,Frontend 1;Frontend 2,34,34,36,0
+3.1.5.2,Land Parcel UI,Frontend:2,3,3.1.2.4,42,44,Frontend 1;Frontend 2,42,42,44,0,Frontend 1;Frontend 2,42,42,44,0
+3.1.5.3,Dashboard UI,Frontend:2,2,3.1.5.2,45,46,Frontend 1;Frontend 2,45,46,47,1,Frontend 1;Frontend 2,45,46,47,1
+3.1.6.1,Unit Testing,QA:1,2,3.1.5.3,47,48,QA 2,48,48,49,0,QA 2,48,48,49,0
+3.1.6.2,Integration Testing,QA:1,2,3.1.6.1,49,50,QA 2,50,50,51,0,QA 2,50,50,51,0
+3.2.1.1,Create Crop,Backend:2,2,3.1.6.2,51,52,Backend 1;Backend 2,52,52,53,0,Backend 1;Backend 2,52,52,53,0
+3.2.1.2,Update Crop,Backend:2,1,3.2.1.1,53,53,Backend 1;Backend 2,54,54,54,0,Backend 1;Backend 2,54,54,54,0
+3.2.1.3,List Crops,Backend:2,1,3.2.1.2,54,54,Backend 1;Backend 2,55,55,55,0,Backend 1;Backend 2,55,55,55,0
+3.2.2.1,Create Crop Cycle Plan,Backend:2,3,3.2.1.3,55,57,Backend 1;Backend 2,56,56,58,0,Backend 1;Backend 2,56,56,58,0
+3.2.2.2,Update Crop Cycle,Backend:2,1,3.2.2.1,58,58,Backend 1;Backend 2,59,59,59,0,Backend 1;Backend 2,59,59,59,0
+3.2.2.3,Calculate Expected Harvest Date,Backend:2,1,3.2.2.2,59,59,Backend 1;Backend 2,60,60,60,0,Backend 1;Backend 2,60,60,60,0
+3.2.2.4,Track Crop Cycle Status,Backend:2,2,3.2.2.3,60,61,Backend 1;Backend 2,61,61,62,0,Backend 1;Backend 2,61,61,62,0
+3.2.3.1,Execute Planting,Backend:2,3,3.2.2.4,62,64,Backend 1;Backend 2,63,63,65,0,Backend 1;Backend 2,63,63,65,0
+3.2.3.2,Record Planting Details,Backend:2,1,3.2.3.1,65,65,Backend 1;Backend 2,66,66,66,0,Backend 1;Backend 2,66,66,66,0
+3.2.4.1,Record Growth Stage,Backend:2,2,3.2.3.2,66,67,Backend 1;Backend 2,67,67,68,0,Backend 1;Backend 2,67,67,68,0
+3.2.4.2,Track Plant Health,Backend:2,1,3.2.4.1,68,68,Backend 1;Backend 2,69,69,69,0,Backend 1;Backend 2,69,69,69,0
+3.2.5.1,Record Cultivation Activity,Backend:2,3,3.2.4.2,69,71,Backend 1;Backend 2,70,70,72,0,Backend 1;Backend 2,70,70,72,0
+3.2.5.2,Calculate Activity Cost,Backend:2,1,3.2.5.1,72,72,Backend 1;Backend 2,73,73,73,0,Backend 1;Backend 2,73,73,73,0
+3.2.6.1,Crop Master UI,Frontend:2,2,3.2.1.3,55,56,Frontend 1;Frontend 2,56,56,57,0,Frontend 1;Frontend 2,56,56,57,0
+3.2.6.2,Crop Cycle UI,Frontend:2,4,3.2.2.4,62,65,Frontend 1;Frontend 2,63,63,66,0,Frontend 1;Frontend 2,63,63,66,0
+3.2.6.3,Activity Recording UI,Frontend:2,3,3.2.5.2,73,75,Frontend 1;Frontend 2,74,74,76,0,Frontend 1;Frontend 2,74,74,76,0
+3.2.7.1,Unit Testing,QA:1,3,3.2.6.3,76,78,QA 1,77,77,79,0,QA 1,77,77,79,0
+3.2.7.2,Integration Testing,QA:1,2,3.2.7.1,79,80,QA 1,80,80,81,0,QA 1,80,80,81,0
+3.3.1.1,Create Harvest Plan,Backend:2,2,3.2.7.2,81,82,Backend 1;Backend 2,82,82,83,0,Backend 1;Backend 2,82,82,83,0
+3.3.1.2,Update Harvest Plan,Backend:2,1,3.3.1.1,83,83,Backend 1;Backend 2,84,84,84,0,Backend 1;Backend 2,84,84,84,0
+3.3.2.1,Execute Harvest,Backend:2,3,3.3.1.2,84,86,Backend 1;Backend 2,85,85,87,0,Backend 1;Backend 2,85,85,87,0
+3.3.2.2,Create Harvest Batch,Backend:2,2,3.3.2.1,87,88,Backend 1;Backend 2,88,88,89,0,Backend 1;Backend 2,88,88,89,0
+3.3.3.1,Record Quality Inspection,Backend:2,2,3.3.2.2,89,90,Backend 1;Backend 2,90,90,91,0,Backend 1;Backend 2,90,90,91,0
+3.3.3.2,Record Post-Harvest Loss,Backend:1,1,3.3.3.1,91,91,Backend 1,92,92,92,0,Backend 1,92,92,92,0
+3.3.4.1,Publish HarvestCompleted Event,Backend:2,2,3.3.2.2,89,90,Backend 3;Backend 4,90,90,91,0,Backend 3;Backend 4,90,90,91,0
+3.3.5.1,Harvest Planning UI,Frontend:2,2,3.3.1.2,84,85,Frontend 1;Frontend 2,85,85,86,0,Frontend 1;Frontend 2,85,85,86,0
+3.3.5.2,Harvest Execution UI,Frontend:2,2,3.3.2.2,89,90,Frontend 1;Frontend 2,90,90,91,0,Frontend 1;Frontend 2,90,90,91,0
+3.3.6.1,Unit Testing,QA:1,2,3.3.5.2,91,92,QA 1,92,92,93,0,QA 1,92,92,93,0
+3.3.6.2,Integration Testing,QA:1,1,3.3.6.1,93,93,QA 1,94,94,94,0,QA 1,94,94,94,0
+3.4.1.1,Create Livestock Master,Backend:2,1,3.3.6.2,94,94,Backend 1;Backend 2,95,95,95,0,Backend 1;Backend 2,95,95,95,0
+3.4.2.1,Register Animal,Backend:2,2,3.4.1.1,95,96,Backend 1;Backend 2,96,96,97,0,Backend 1;Backend 2,96,96,97,0
+3.4.2.2,Update Animal,Backend:2,1,3.4.2.1,97,97,Backend 1;Backend 2,98,98,98,0,Backend 1;Backend 2,98,98,98,0
+3.4.2.3,Generate QR Code,Backend:1,1,3.4.2.2,98,98,Backend 1,99,99,99,0,Backend 1,99,99,99,0
+3.4.3.1,Record Feeding Activity,Backend:2,2,3.4.2.3,99,100,Backend 1;Backend 2,100,100,101,0,Backend 1;Backend 2,100,100,101,0
+3.4.4.1,Record Health Check,Backend:2,2,3.4.3.1,101,102,Backend 1;Backend 2,102,102,103,0,Backend 1;Backend 2,102,102,103,0
+3.4.4.2,Record Vaccination,Backend:2,1,3.4.4.1,103,103,Backend 1;Backend 2,104,104,104,0,Backend 1;Backend 2,104,104,104,0
+3.4.4.3,Record Mortality,Backend:1,1,3.4.4.2,104,104,Backend 1,105,105,105,0,Backend 1,105,105,105,0
+3.4.5.1,Record Reproduction,Backend:2,2,3.4.4.3,105,106,Backend 1;Backend 2,106,106,107,0,Backend 1;Backend 2,106,106,107,0
+3.4.6.1,Record Animal Production,Backend:2,2,3.4.5.1,107,108,Backend 1;Backend 2,108,108,109,0,Backend 1;Backend 2,108,108,109,0
+3.4.6.2,Publish LivestockProductionCompleted,Backend:1,1,3.4.6.1,109,109,Backend 1,110,110,110,0,Backend 1,110,110,110,0
+3.4.7.1,Record Animal Transaction,Backend:1,1,3.4.6.2,110,110,Backend 1,111,111,111,0,Backend 1,111,111,111,0
+3.4.8.1,Livestock Management UI,Frontend:2,3,3.4.2.3,99,101,Frontend 1;Frontend 2,100,100,102,0,Frontend 1;Frontend 2,100,100,102,0
+3.4.8.2,Health Monitoring UI,Frontend:2,2,3.4.4.3,105,106,Frontend 1;Frontend 2,106,106,107,0,Frontend 1;Frontend 2,106,106,107,0
+3.4.9.1,Unit Testing,QA:1,2,3.4.8.2,107,108,QA 1,108,108,109,0,QA 1,108,108,109,0
+3.4.9.2,Integration Testing,QA:1,1,3.4.9.1,109,109,QA 1,110,110,110,0,QA 1,110,110,110,0
+3.5.1.1,Record Generic Activity,Backend:2,2,3.4.9.2,110,111,Backend 2;Backend 3,111,111,112,0,Backend 2;Backend 3,111,111,112,0
+3.5.1.2,Create Activity Type,Backend:1,1,3.5.1.1,112,112,Backend 1,113,113,113,0,Backend 1,113,113,113,0
+3.5.1.3,List Activities,Backend:1;Frontend:1,1,3.5.1.2,113,113,Backend 1;Frontend 1,114,114,114,0,Backend 1;Frontend 1,114,114,114,0
+3.5.2.1,Schedule Activity Reminder,Backend:1,2,3.5.1.3,114,115,Backend 1,115,115,116,0,Backend 1,115,115,116,0
+3.5.3.1,Activity Recording UI,Frontend:2,2,3.5.1.3,114,115,Frontend 1;Frontend 2,115,115,116,0,Frontend 1;Frontend 2,115,115,116,0
+3.5.3.2,Activity Calendar UI,Frontend:2,2,3.5.2.1,116,117,Frontend 1;Frontend 2,117,117,118,0,Frontend 1;Frontend 2,117,117,118,0
+3.5.4.1,Unit Testing,QA:1,1,3.5.3.2,118,118,QA 1,119,119,119,0,QA 1,119,119,119,0
+3.5.4.2,Integration Testing,QA:1,1,3.5.4.1,119,119,QA 1,120,120,120,0,QA 1,120,120,120,0
+3.6.1.1,Create Resource Item,Backend:1,1,3.5.4.2,120,120,Backend 1,121,121,121,0,Backend 1,121,121,121,0
+3.6.1.2,Allocate Resource,Backend:1,2,3.6.1.1,121,122,Backend 1,122,122,123,0,Backend 1,122,122,123,0
+3.6.1.3,Consume Resource,Backend:1,2,3.6.1.2,123,124,Backend 1,124,124,125,0,Backend 1,124,124,125,0
+3.6.1.4,Calculate Resource Requirements,Backend:1,1,3.6.1.3,125,125,Backend 1,126,126,126,0,Backend 1,126,126,126,0
+3.6.2.1,Resource Management UI,Frontend:1,2,3.6.1.4,126,127,Frontend 1,127,127,128,0,Frontend 1,127,127,128,0
+3.6.3.1,Unit Testing,QA:1,1,3.6.2.1,128,128,QA 1,129,129,129,0,QA 1,129,129,129,0
+3.6.3.2,Integration Testing,QA:1,1,3.6.3.1,129,129,QA 1,130,130,130,0,QA 1,130,130,130,0
+4.1.1,Wireframes,Mobile:1,3,1.1.5,12,14,Mobile,12,12,14,0,Mobile,12,12,14,0
+4.1.2,Design System,Mobile:1,3,4.1.1,15,17,Mobile,15,15,17,0,Mobile,15,15,17,0
+4.2.1,Local Database Schema,Mobile:1,3,4.1.2,18,20,Mobile,18,18,20,0,Mobile,18,18,20,0
+4.2.2,Sync Strategy,Mobile:1,3,4.2.1,21,23,Mobile,21,21,23,0,Mobile,21,21,23,0
+4.3.1,Activity Entry Form,Mobile:1,5,4.2.2,24,28,Mobile,24,24,28,0,Mobile,24,24,28,0
+4.3.2,Photo Capture,Mobile:1,3,4.3.1,29,31,Mobile,29,29,31,0,Mobile,29,29,31,0
+4.3.3,GPS Capture,Mobile:1,2,4.3.2,32,33,Mobile,32,32,33,0,Mobile,32,32,33,0
+4.4.1,Data Sync Logic,Mobile:1,5,4.3.3,34,38,Mobile,34,34,38,0,Mobile,34,34,38,0
+4.4.2,Conflict Resolution,Mobile:1,3,4.4.1,39,41,Mobile,39,39,41,0,Mobile,39,39,41,0
+4.4.3,Retry Mechanism,Mobile:1,2,4.4.2,42,43,Mobile,42,42,43,0,Mobile,42,42,43,0
+4.5.1,Unit Testing,Mobile:1;QA:1,3,4.4.3,44,46,Mobile;QA 1,44,44,46,0,Mobile;QA 1,44,44,46,0
+4.5.2,Integration Testing,Mobile:1;QA:1,2,4.5.1,47,48,Mobile;QA 1,47,47,48,0,Mobile;QA 1,47,47,48,0
+4.5.3,Offline Testing,QA:1,2,4.5.2,49,50,QA 1,49,49,50,0,QA 1,49,49,50,0
+5.1.1,Kafka Setup,DevOps:1,2,3.6.3.2,130,131,DevOps,131,131,132,0,DevOps,131,131,132,0
+5.1.2,Topic Configuration,DevOps:1,1,5.1.1,132,132,DevOps,133,133,133,0,DevOps,133,133,133,0
+5.1.3,Schema Registry,Backend:1,2,5.1.2,133,134,Backend 1,134,134,135,0,Backend 1,134,134,135,0
+5.2.1,HarvestCompleted Event Publisher,Backend:2,2,5.1.3,135,136,Backend 1;Backend 2,136,136,137,0,Backend 1;Backend 2,136,136,137,0
+5.2.2,LivestockProductionCompleted Publisher,Backend:2,2,5.2.1,137,138,Backend 1;Backend 2,138,138,139,0,Backend 1;Backend 2,138,138,139,0
+5.2.3,ActivityRecorded Event Publisher,Backend:2,1,5.2.2,139,139,Backend 1;Backend 2,140,140,140,0,Backend 1;Backend 2,140,140,140,0
+5.2.4,Event Consumers,Backend:2,3,5.2.3,140,142,Backend 1;Backend 2,141,141,143,0,Backend 1;Backend 2,141,141,143,0
+5.3.1,API Gateway Configuration,DevOps:1,2,5.2.4,143,144,DevOps,144,144,145,0,DevOps,144,144,145,0
+5.3.2,BFF Implementation,Backend:3;Frontend:2,4,5.3.1,145,148,Backend 1;Backend 2;Backend 3;Frontend 1;Frontend 2,146,146,149,0,Backend 1;Backend 2;Backend 3;Frontend 1;Frontend 2,146,146,149,0
+5.3.3,Authentication Integration,Backend:2,2,5.3.2,149,150,Backend 1;Backend 2,150,150,151,0,Backend 1;Backend 2,150,150,151,0
+5.4.1,API Testing,QA:2,2,5.3.3,151,152,QA 1;QA 2,152,152,153,0,QA 1;QA 2,152,152,153,0
+5.4.2,Event Testing,QA:2,2,5.4.1,153,154,QA 1;QA 2,154,154,155,0,QA 1;QA 2,154,154,155,0
+5.4.3,End-to-End Testing,QA:2,3,5.4.2,155,157,QA 1;QA 2,156,156,158,0,QA 1;QA 2,156,156,158,0
+6.1.1,All Services Unit Testing,QA:2;Backend:1,5,5.4.3,158,162,QA 1;QA 2;Backend 1,159,159,163,0,QA 1;QA 2;Backend 1,159,159,163,0
+6.2.1,Internal Integration Testing,QA:2,3,6.1.1,163,165,QA 1;QA 2,164,164,166,0,QA 1;QA 2,164,164,166,0
+6.2.2,External Integration Testing,QA:2,2,6.2.1,166,167,QA 1;QA 2,167,167,168,0,QA 1;QA 2,167,167,168,0
+6.3.1,Load Testing,QA:2,3,6.2.2,168,170,QA 1;QA 2,169,169,171,0,QA 1;QA 2,169,169,171,0
+6.3.2,Stress Testing,QA:2,2,6.3.1,171,172,QA 1;QA 2,172,172,173,0,QA 1;QA 2,172,172,173,0
+6.3.3,Scalability Testing,QA:2,2,6.3.2,173,174,QA 1;QA 2,174,174,175,0,QA 1;QA 2,174,174,175,0
+6.4.1,Authentication Testing,QA:1,1,6.3.3,175,175,QA 1,176,176,176,0,QA 1,176,176,176,0
+6.4.2,Authorization Testing,QA:1,1,6.4.1,176,176,QA 1,177,177,177,0,QA 1,177,177,177,0
+6.4.3,Vulnerability Scanning,QA:1,2,6.4.2,177,178,QA 1,178,178,179,0,QA 1,178,178,179,0
+6.5.1,UAT Preparation,BA:1;PO:1,2,6.4.3,179,180,BA;PO,180,180,181,0,BA;PO,180,180,181,0
+6.5.2,UAT Execution,BA:1;PO:1;QA:1,5,6.5.1,181,185,BA;PO;QA 1,182,182,186,0,BA;PO;QA 1,182,182,186,0
+6.5.3,UAT Sign-off,PO:1,1,6.5.2,186,186,PO,187,187,187,0,PO,187,187,187,0
+6.6.1,Bug Fixing & Regression,Backend:1;QA:1,5,6.5.3,187,191,Backend 1;QA 1,188,188,192,0,Backend 1;QA 1,188,188,192,0
+7.1.1,UAT Environment Setup,DevOps:1,2,6.6.1,192,193,DevOps,193,193,194,0,DevOps,193,193,194,0
+7.1.2,UAT Data Preparation,DevOps:1,2,7.1.1,194,195,DevOps,195,195,196,0,DevOps,195,195,196,0
+7.2.1,Infrastructure Provisioning,DevOps:1,3,7.1.2,196,198,DevOps,197,197,199,0,DevOps,197,197,199,0
+7.2.2,Application Deployment,DevOps:1;Backend:1,2,7.2.1,199,200,DevOps;Backend 1,200,200,201,0,DevOps;Backend 1,200,200,201,0
+7.2.3,Monitoring Setup,DevOps:1,2,7.2.2,201,202,DevOps,202,202,203,0,DevOps,202,202,203,0
+7.3.1,Data Mapping,Backend:1,2,7.2.3,203,204,Backend 1,204,204,205,0,Backend 1,204,204,205,0
+7.3.2,Migration Scripts,Backend:1,2,7.3.1,205,206,Backend 1,206,206,207,0,Backend 1,206,206,207,0
+7.3.3,Data Validation,QA:1;BA:1,2,7.3.2,207,208,QA 1;BA,208,208,209,0,QA 1;BA,208,208,209,0
+7.4.1,Go-Live Checklist,PM:1,1,7.3.3,209,209,PM,210,210,210,0,PM,210,210,210,0
+7.4.2,Cutover Plan,PM:1,1,7.4.1,210,210,PM,211,211,211,0,PM,211,211,211,0
+7.4.3,Rollback Plan,PM:1,1,7.4.2,211,211,PM,212,212,212,0,PM,212,212,212,0
+7.5.1,24/7 Support,PM:1,5,7.4.3,212,216,PM,213,213,217,0,PM,213,213,217,0
+7.5.2,Issue Tracking & Resolution,PM:1,5,7.5.1,217,221,PM,218,218,222,0,PM,218,218,222,0
+8.1.1,Technical Documentation,Tech Lead:1,2,7.5.2,222,223,Tech Lead,223,223,224,0,Tech Lead,223,223,224,0
+8.1.2,User Manual,BA:1,2,8.1.1,224,225,BA,225,225,226,0,BA,225,225,226,0
+8.1.3,API Documentation,Backend:1,1,8.1.2,226,226,Backend 1,227,227,227,0,Backend 1,227,227,227,0
+8.2.1,KT Session,PM:1,2,8.1.3,227,228,PM,228,228,229,0,PM,228,228,229,0
+8.2.2,Handover Documents,PM:1;Tech Lead:1,1,8.2.1,229,229,PM;Tech Lead,230,230,230,0,PM;Tech Lead,230,230,230,0
+8.3.1,Lessons Learned,PM:1,1,8.2.2,230,230,PM,231,231,231,0,PM,231,231,231,0
+8.3.2,Final Report,PM:1,1,8.3.1,231,231,PM,232,232,232,0,PM,232,232,232,0

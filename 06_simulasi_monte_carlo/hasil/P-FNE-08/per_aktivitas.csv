@@ -1,0 +1,77 @@
+Subproyek,Skenario_CR,Kebijakan,ID,Aktivitas,Kebutuhan_Resource,P_Kena_CR,Rata2_Delay_Sendiri_CR_Hari,Rata2_Pergeseran_Mulai_Hari,dari_Predecessor_Hari,dari_Antrian_Resource_Hari,Indeks_Kekritisan,P_Selesai_Lewat_Rencana
+P-FNE-08,dosen,FCFS,ACT-004,IoT DB — Database Schema Design (iot_devices),IoT Lead:1,0.096,0.059,0.0,0.0,0.0,1.0,0.096
+P-FNE-08,dosen,FCFS,ACT-005,Reg API — Device Registration API Development,IoT Eng 1:1,0.106,0.072,0.059,0.059,0.0,1.0,0.191
+P-FNE-08,dosen,FCFS,ACT-008,Telemetry API — Telemetry Ingestion API Development,IoT Eng 2:1,0.106,0.105,0.132,0.132,0.0,1.0,0.285
+P-FNE-08,dosen,FCFS,ACT-012,Alert Engine — Alert Engine Implementation,IoT Eng 2:1,0.097,0.082,0.237,0.237,0.0,1.0,0.359
+P-FNE-08,dosen,FCFS,ACT-019,IoT Dashboard — Device List View,Frontend 1:1,0.107,0.067,0.319,0.319,0.0,1.0,0.429
+P-FNE-08,dosen,FCFS,ACT-023,Twin DB — Twin Database Schema (digital_twins),Twin Lead:1,0.094,0.061,0.386,0.386,0.0,1.0,0.479
+P-FNE-08,dosen,FCFS,ACT-024,Twin CRUD — Twin CRUD API Development,Twin Eng 1:1,0.111,0.102,0.446,0.446,0.0,1.0,0.527
+P-FNE-08,dosen,FCFS,ACT-030,State Sync — State Update Engine,Twin Eng 2:1,0.091,0.084,0.548,0.548,0.0,1.0,0.571
+P-FNE-08,dosen,FCFS,ACT-035,What-If — What-If API Development,Twin Eng 2:1,0.101,0.09,0.632,0.632,0.0,1.0,0.616
+P-FNE-08,dosen,FCFS,ACT-047,Crop Sim — Crop Yield Simulation Development,Sim Eng 1:1,0.084,0.096,0.722,0.722,0.0,1.0,0.645
+P-FNE-08,dosen,FCFS,ACT-066,Rule Engine — Rule Evaluation Engine (Drools),Auto Eng 1:1,0.078,0.073,0.817,0.817,0.0,1.0,0.673
+P-FNE-08,dosen,FCFS,ACT-070,Recommendation — Recommendation Engine Development,Auto Eng 2:1,0.095,0.065,0.89,0.89,0.0,1.0,0.7
+P-FNE-08,dosen,FCFS,ACT-075,Approval — Approval Workflow Implementation,Auto Eng 1:1,0.089,0.082,0.955,0.955,0.0,1.0,0.726
+P-FNE-08,dosen,FCFS,ACT-086,IoT Dashboard — IoT Dashboard Development,Frontend 1:1,0.105,0.095,1.037,1.037,0.0,1.0,0.756
+P-FNE-08,dosen,FCFS,ACT-107,Integration Test — Service Integration Tests,QA:1,0.107,0.08,1.132,1.132,0.0,1.0,0.775
+P-FNE-08,dosen,FCFS,ACT-109,Performance Test — IoT Throughput Test,QA:1,0.105,0.047,1.212,1.212,0.0,1.0,0.797
+P-FNE-08,dosen,FCFS,ACT-114,UAT Execution — UAT Test Plan Preparation,Business Analyst:1;QA:1,0.118,0.054,1.259,1.259,0.0,1.0,0.821
+P-FNE-08,dosen,FCFS,ACT-116,Bug Fixing — Bug Fixing & Retesting,,0.101,0.046,1.312,1.312,0.0,1.0,0.843
+P-FNE-08,dosen,FCFS,ACT-117,UAT Sign-off,Business Analyst:1;Project Manager:1,0.113,0.023,1.358,1.358,0.0,1.0,0.863
+P-FNE-08,dosen,SPT,ACT-004,IoT DB — Database Schema Design (iot_devices),IoT Lead:1,0.096,0.059,0.0,0.0,0.0,1.0,0.096
+P-FNE-08,dosen,SPT,ACT-005,Reg API — Device Registration API Development,IoT Eng 1:1,0.106,0.072,0.059,0.059,0.0,1.0,0.191
+P-FNE-08,dosen,SPT,ACT-008,Telemetry API — Telemetry Ingestion API Development,IoT Eng 2:1,0.106,0.105,0.132,0.132,0.0,1.0,0.285
+P-FNE-08,dosen,SPT,ACT-012,Alert Engine — Alert Engine Implementation,IoT Eng 2:1,0.097,0.082,0.237,0.237,0.0,1.0,0.359
+P-FNE-08,dosen,SPT,ACT-019,IoT Dashboard — Device List View,Frontend 1:1,0.107,0.067,0.319,0.319,0.0,1.0,0.429
+P-FNE-08,dosen,SPT,ACT-023,Twin DB — Twin Database Schema (digital_twins),Twin Lead:1,0.094,0.061,0.386,0.386,0.0,1.0,0.479
+P-FNE-08,dosen,SPT,ACT-024,Twin CRUD — Twin CRUD API Development,Twin Eng 1:1,0.111,0.102,0.446,0.446,0.0,1.0,0.527
+P-FNE-08,dosen,SPT,ACT-030,State Sync — State Update Engine,Twin Eng 2:1,0.091,0.084,0.548,0.548,0.0,1.0,0.571
+P-FNE-08,dosen,SPT,ACT-035,What-If — What-If API Development,Twin Eng 2:1,0.101,0.09,0.632,0.632,0.0,1.0,0.616
+P-FNE-08,dosen,SPT,ACT-047,Crop Sim — Crop Yield Simulation Development,Sim Eng 1:1,0.084,0.096,0.722,0.722,0.0,1.0,0.645
+P-FNE-08,dosen,SPT,ACT-066,Rule Engine — Rule Evaluation Engine (Drools),Auto Eng 1:1,0.078,0.073,0.817,0.817,0.0,1.0,0.673
+P-FNE-08,dosen,SPT,ACT-070,Recommendation — Recommendation Engine Development,Auto Eng 2:1,0.095,0.065,0.89,0.89,0.0,1.0,0.7
+P-FNE-08,dosen,SPT,ACT-075,Approval — Approval Workflow Implementation,Auto Eng 1:1,0.089,0.082,0.955,0.955,0.0,1.0,0.726
+P-FNE-08,dosen,SPT,ACT-086,IoT Dashboard — IoT Dashboard Development,Frontend 1:1,0.105,0.095,1.037,1.037,0.0,1.0,0.756
+P-FNE-08,dosen,SPT,ACT-107,Integration Test — Service Integration Tests,QA:1,0.107,0.08,1.132,1.132,0.0,1.0,0.775
+P-FNE-08,dosen,SPT,ACT-109,Performance Test — IoT Throughput Test,QA:1,0.105,0.047,1.212,1.212,0.0,1.0,0.797
+P-FNE-08,dosen,SPT,ACT-114,UAT Execution — UAT Test Plan Preparation,Business Analyst:1;QA:1,0.118,0.054,1.259,1.259,0.0,1.0,0.821
+P-FNE-08,dosen,SPT,ACT-116,Bug Fixing — Bug Fixing & Retesting,,0.101,0.046,1.312,1.312,0.0,1.0,0.843
+P-FNE-08,dosen,SPT,ACT-117,UAT Sign-off,Business Analyst:1;Project Manager:1,0.113,0.023,1.358,1.358,0.0,1.0,0.863
+P-FNE-08,pmp,FCFS,ACT-004,IoT DB — Database Schema Design (iot_devices),IoT Lead:1,0.096,0.019,0.0,0.0,0.0,1.0,0.096
+P-FNE-08,pmp,FCFS,ACT-005,Reg API — Device Registration API Development,IoT Eng 1:1,0.106,0.028,0.019,0.019,0.0,1.0,0.191
+P-FNE-08,pmp,FCFS,ACT-008,Telemetry API — Telemetry Ingestion API Development,IoT Eng 2:1,0.106,0.041,0.047,0.047,0.0,1.0,0.285
+P-FNE-08,pmp,FCFS,ACT-012,Alert Engine — Alert Engine Implementation,IoT Eng 2:1,0.097,0.027,0.088,0.088,0.0,1.0,0.359
+P-FNE-08,pmp,FCFS,ACT-019,IoT Dashboard — Device List View,Frontend 1:1,0.107,0.022,0.115,0.115,0.0,1.0,0.429
+P-FNE-08,pmp,FCFS,ACT-023,Twin DB — Twin Database Schema (digital_twins),Twin Lead:1,0.094,0.019,0.137,0.137,0.0,1.0,0.479
+P-FNE-08,pmp,FCFS,ACT-024,Twin CRUD — Twin CRUD API Development,Twin Eng 1:1,0.111,0.039,0.156,0.156,0.0,1.0,0.527
+P-FNE-08,pmp,FCFS,ACT-030,State Sync — State Update Engine,Twin Eng 2:1,0.091,0.036,0.195,0.195,0.0,1.0,0.571
+P-FNE-08,pmp,FCFS,ACT-035,What-If — What-If API Development,Twin Eng 2:1,0.101,0.032,0.231,0.231,0.0,1.0,0.616
+P-FNE-08,pmp,FCFS,ACT-047,Crop Sim — Crop Yield Simulation Development,Sim Eng 1:1,0.084,0.038,0.263,0.263,0.0,1.0,0.645
+P-FNE-08,pmp,FCFS,ACT-066,Rule Engine — Rule Evaluation Engine (Drools),Auto Eng 1:1,0.078,0.029,0.301,0.301,0.0,1.0,0.673
+P-FNE-08,pmp,FCFS,ACT-070,Recommendation — Recommendation Engine Development,Auto Eng 2:1,0.095,0.025,0.33,0.33,0.0,1.0,0.7
+P-FNE-08,pmp,FCFS,ACT-075,Approval — Approval Workflow Implementation,Auto Eng 1:1,0.089,0.03,0.355,0.355,0.0,1.0,0.726
+P-FNE-08,pmp,FCFS,ACT-086,IoT Dashboard — IoT Dashboard Development,Frontend 1:1,0.105,0.034,0.385,0.385,0.0,1.0,0.756
+P-FNE-08,pmp,FCFS,ACT-107,Integration Test — Service Integration Tests,QA:1,0.107,0.033,0.418,0.418,0.0,1.0,0.775
+P-FNE-08,pmp,FCFS,ACT-109,Performance Test — IoT Throughput Test,QA:1,0.105,0.016,0.452,0.452,0.0,1.0,0.797
+P-FNE-08,pmp,FCFS,ACT-114,UAT Execution — UAT Test Plan Preparation,Business Analyst:1;QA:1,0.118,0.019,0.468,0.468,0.0,1.0,0.821
+P-FNE-08,pmp,FCFS,ACT-116,Bug Fixing — Bug Fixing & Retesting,,0.101,0.016,0.487,0.487,0.0,1.0,0.843
+P-FNE-08,pmp,FCFS,ACT-117,UAT Sign-off,Business Analyst:1;Project Manager:1,0.113,0.006,0.503,0.503,0.0,1.0,0.863
+P-FNE-08,pmp,SPT,ACT-004,IoT DB — Database Schema Design (iot_devices),IoT Lead:1,0.096,0.019,0.0,0.0,0.0,1.0,0.096
+P-FNE-08,pmp,SPT,ACT-005,Reg API — Device Registration API Development,IoT Eng 1:1,0.106,0.028,0.019,0.019,0.0,1.0,0.191
+P-FNE-08,pmp,SPT,ACT-008,Telemetry API — Telemetry Ingestion API Development,IoT Eng 2:1,0.106,0.041,0.047,0.047,0.0,1.0,0.285
+P-FNE-08,pmp,SPT,ACT-012,Alert Engine — Alert Engine Implementation,IoT Eng 2:1,0.097,0.027,0.088,0.088,0.0,1.0,0.359
+P-FNE-08,pmp,SPT,ACT-019,IoT Dashboard — Device List View,Frontend 1:1,0.107,0.022,0.115,0.115,0.0,1.0,0.429
+P-FNE-08,pmp,SPT,ACT-023,Twin DB — Twin Database Schema (digital_twins),Twin Lead:1,0.094,0.019,0.137,0.137,0.0,1.0,0.479
+P-FNE-08,pmp,SPT,ACT-024,Twin CRUD — Twin CRUD API Development,Twin Eng 1:1,0.111,0.039,0.156,0.156,0.0,1.0,0.527
+P-FNE-08,pmp,SPT,ACT-030,State Sync — State Update Engine,Twin Eng 2:1,0.091,0.036,0.195,0.195,0.0,1.0,0.571
+P-FNE-08,pmp,SPT,ACT-035,What-If — What-If API Development,Twin Eng 2:1,0.101,0.032,0.231,0.231,0.0,1.0,0.616
+P-FNE-08,pmp,SPT,ACT-047,Crop Sim — Crop Yield Simulation Development,Sim Eng 1:1,0.084,0.038,0.263,0.263,0.0,1.0,0.645
+P-FNE-08,pmp,SPT,ACT-066,Rule Engine — Rule Evaluation Engine (Drools),Auto Eng 1:1,0.078,0.029,0.301,0.301,0.0,1.0,0.673
+P-FNE-08,pmp,SPT,ACT-070,Recommendation — Recommendation Engine Development,Auto Eng 2:1,0.095,0.025,0.33,0.33,0.0,1.0,0.7
+P-FNE-08,pmp,SPT,ACT-075,Approval — Approval Workflow Implementation,Auto Eng 1:1,0.089,0.03,0.355,0.355,0.0,1.0,0.726
+P-FNE-08,pmp,SPT,ACT-086,IoT Dashboard — IoT Dashboard Development,Frontend 1:1,0.105,0.034,0.385,0.385,0.0,1.0,0.756
+P-FNE-08,pmp,SPT,ACT-107,Integration Test — Service Integration Tests,QA:1,0.107,0.033,0.418,0.418,0.0,1.0,0.775
+P-FNE-08,pmp,SPT,ACT-109,Performance Test — IoT Throughput Test,QA:1,0.105,0.016,0.452,0.452,0.0,1.0,0.797
+P-FNE-08,pmp,SPT,ACT-114,UAT Execution — UAT Test Plan Preparation,Business Analyst:1;QA:1,0.118,0.019,0.468,0.468,0.0,1.0,0.821
+P-FNE-08,pmp,SPT,ACT-116,Bug Fixing — Bug Fixing & Retesting,,0.101,0.016,0.487,0.487,0.0,1.0,0.843
+P-FNE-08,pmp,SPT,ACT-117,UAT Sign-off,Business Analyst:1;Project Manager:1,0.113,0.006,0.503,0.503,0.0,1.0,0.863

@@ -1,0 +1,17 @@
+Orang,Role,Hari_Mulai,Hari_Selesai,Sumber
+PM1,PM,1,,PMP-01 §4.6.1 (Project Manager 1-1-1-1-1); bulan 1–5
+DevOps1,DevOps,1,,PMP-01 §4.6.1 (DevOps Engineer 3-2-2-2-1); bulan 1–5
+DevOps2,DevOps,1,88,PMP-01 §4.6.1 (DevOps Engineer 3-2-2-2-1); bulan 1–4
+DevOps3,DevOps,1,22,PMP-01 §4.6.1 (DevOps Engineer 3-2-2-2-1); bulan 1–1
+BE1,Backend,1,,PMP-01 §4.6.1 (Backend Developer 2-4-5-5-4); bulan 1–5
+BE2,Backend,1,,PMP-01 §4.6.1 (Backend Developer 2-4-5-5-4); bulan 1–5
+BE3,Backend,23,,PMP-01 §4.6.1 (Backend Developer 2-4-5-5-4); bulan 2–5
+BE4,Backend,23,,PMP-01 §4.6.1 (Backend Developer 2-4-5-5-4); bulan 2–5
+BE5,Backend,45,88,PMP-01 §4.6.1 (Backend Developer 2-4-5-5-4); bulan 3–4
+FE1,Frontend,23,,PMP-01 §4.6.1 (Frontend Developer 0-2-3-3-3); bulan 2–5
+FE2,Frontend,23,,PMP-01 §4.6.1 (Frontend Developer 0-2-3-3-3); bulan 2–5
+FE3,Frontend,45,,PMP-01 §4.6.1 (Frontend Developer 0-2-3-3-3); bulan 3–5
+Sec1,Security,1,,PMP-01 §4.6.1 (Security Engineer 1-2-2-1-1); bulan 1–5
+Sec2,Security,23,66,PMP-01 §4.6.1 (Security Engineer 1-2-2-1-1); bulan 2–3
+QA1,QA,23,,PMP-01 §4.6.1 (QA Engineer 0-1-1-2-2); bulan 2–5
+QA2,QA,67,,PMP-01 §4.6.1 (QA Engineer 0-1-1-2-2); bulan 4–5

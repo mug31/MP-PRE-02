@@ -1,0 +1,13 @@
+ID,Aktivitas,Kebutuhan_Resource,Durasi_Hari,Predecessor,Mulai_TanpaResource,Selesai_TanpaResource,Orang_FCFS,Siap_FCFS,Mulai_FCFS,Selesai_FCFS,Tunggu_FCFS,Orang_SPT,Siap_SPT,Mulai_SPT,Selesai_SPT,Tunggu_SPT
+M0,Project Initiation,Tim Inti:1,5,,1,5,Tim Inti,1,1,5,0,Tim Inti,1,1,5,0
+M1,Analysis Complete,Tim Inti:1,10,M0,6,15,Tim Inti,6,6,15,0,Tim Inti,6,6,15,0
+M2,Design Complete,Tim Inti:1,10,M1,16,25,Tim Inti,16,16,25,0,Tim Inti,16,16,25,0
+M3,Sprint 1-2 Complete,Tim Inti:1,20,M2,26,45,Tim Inti,26,26,45,0,Tim Inti,26,26,45,0
+M4,Sprint 3-4 Complete,Tim Inti:1,20,M3,46,65,Tim Inti,46,46,65,0,Tim Inti,46,46,65,0
+M5,Sprint 5-6 Complete,Tim Inti:1,20,M4,66,85,Tim Inti,66,66,85,0,Tim Inti,66,66,85,0
+M6,Frontend Complete,Tim Frontend:1,20,M2,26,45,Tim Frontend,26,26,45,0,Tim Frontend,26,26,45,0
+M7,Integration Complete,Tim Inti:1,10,M5;M6,86,95,Tim Inti,86,86,95,0,Tim Inti,86,86,95,0
+M8,Testing Complete,Tim Inti:1,10,M7,96,105,Tim Inti,96,96,105,0,Tim Inti,96,96,105,0
+M9,UAT Complete,Tim Inti:1,5,M8,106,110,Tim Inti,106,106,110,0,Tim Inti,106,106,110,0
+M10,Deployment & Go-Live,Tim Inti:1,5,M9,111,115,Tim Inti,111,111,115,0,Tim Inti,111,111,115,0
+M11,Project Closure,Tim Inti:1,5,M10,116,120,Tim Inti,116,116,120,0,Tim Inti,116,116,120,0
