@@ -15,7 +15,7 @@
 | No | Tahap | Revisi | Yang dikerjakan | Menit | Status |
 |---|---|---|---|---|---|
 | 1 | Paper | Perjelas tujuan ("mau ngapain?") | Jelaskan *kenapa* proyek bisa telat (CR, dependensi, keterbatasan resource) dan bagaimana delay merambat antaraktivitas | 4:51–6:18 | Pasti |
-| 2 | Paper | Konfirmasi metode | Tanya dosen: simulasi Monte Carlo **menggantikan** supervised learning, atau hasilnya jadi **label/data** untuk ML | – | Perlu ditanyakan |
+| 2 | Paper | Konfirmasi metode | Tanya dosen: simulasi iterasi random **menggantikan** supervised learning, atau hasilnya jadi **label/data** untuk ML | – | Perlu ditanyakan |
 | 3 | Data | Ekstraksi bisa dilacak | Kolom sumber (dokumen + bab); data diambil apa adanya dari dokumen; boleh dibantu AI tapi dicek ke sumber; kalau antardokumen beda, diseragamkan | 30:33–32:38 | Pasti |
 | 4 | Data | Jadwal aktivitas | Dari PMP: aktivitas/deliverable, durasi (angka + formula, bukan teks), predecessor, prioritas. *Arrival* = deadline predecessor + 1; *deadline* = arrival + durasi | 24:40–26:44, 37:01–38:05 | Pasti |
 | 5 | Data | Kolom resource | Contoh dosen: PM, PO, BA, DevOps, Dev…; di PMP-01 §4.6.1 role-nya PM, DevOps, Backend, Frontend, Security, QA. Alokasi orang ke aktivitas ditentukan kelompok | 28:43–29:28, 33:02–33:51 | Pasti |
@@ -36,9 +36,9 @@ diterapkan ke 8 subproyek ([35:48] "satu dulu… kalau tahu cara kerjanya baru n
 |---|---|---|
 | 1 | ❌ Belum | Bahan dari hasil simulasi sudah ada (CR, rambatan, antrian, rantai kritis); belum ditulis ke paper |
 | 2 | ❌ Belum | Ditanyakan pada bimbingan berikutnya |
-| 3 | ✅ 8 subproyek | `06_simulasi_monte_carlo/ekstraksi_pmp.py` membaca tabel asli PMP; tiap baris punya kolom sumber & catatan. Dataset lama `dataset_pre02_fne*.csv` belum disentuh (menunggu no. 2) |
+| 3 | ✅ 8 subproyek | `06_simulasi_iterasi/ekstraksi_pmp.py` membaca tabel asli PMP; tiap baris punya kolom sumber & catatan. Dataset lama `dataset_pre02_fne*.csv` belum disentuh (menunggu no. 2) |
 | 4–6 | ✅ 8 subproyek | Jadwal aktivitas, resource, antrian FCFS/SPT. Import ke MS Project belum dicoba |
-| 7–11 | ✅ 8 subproyek | 1000 iterasi × 2 skenario CR × 2 antrian; ringkasan di `06_simulasi_monte_carlo/hasil/00_RINGKASAN_SEMUA.md` |
+| 7–11 | ✅ 8 subproyek | 1000 iterasi × 2 skenario CR × 2 antrian; ringkasan di `06_simulasi_iterasi/hasil/00_RINGKASAN_SEMUA.md` |
 | 12 | ❌ Belum | Model saat ini: dependensi selalu dipatuhi |
 
 ---
@@ -50,7 +50,7 @@ diterapkan ke 8 subproyek ([35:48] "satu dulu… kalau tahu cara kerjanya baru n
 | Unit analisis | 26 baris modul (`dataset_pre02_fne_v3.csv`), 1 baris = 1 modul | Jadwal aktivitas **di dalam** tiap subproyek (puluhan aktivitas + dependensi + resource) |
 | `Change_Request_Count` | Angka dummy buatan sendiri | Hasil simulasi `RAND()` per aktivitas per iterasi |
 | `Status_Delay` | Label turunan dari SPI estimasi | Hasil simulasi: selesai simulasi > selesai rencana |
-| Probabilitas | Keluaran model ML (LR/RF/GB/MLP) | Proporsi iterasi yang telat (Monte Carlo) — atau tetap ML jika dosen memilih "pelengkap" (revisi 2) |
+| Probabilitas | Keluaran model ML (LR/RF/GB/MLP) | Proporsi iterasi yang telat (simulasi iterasi random) — atau tetap ML jika dosen memilih "pelengkap" (revisi 2) |
 | Penjelasan "kenapa telat" | Feature importance | Jejak simulasi: CR sendiri, rambatan predecessor, menunggu resource |
 
 Judul tetap cocok: "Prediksi Probabilitas Keterlambatan Proyek **Multi Sumber Daya Terbatas**". Justru
@@ -60,7 +60,7 @@ revisi 5–6 (antrian resource) yang membuat bagian "sumber daya terbatas" benar
 
 ## 3. Mulai dari Mana: Pilot P-FNE-01
 
-> Status: langkah A–G sudah dibuat untuk P-FNE-01 lalu diterapkan ke 8 subproyek di `06_simulasi_monte_carlo/`
+> Status: langkah A–G sudah dibuat untuk P-FNE-01 lalu diterapkan ke 8 subproyek di `06_simulasi_iterasi/`
 > (lihat README di folder tersebut). Rincian di bawah adalah rencana awal untuk pilot P-FNE-01.
 
 Semua bahan pilot sudah ada di `MP-datasetRaw/2026 PMP Super ERP Farm Nation Enterprise Foundation & Core Platform.docx`.
@@ -101,7 +101,7 @@ Semua bahan pilot sudah ada di `MP-datasetRaw/2026 PMP Super ERP Farm Nation Ent
 |---|---|
 | `dataset_pre02_fne_v3.csv` | Jangan dihapus. Statusnya menunggu revisi 2; kemungkinan menjadi data level modul/pelengkap |
 | `04_implemen_desain_eksperimen/experiment_pipeline.py` | Ditahan sampai revisi 2 dijawab. Jika ML jadi pelengkap, label `Status_Delay` diganti hasil simulasi |
-| `04_implemen_desain_eksperimen/02_Draft_Metodologi_Eksperimen_Bab3.md` | §3.1 alur penelitian, §3.2 sumber data (tambah jadwal aktivitas & resource), §3.3 variabel (CR jadi variabel simulasi), §3.4 desain eksperimen (tambah simulasi Monte Carlo) |
+| `04_implemen_desain_eksperimen/02_Draft_Metodologi_Eksperimen_Bab3.md` | §3.1 alur penelitian, §3.2 sumber data (tambah jadwal aktivitas & resource), §3.3 variabel (CR jadi variabel simulasi), §3.4 desain eksperimen (tambah simulasi iterasi random) |
 | `catatan_dosen/Penjelasan_Variabel_Dataset.md`, `sumber_data_variabel.md` | Tambahkan sumber untuk jadwal aktivitas, resource, dan parameter simulasi |
 | Bab I / pendahuluan | Revisi 1: kenapa proyek telat + mekanisme rambatan |
 
@@ -109,7 +109,7 @@ Semua bahan pilot sudah ada di `MP-datasetRaw/2026 PMP Super ERP Farm Nation Ent
 
 ## 5. Untuk Ditanyakan di Bimbingan Berikutnya
 
-1. Monte Carlo menggantikan ML, atau hasil simulasi dipakai sebagai data/label ML?
+1. Simulasi iterasi random menggantikan ML, atau hasil simulasi dipakai sebagai data/label ML?
 2. Unit probabilitas: per subproyek saja, atau juga per aktivitas?
 3. Apakah boleh memakai kelas *impact* di PMP §2.5 sebagai dasar tambahan durasi CR?
 4. Jawaban kelompok untuk pertanyaan dosen [47:30]: jika syarat dependensi tidak diikuti (aktivitas mulai sebelum predecessor selesai), bagaimana memodelkannya — dilarang, atau diizinkan dengan penalti *rework*?

@@ -1,6 +1,6 @@
-# Ringkasan Hasil Simulasi Monte Carlo — 8 Subproyek Super ERP FNE
+# Ringkasan Hasil Simulasi Iterasi Random — 8 Subproyek Super ERP FNE
 
-> Digenerate otomatis oleh `simulasi_monte_carlo.py`. Jangan diedit manual; jalankan ulang script.
+> Digenerate otomatis oleh `simulasi_iterasi.py`. Jangan diedit manual; jalankan ulang script.
 
 ## Parameter
 

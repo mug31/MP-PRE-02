@@ -1,5 +1,5 @@
 """
-PRE-02: Simulasi Monte Carlo Keterlambatan Proyek — 8 Sub-Proyek Super ERP FNE
+PRE-02: Simulasi Iterasi Random Keterlambatan Proyek — 8 Sub-Proyek Super ERP FNE
 (sesuai arahan dosen pada bimbingan 7 Oktober 2026, lihat catatan_dosen/revisi_7okt.md).
 
 Alur per subproyek:
@@ -16,8 +16,8 @@ Aturan waktu (hari kerja, dosen [25:01–25:28], [37:06–37:31]):
 
 Keluaran: hasil/ (per subproyek + ringkasan semua) dan excel/P-FNE-0X.xlsx.
 Kebutuhan: pip install openpyxl matplotlib
-Jalankan:  python simulasi_monte_carlo.py            (semua subproyek)
-           python simulasi_monte_carlo.py 01 07      (subproyek tertentu)
+Jalankan:  python simulasi_iterasi.py            (semua subproyek)
+           python simulasi_iterasi.py 01 07      (subproyek tertentu)
 """
 
 import csv
@@ -456,8 +456,8 @@ def tulis_ringkasan_subproyek(path, kode, aktivitas, rencana, rencana_cpm, ringk
     selalu = [r['ID'] for r in utama_akt if r['Indeks_Kekritisan'] == 1]
     kadang = sorted((r for r in utama_akt if 0 < r['Indeks_Kekritisan'] < 1), key=lambda r: -r['Indeks_Kekritisan'])[:10]
     cpm = max(j['selesai'] for j in rencana_cpm.values())
-    L = [f'# Hasil Simulasi Monte Carlo — P-FNE-{kode}\n',
-         '> Digenerate otomatis oleh `simulasi_monte_carlo.py`. Jangan diedit manual; jalankan ulang script.\n',
+    L = [f'# Hasil Simulasi Iterasi Random — P-FNE-{kode}\n',
+         '> Digenerate otomatis oleh `simulasi_iterasi.py`. Jangan diedit manual; jalankan ulang script.\n',
          '## Jadwal Rencana\n',
          f'- {len(aktivitas)} aktivitas (sumber: `data/P-FNE-{kode}_aktivitas.csv`).',
          f'- Tanpa batasan resource: selesai hari kerja ke-**{cpm}**.']
@@ -498,8 +498,8 @@ def tulis_ringkasan_subproyek(path, kode, aktivitas, rencana, rencana_cpm, ringk
 
 
 def tulis_ringkasan_semua(path, semua_ringkasan):
-    L = ['# Ringkasan Hasil Simulasi Monte Carlo — 8 Subproyek Super ERP FNE\n',
-         '> Digenerate otomatis oleh `simulasi_monte_carlo.py`. Jangan diedit manual; jalankan ulang script.\n',
+    L = ['# Ringkasan Hasil Simulasi Iterasi Random — 8 Subproyek Super ERP FNE\n',
+         '> Digenerate otomatis oleh `simulasi_iterasi.py`. Jangan diedit manual; jalankan ulang script.\n',
          '## Parameter\n',
          f'- Iterasi: **{N_ITERASI}** per subproyek per skenario; seed `{SEED}-<kode>`; peluang CR per aktivitas: **{P_CR:g}**']
     for s, kelas in SKENARIO_CR.items():

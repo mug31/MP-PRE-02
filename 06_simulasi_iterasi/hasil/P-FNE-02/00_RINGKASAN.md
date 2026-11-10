@@ -1,6 +1,6 @@
-# Hasil Simulasi Monte Carlo — P-FNE-02
+# Hasil Simulasi Iterasi Random — P-FNE-02
 
-> Digenerate otomatis oleh `simulasi_monte_carlo.py`. Jangan diedit manual; jalankan ulang script.
+> Digenerate otomatis oleh `simulasi_iterasi.py`. Jangan diedit manual; jalankan ulang script.
 
 ## Jadwal Rencana
 

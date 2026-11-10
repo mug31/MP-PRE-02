@@ -1,5 +1,5 @@
-# 06_simulasi_monte_carlo
-## Simulasi Monte Carlo Keterlambatan — 8 Sub-Proyek Super ERP FNE
+# 06_simulasi_iterasi
+## Simulasi Iterasi Random Keterlambatan — 8 Sub-Proyek Super ERP FNE
 
 Implementasi revisi dosen bimbingan 7 Oktober 2026 ([[revisi_7okt]]): probabilitas keterlambatan dihitung dari
 simulasi berulang berbasis jadwal aktivitas dan resource di PMP, dengan change request (CR) yang disimulasikan.
@@ -10,7 +10,7 @@ Metode dicoba dulu pada P-FNE-01, lalu diterapkan ke ke-8 subproyek.
 ```
 MP-datasetRaw/*.docx ──ekstraksi_pmp.py──▶ data/P-FNE-0X_aktivitas.csv + _resource.csv
                                                    │
-                                     simulasi_monte_carlo.py (1000 iterasi × 2 skenario CR × 2 antrian)
+                                     simulasi_iterasi.py (1000 iterasi × 2 skenario CR × 2 antrian)
                                                    │
                          hasil/ (ringkasan, iterasi, per aktivitas, histogram) + excel/P-FNE-0X.xlsx
 ```
@@ -22,7 +22,7 @@ MP-datasetRaw/*.docx ──ekstraksi_pmp.py──▶ data/P-FNE-0X_aktivitas.csv
 | `ekstraksi_pmp.py` | Membaca tabel asli di 8 berkas PMP `.docx` dan menulis jadwal + resource per subproyek. Semua tafsiran tertulis di kode dan di kolom `Catatan` | 3–5 |
 | `data/P-FNE-0X_aktivitas.csv` | ID, durasi (hari kerja), predecessor, kebutuhan resource (`Role:jumlah`), durasi/dependensi/resource asli dokumen, sumber, catatan | 3, 4 |
 | `data/P-FNE-0X_resource.csv` | Orang/tim, role, jendela ketersediaan, sumber | 5 |
-| `simulasi_monte_carlo.py` | Penjadwalan dengan antrian resource (FCFS/SPT), simulasi CR, iterasi, ringkasan | 6–11 |
+| `simulasi_iterasi.py` | Penjadwalan dengan antrian resource (FCFS/SPT), simulasi CR, iterasi, ringkasan | 6–11 |
 | `buat_excel.py` | Pembuat workbook Excel (dipanggil otomatis) | – |
 | `excel/P-FNE-0X.xlsx` | Untuk dosen: jadwal rencana & 1 iterasi CR dengan rumus hidup (`RAND()`/`IF`, tekan F9), jadwal per orang, 1000 iterasi | 4–10 |
 | `hasil/00_RINGKASAN_SEMUA.md` | Ringkasan 8 subproyek (digenerate) | 10, 11 |
@@ -34,11 +34,11 @@ MP-datasetRaw/*.docx ──ekstraksi_pmp.py──▶ data/P-FNE-0X_aktivitas.csv
 ```bash
 pip install openpyxl matplotlib
 python ekstraksi_pmp.py          # hanya perlu jika dokumen PMP atau aturan ekstraksi berubah
-python simulasi_monte_carlo.py   # semua subproyek; atau: python simulasi_monte_carlo.py 01 07
+python simulasi_iterasi.py   # semua subproyek; atau: python simulasi_iterasi.py 01 07
 ```
 
 Parameter (peluang CR, kelas kesulitan, jumlah iterasi, kebijakan antrian) ada di bagian atas
-`simulasi_monte_carlo.py`. Hasil dapat direplikasi (seed `42-<kode>`).
+`simulasi_iterasi.py`. Hasil dapat direplikasi (seed `42-<kode>`).
 
 ### Data yang dipakai per subproyek (pilihan A: tabel paling detail yang durasi DAN dependensinya tertulis)
 

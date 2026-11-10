@@ -4,9 +4,9 @@ Membuat workbook excel/P-FNE-0X.xlsx (satu per subproyek) untuk dipresentasikan 
 Sheet berisi RUMUS hidup (berubah setiap F9):
   - Jadwal_Rencana      : rumus dosen, mulai = MAX(selesai predecessor) + 1, selesai = mulai + durasi - 1
   - Simulasi_1_Iterasi  : satu putaran CR dengan RAND() dan IF(), delay sendiri vs rambatan
-Sheet berisi NILAI dari simulasi_monte_carlo.py (karena antrian resource sulit dirumuskan di Excel):
+Sheet berisi NILAI dari simulasi_iterasi.py (karena antrian resource sulit dirumuskan di Excel):
   - Jadwal_Resource, Hasil_Iterasi, Ringkasan
-Dipanggil dari simulasi_monte_carlo.py.
+Dipanggil dari simulasi_iterasi.py.
 """
 
 from openpyxl import Workbook
@@ -36,7 +36,7 @@ def sheet_petunjuk(wb, kode, aktivitas):
     ws.title = 'Petunjuk'
     sumber = sorted({a['Sumber'] for a in aktivitas})
     teks = [
-        f'Simulasi Monte Carlo Keterlambatan — Sub-Proyek P-FNE-{kode}',
+        f'Simulasi Iterasi Random Keterlambatan — Sub-Proyek P-FNE-{kode}',
         '',
         'Urutan membaca (sesuai arahan dosen, bimbingan 7 Oktober 2026):',
         '1. Parameter — peluang CR dan kelas kesulitan (sel kuning boleh diubah).',
@@ -173,7 +173,7 @@ def sheet_simulasi(wb, aktivitas, baris, n_kelas):
 
 def sheet_jadwal_resource(wb, aktivitas, orang, rencana):
     ws = wb.create_sheet('Jadwal_Resource')
-    ws['A1'] = 'Jadwal per orang/tim (rencana, tanpa CR, antrian FCFS) — dihitung oleh simulasi_monte_carlo.py'
+    ws['A1'] = 'Jadwal per orang/tim (rencana, tanpa CR, antrian FCFS) — dihitung oleh simulasi_iterasi.py'
     ws['A1'].font = Font(bold=True, size=12)
     selesai = max(j['selesai'] for j in rencana['FCFS'].values())
     ws['A2'] = f'Selesai proyek dengan batasan resource: hari kerja ke-{selesai}'
