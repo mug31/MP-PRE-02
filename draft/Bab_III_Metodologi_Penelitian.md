@@ -309,7 +309,7 @@ hasil eksperimen, dan hasil analisis identik setiap kali dijalankan ulang.
 | Murphy (1973), *A new vector partition of the probability score*, Journal of Applied Meteorology | 3.11.3 | † Perlu ditambahkan |
 | Dokumen PMP P-FNE-01 s.d. P-FNE-08 (2026) | 3.3–3.5, 3.10 | Sumber data primer |
 
-Rujukan bertanda † adalah rujukan standar untuk metode yang dipakai; detail bibliografinya perlu dicek ulang sebelum
-dimasukkan ke Daftar Pustaka. Rujukan penelitian terdahulu tentang prediksi keterlambatan dan simulasi risiko jadwal
+Rujukan bertanda † adalah rujukan standar untuk metode yang dipakai. Metadatanya sudah diverifikasi ke sumber
+(`02_Studi Literatur/Verifikasi_Literatur.md`, bagian B) dan sudah masuk Daftar Rujukan naskah paper (`paper/`). Rujukan penelitian terdahulu tentang prediksi keterlambatan dan simulasi risiko jadwal
 (misalnya Batselier & Vanhoucke, 2015; Wauters & Vanhoucke, 2016; Browning & Yassine, 2010) dapat ditambahkan pada
 3.1 dan 3.4 sesuai alur Tinjauan Pustaka.
