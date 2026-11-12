@@ -1,0 +1,15 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-TECH-001,Kegagalan Integrasi dengan Modul Transaksional,Teknis,3 (Medium),5 (Very High),0.5,5,1,,PMP-07 R-TECH-001: Kegagalan Integrasi dengan Modul Transaksional
+R-TECH-002,Model AI/ML Tidak Mencapai Target Akurasi,Teknis,4 (High),4 (High),0.7,4,1,,PMP-07 R-TECH-002: Model AI/ML Tidak Mencapai Target Akurasi
+R-TECH-003,Knowledge Graph Query Performance Tidak Mencukupi,Teknis,3 (Medium),3 (Medium),0.5,3,1,,PMP-07 R-TECH-003: Knowledge Graph Query Performance Tidak Mencukupi
+R-TECH-004,Dashboard Performance Tidak Mencukupi,Teknis,3 (Medium),3 (Medium),0.5,3,1,,PMP-07 R-TECH-004: Dashboard Performance Tidak Mencukupi
+R-TECH-005,Security Breach atau Data Leak,Keamanan,2 (Low),5 (Very High),0.3,5,1,,PMP-07 R-TECH-005: Security Breach atau Data Leak
+R-MGMT-001,Scope Creep,Manajemen,4 (High),4 (High),0.7,4,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-07 R-MGMT-001: Scope Creep
+R-MGMT-002,Schedule Delay,Manajemen,4 (High),4 (High),0.7,4,1,,PMP-07 R-MGMT-002: Schedule Delay
+R-MGMT-003,Budget Overrun,Manajemen,3 (Medium),4 (High),0.5,4,0,Risiko biaya: tidak menggeser jadwal,PMP-07 R-MGMT-003: Budget Overrun
+R-MGMT-004,Key Resource Turnover,Manajemen,2 (Low),5 (Very High),0.3,5,1,,PMP-07 R-MGMT-004: Key Resource Turnover
+R-ORG-001,Resistance to Change,Organisasi,3 (Medium),4 (High),0.5,4,1,,PMP-07 R-ORG-001: Resistance to Change
+R-EXT-001,Vendor Failure atau Performance Issue,Eksternal,2 (Low),4 (High),0.3,4,1,,PMP-07 R-EXT-001: Vendor Failure atau Performance Issue
+R-EXT-002,Perubahan Regulasi,Eksternal,1 (Very Low),4 (High),0.1,4,1,,PMP-07 R-EXT-002: Perubahan Regulasi
+R-DATA-001,Data Quality Issues,Data,4 (High),4 (High),0.7,4,1,,PMP-07 R-DATA-001: Data Quality Issues
+R-DATA-002,Data Availability Issues,Data,3 (Medium),4 (High),0.5,4,1,,PMP-07 R-DATA-002: Data Availability Issues

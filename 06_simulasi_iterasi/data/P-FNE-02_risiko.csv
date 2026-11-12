@@ -1,0 +1,11 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-001,Keterlambatan P-FNE-01,Manajemen,4,5,0.7,5,1,,PMP-02 12.5. Risk Register Complete
+R-002,Perubahan requirement signifikan,Manajemen,3,4,0.5,4,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-02 12.5. Risk Register Complete
+R-003,Turnover tim kunci,Organisasi,2,4,0.3,4,1,,PMP-02 12.5. Risk Register Complete
+R-004,Integrasi event-driven gagal,Teknis,2,5,0.3,5,1,,PMP-02 12.5. Risk Register Complete
+R-005,Database performance issue,Teknis,3,4,0.5,4,1,,PMP-02 12.5. Risk Register Complete
+R-006,User tidak tersedia UAT,Eksternal,3,3,0.5,3,1,,PMP-02 12.5. Risk Register Complete
+R-007,Cloud infrastructure issue,Eksternal,2,4,0.3,4,1,,PMP-02 12.5. Risk Register Complete
+R-008,Perubahan regulasi pertanian,Eksternal,2,3,0.3,3,1,,PMP-02 12.5. Risk Register Complete
+R-009,Kompleksitas data pertanian,Domain,3,3,0.5,3,1,,PMP-02 12.5. Risk Register Complete
+R-010,Mobile offline sync failure,Teknis,3,3,0.5,3,1,,PMP-02 12.5. Risk Register Complete

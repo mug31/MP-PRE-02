@@ -1,0 +1,21 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-001,Kompleksitas integrasi microservices,Teknis,5,5,0.9,5,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-002,Performa audit log menurun,Teknis,4,4,0.7,4,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-003,Security vulnerability IAM,Teknis,3,5,0.5,5,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-004,Data migration quality issue,Teknis,4,3,0.7,3,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-005,Teknologi stack tidak mature,Teknis,2,2,0.3,2,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-006,Team turnover,Sumber Daya,4,4,0.7,4,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-007,Kesulitan rekrut security,Sumber Daya,4,3,0.7,3,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-008,Overload tim,Sumber Daya,3,2,0.5,2,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-009,Scope creep,Jadwal,5,3,0.9,3,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-01 12.5.1 Risk Register Lengkap
+R-010,Integration with legacy complex,Jadwal,4,4,0.7,4,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-011,Cloud cost overrun,Biaya,3,3,0.5,3,0,Risiko biaya: tidak menggeser jadwal,PMP-01 12.5.1 Risk Register Lengkap
+R-012,Software license cost increase,Biaya,2,2,0.3,2,0,Risiko biaya: tidak menggeser jadwal,PMP-01 12.5.1 Risk Register Lengkap
+R-013,UAT gagal,Kualitas,3,4,0.5,4,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-014,Performance NFR tidak tercapai,Kualitas,3,4,0.5,4,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-015,Data breach,Keamanan,2,5,0.3,5,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-016,Compliance failure,Keamanan,2,5,0.3,5,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-017,Vulnerabilities in third-party libraries,Keamanan,3,2,0.5,2,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-018,Third-party API downtime,Eksternal,3,2,0.5,2,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-019,Cloud provider outage,Eksternal,1,5,0.1,5,1,,PMP-01 12.5.1 Risk Register Lengkap
+R-020,Perubahan regulasi,Eksternal,2,3,0.3,3,1,,PMP-01 12.5.1 Risk Register Lengkap

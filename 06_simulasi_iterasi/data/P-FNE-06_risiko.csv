@@ -1,0 +1,17 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-001,Keterlambatan integrasi P-FNE-01,Teknis,H (4),M (3),0.7,3,1,,PMP-06 9.5. RISK REGISTER
+R-002,Kompleksitas integrasi 6 proyek,Teknis,L (2),M (3),0.3,3,1,,PMP-06 9.5. RISK REGISTER
+R-003,Performa tidak mencapai target,Teknis,H (4),H (4),0.7,4,1,,PMP-06 9.5. RISK REGISTER
+R-004,Data breach,Teknis,L (2),VH (5),0.3,5,1,,PMP-06 9.5. RISK REGISTER
+R-005,Three-way matching tidak akurat,Teknis,M (3),L (2),0.5,2,1,,PMP-06 9.5. RISK REGISTER
+R-006,Perubahan regulasi akuntansi,Manajemen,M (3),VH (5),0.5,5,1,,PMP-06 9.5. RISK REGISTER
+R-007,Scope creep,Manajemen,H (4),M (3),0.7,3,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-06 9.5. RISK REGISTER
+R-008,Keterlambatan jadwal,Manajemen,M (3),H (4),0.5,4,1,,PMP-06 9.5. RISK REGISTER
+R-009,Over budget,Manajemen,M (3),M (3),0.5,3,0,Risiko biaya: tidak menggeser jadwal,PMP-06 9.5. RISK REGISTER
+R-010,Turnover tim kunci,Organisasi,M (3),M (3),0.5,3,1,,PMP-06 9.5. RISK REGISTER
+R-011,SME tidak tersedia,Organisasi,M (3),L (2),0.5,2,1,,PMP-06 9.5. RISK REGISTER
+R-012,End user resistance,Organisasi,L (2),M (3),0.3,3,1,,PMP-06 9.5. RISK REGISTER
+R-013,Vendor cloud outage,Eksternal,VL (1),VH (5),0.1,5,1,,PMP-06 9.5. RISK REGISTER
+R-014,Kenaikan tarif cloud/tool,Eksternal,L (2),H (4),0.3,4,0,Risiko biaya: tidak menggeser jadwal,PMP-06 9.5. RISK REGISTER
+R-015,Data migration tidak akurat,Data,L (2),L (2),0.3,2,1,,PMP-06 9.5. RISK REGISTER
+R-016,Data loss saat migrasi,Data,L (2),L (2),0.3,2,1,,PMP-06 9.5. RISK REGISTER

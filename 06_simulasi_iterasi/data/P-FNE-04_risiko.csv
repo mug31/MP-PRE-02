@@ -1,0 +1,21 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-01,MRP Engine Performance,,3 (Medium),4 (High),0.5,4,1,,PMP-04 9.3.2. Risk Register
+R-02,Mobile App Offline Sync Conflict,,2 (Low),5 (Very High),0.3,5,1,,PMP-04 9.3.2. Risk Register
+R-03,BOM Circular Dependency,,3 (Medium),4 (High),0.5,4,1,,PMP-04 9.3.2. Risk Register
+R-04,Integration API Performance,,4 (High),4 (High),0.7,4,1,,PMP-04 9.3.2. Risk Register
+R-05,Event Bus Failure,,2 (Low),5 (Very High),0.3,5,1,,PMP-04 9.3.2. Risk Register
+R-06,Security Vulnerability,,2 (Low),5 (Very High),0.3,5,1,,PMP-04 9.3.2. Risk Register
+R-07,Scope Creep,,5 (Very High),4 (High),0.9,4,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-04 9.3.2. Risk Register
+R-08,Key Resource Leaving,,3 (Medium),5 (Very High),0.5,5,1,,PMP-04 9.3.2. Risk Register
+R-09,Budget Overrun,,3 (Medium),4 (High),0.5,4,0,Risiko biaya: tidak menggeser jadwal,PMP-04 9.3.2. Risk Register
+R-10,Schedule Slip,,4 (High),4 (High),0.7,4,1,,PMP-04 9.3.2. Risk Register
+R-11,Communication Breakdown,,3 (Medium),4 (High),0.5,4,1,,PMP-04 9.3.2. Risk Register
+R-12,Skill Gap,,3 (Medium),4 (High),0.5,4,1,,PMP-04 9.3.2. Risk Register
+R-13,Infrastructure Failure,,1 (Very Low),5 (Very High),0.1,5,1,,PMP-04 9.3.2. Risk Register
+R-14,Environment Inconsistency,,4 (High),3 (Medium),0.7,3,1,,PMP-04 9.3.2. Risk Register
+R-15,Dependency Delay,,4 (High),4 (High),0.7,4,1,,PMP-04 9.3.2. Risk Register
+R-16,Regulatory Change,,1 (Very Low),4 (High),0.1,4,1,,PMP-04 9.3.2. Risk Register
+R-17,Vendor Failure,,1 (Very Low),5 (Very High),0.1,5,1,,PMP-04 9.3.2. Risk Register
+R-18,Data Inaccuracy,,4 (High),4 (High),0.7,4,1,,PMP-04 9.3.2. Risk Register
+R-19,Process Misalignment,,3 (Medium),4 (High),0.5,4,1,,PMP-04 9.3.2. Risk Register
+R-20,User Adoption,,4 (High),3 (Medium),0.7,3,1,,PMP-04 9.3.2. Risk Register

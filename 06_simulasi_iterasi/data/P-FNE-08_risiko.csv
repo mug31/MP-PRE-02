@@ -1,0 +1,32 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-001,IoT Throughput Failure,,High (0.6),High (0.8),0.6,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-005,ERP Integration Failure,,Medium (0.4),Very High (0.9),0.4,5,1,,PMP-08 9.5.4. Risk Prioritization
+R-006,Security Vulnerability,,Medium (0.4),Very High (0.9),0.4,5,1,,PMP-08 9.5.4. Risk Prioritization
+R-030,Data Breach,,Low (0.2),Very High (0.9),0.2,5,1,,PMP-08 9.5.4. Risk Prioritization
+R-003,Simulation Accuracy Low,,High (0.6),High (0.7),0.6,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-004,Simulation Execution Slow,,High (0.6),High (0.7),0.6,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-002,IoT Latency High,,High (0.6),Medium (0.6),0.6,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-009,State Sync Delay,,High (0.6),Medium (0.6),0.6,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-011,Key Person Departure,,Medium (0.5),High (0.7),0.5,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-015,P-FNE-07 Delay,,Medium (0.5),High (0.7),0.5,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-016,P-FNE-01 Delay,,Medium (0.5),High (0.7),0.5,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-007,Data Quality Poor,,Medium (0.4),High (0.7),0.4,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-008,Architecture Scalability,,Medium (0.4),High (0.7),0.4,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-010,AI Model Inaccuracy,,Medium (0.4),High (0.7),0.4,4,1,,PMP-08 9.5.4. Risk Prioritization
+R-012,Skill Gap,,Medium (0.4),Medium (0.6),0.4,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-013,Resource Overload,,Medium (0.4),Medium (0.6),0.4,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-017,Cloud Provider Issue,,Medium (0.4),Medium (0.6),0.4,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-021,Development Delay,,Medium (0.4),Medium (0.6),0.4,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-022,Testing Delay,,Medium (0.4),Medium (0.6),0.4,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-014,Hiring Delay,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-018,Software License Delay,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-019,Regulatory Change,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-020,Tech Obsolescence,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-023,Integration Delay,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-024,Budget Overrun,,Low (0.3),Medium (0.6),0.3,3,0,Risiko biaya: tidak menggeser jadwal,PMP-08 9.5.4. Risk Prioritization
+R-025,Cloud Cost Spike,,Low (0.3),Medium (0.6),0.3,3,0,Risiko biaya: tidak menggeser jadwal,PMP-08 9.5.4. Risk Prioritization
+R-026,Consultant Cost Overrun,,Low (0.3),Medium (0.6),0.3,3,0,Risiko biaya: tidak menggeser jadwal,PMP-08 9.5.4. Risk Prioritization
+R-027,High Defect Rate,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-028,Low Test Coverage,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-029,UAT Failure,,Low (0.3),Medium (0.6),0.3,3,1,,PMP-08 9.5.4. Risk Prioritization
+R-031,IoT Device Compromise,,Very Low (0.1),Very High (0.9),0.1,5,1,,PMP-08 9.5.4. Risk Prioritization

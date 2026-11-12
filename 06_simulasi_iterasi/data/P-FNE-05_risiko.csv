@@ -1,0 +1,37 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+R-001,Integrasi dengan sistem eksternal gagal,Technical,Medium (50%),Major,0.5,4,1,,PMP-05 9.4.3 Output
+R-002,Performance tidak mencapai target,Technical,Medium (50%),Major,0.5,4,1,,PMP-05 9.4.3 Output
+R-003,API Gateway bottleneck,Technical,Medium (50%),Major,0.5,4,1,,PMP-05 9.4.3 Output
+R-004,Security vulnerability,Technical,Low (20%),Catastrophic,0.2,5,1,,PMP-05 9.4.3 Output
+R-005,Data migration error,Technical,Medium (50%),Major,0.5,4,1,,PMP-05 9.4.3 Output
+R-006,Database performance issue,Technical,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-007,Third-party API changes,Technical,Low (20%),Moderate,0.2,3,1,,PMP-05 9.4.3 Output
+R-008,Technical debt accumulation,Technical,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-009,Microservices communication failure,Technical,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-010,Container orchestration issue,Technical,Low (20%),Moderate,0.2,3,1,,PMP-05 9.4.3 Output
+R-011,Scope creep,Schedule,High (70%),Moderate,0.7,3,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-05 9.4.3 Output
+R-012,Dependency with other projects,Schedule,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-013,Estimasi tidak akurat,Schedule,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-014,Resource unavailability,Schedule,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-015,Integration delay,Schedule,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-016,UAT delay,Schedule,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-017,Requirement changes,Schedule,High (70%),Moderate,0.7,3,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-05 9.4.3 Output
+R-018,Over budget,Cost,Medium (50%),Moderate,0.5,3,0,Risiko biaya: tidak menggeser jadwal,PMP-05 9.4.3 Output
+R-019,Currency fluctuation,Cost,Low (20%),Minor,0.2,2,0,Risiko biaya: tidak menggeser jadwal,PMP-05 9.4.3 Output
+R-020,Vendor cost increase,Cost,Low (20%),Moderate,0.2,3,0,Risiko biaya: tidak menggeser jadwal,PMP-05 9.4.3 Output
+R-021,Infrastructure cost overrun,Cost,Medium (50%),Moderate,0.5,3,0,Risiko biaya: tidak menggeser jadwal,PMP-05 9.4.3 Output
+R-022,Resource cost increase,Cost,Low (20%),Minor,0.2,2,0,Risiko biaya: tidak menggeser jadwal,PMP-05 9.4.3 Output
+R-023,Kehilangan key developer,Resource,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-024,Skill gap,Resource,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-025,Team conflict,Resource,Low (20%),Moderate,0.2,3,1,,PMP-05 9.4.3 Output
+R-026,Burnout,Resource,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-027,Code quality issue,Quality,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-028,Testing coverage rendah,Quality,Medium (50%),Moderate,0.5,3,1,,PMP-05 9.4.3 Output
+R-029,Critical bug di production,Quality,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-030,UAT tidak lulus,Quality,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-031,Regulasi baru,External,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-032,Cloud service outage,External,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-033,Natural disaster,External,Very Low (5%),Catastrophic,0.05,5,1,,PMP-05 9.4.3 Output
+R-034,Pandemi/wabah,External,Low (20%),Major,0.2,4,1,,PMP-05 9.4.3 Output
+R-035,Vendor bankruptcy,External,Very Low (5%),Major,0.05,4,1,,PMP-05 9.4.3 Output
+R-036,Cybersecurity attack,External,Low (20%),Catastrophic,0.2,5,1,,PMP-05 9.4.3 Output

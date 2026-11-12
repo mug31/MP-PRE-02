@@ -1,0 +1,25 @@
+ID,Risiko,Kategori,Probabilitas_Dokumen,Dampak_Dokumen,Peluang,Level_Dampak,Dipakai_Simulasi,Alasan,Sumber
+TEC-001,Kinerja sistem tidak memenuhi target,,4,5,0.7,5,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-002,Integrasi dengan sistem lain gagal,,4,4,0.7,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-003,Security vulnerability,,3,5,0.5,5,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-001,Keterlambatan jadwal,,4,4,0.7,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-002,Over budget,,3,4,0.5,4,0,Risiko biaya: tidak menggeser jadwal,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-003,Scope creep,,4,3,0.7,3,0,Perubahan scope/requirement: sudah dimodelkan sebagai CR,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-004,Technical debt tinggi,,3,4,0.5,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-001,Kehilangan key person,,3,4,0.5,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-005,Data migration gagal,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-002,Konflik dalam tim,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+EXT-001,Perubahan regulasi,,2,4,0.3,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-006,Dependency P-FNE lain,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-006,Performance bottleneck,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-003,Kurangnya kompetensi tim,,2,4,0.3,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+EXT-002,Vendor issue,,2,3,0.3,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-004,Burnout tim,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+EXT-003,Security incident,,2,4,0.3,4,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-004,Stakeholder expectation mismatch,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-005,SME tidak tersedia,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+ORG-006,Resistance to change,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+TEC-007,Batch/lot tracking tidak akurat,,2,3,0.3,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+MGT-005,Quality issue,,3,3,0.5,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+EXT-004,Force majeure,,1,5,0.1,5,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
+EXT-005,Infrastructure failure,,2,3,0.3,3,1,,PMP-03 9.2.3.3. Risk Scoring & Prioritization
