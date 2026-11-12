@@ -1,0 +1,3 @@
+Jenis,Subproyek,Iterasi,T_Rencana,Keterlambatan_Akhir_Hari,Telat_Persen,P_25,Zona_25,P_50,Zona_50,P_75,Zona_75,SPI_25,SPI_50,SPI_75
+"Telat, terdeteksi dini",P-FNE-03,301,220.0,11.7,0.053182,0.796267,Merah,0.852926,Merah,0.825593,Merah,0.9285,0.9191,0.9442
+"Tepat waktu, peringatan palsu",P-FNE-03,216,220.0,10.6457,0.04839,0.630013,Kuning,0.693841,Merah,0.634855,Kuning,0.9558,0.9368,0.9487

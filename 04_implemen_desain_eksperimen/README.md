@@ -20,6 +20,9 @@ riwayat git.
 | [`analisis_data.py`](analisis_data.py) | Analisis data Pertemuan 6: CI *bootstrap*, uji hipotesis H1–H5, dekomposisi Brier, analisis ambang & deteksi dini, per subproyek, kepentingan fitur model rekomendasi | Aktif |
 | [`uji_analisis.py`](uji_analisis.py) | Uji analisis: konsistensi dengan Pertemuan 5, metrik berbobot, kalibrasi logistik, CI, dekomposisi Brier, prosedur uji, ambang, reproduksi | Aktif |
 | [`hasil_analisis/`](hasil_analisis/) | Luaran analisis (tabel CSV, grafik, ringkasan) | Aktif (luaran Pertemuan 6) |
+| [`bukti_pembahasan.py`](bukti_pembahasan.py) | Bukti untuk pembahasan Pertemuan 7 (E1–E8): overconfidence NN, transfer kalibrasi, slope LR latih vs uji, profil subproyek, post-hoc fitur relatif, korelasi variabel, contoh kasus, sifat peringatan palsu | Aktif |
+| [`hasil_analisis/bukti_pembahasan/`](hasil_analisis/bukti_pembahasan/) | Luaran bukti pembahasan (CSV + `00_RINGKASAN_BUKTI.md`) | Aktif (luaran Pertemuan 7) |
+| [`../draft/Bab_V_Pembahasan.md`](../draft/Bab_V_Pembahasan.md), [`../draft/Bab_VI_Kesimpulan_dan_Saran.md`](../draft/Bab_VI_Kesimpulan_dan_Saran.md) | Draf Bab V Pembahasan dan Bab VI Kesimpulan dan Saran | Aktif (draf) |
 | [`../draft/Bab_III_Metodologi_Penelitian.md`](../draft/Bab_III_Metodologi_Penelitian.md) | Draf Bab III versi baru (+ 3.11 hipotesis & teknik analisis) | Aktif (draf) |
 | [`../draft/Bab_IV_Hasil_Penelitian.md`](../draft/Bab_IV_Hasil_Penelitian.md) | Draf Bab IV Hasil Penelitian | Aktif (draf) |
 | [`02_Draft_Metodologi_Eksperimen_Bab3.md`](02_Draft_Metodologi_Eksperimen_Bab3.md) | Draf Bab III versi 1 (dataset 26 modul) | Arsip, digantikan `../draft/` |
@@ -45,6 +48,9 @@ python uji_pipeline.py --reproduksi            # uji pipeline + jalan ulang untu
 # 3) Analisis data (Pertemuan 6) — dari folder ini, setelah langkah 2
 python analisis_data.py                        # ± 3 menit
 python uji_analisis.py --reproduksi            # uji analisis + jalan ulang untuk reproduksi
+
+# 4) Bukti pembahasan (Pertemuan 7) — dari folder ini, setelah langkah 3
+python bukti_pembahasan.py                     # < 1 menit; diuji oleh uji_analisis.py (uji 9)
 ```
 
 ### Luaran di `hasil_eksperimen/`
@@ -102,3 +108,11 @@ python uji_analisis.py --reproduksi            # uji analisis + jalan ulang untu
 - [x] **Pembuatan tabel & grafik:** `hasil_analisis/`.
 - [x] **Pengujian hipotesis/evaluasi performa:** H1–H5, satu per eksperimen di `Deskripsi_Penelitian.md` §4 (`tabel_keputusan_hipotesis.csv`).
 - [x] **Draft bagian results:** `../draft/Bab_IV_Hasil_Penelitian.md`.
+
+### Checklist Pertemuan 7 (`progres_penelitian_MP.md`)
+
+- [x] **Interpretasi hasil analisis:** `../draft/Bab_V_Pembahasan.md` 5.1–5.7, setiap penjelasan didukung bukti E1–E8 (`bukti_pembahasan.py`).
+- [x] **Perbandingan dengan penelitian sebelumnya:** Bab V 5.2–5.8, hanya memakai klaim yang sudah diverifikasi (`../02_Studi Literatur/Verifikasi_Literatur.md`).
+- [x] **Implikasi hasil penelitian:** Bab V 5.10.1–5.10.2.
+- [x] **Keterbatasan penelitian:** Bab V 5.10.3.
+- [x] **Draft discussion & kesimpulan:** `../draft/Bab_V_Pembahasan.md`, `../draft/Bab_VI_Kesimpulan_dan_Saran.md`.

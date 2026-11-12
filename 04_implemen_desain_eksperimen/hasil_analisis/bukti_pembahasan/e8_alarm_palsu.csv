@@ -1,0 +1,7 @@
+Ambang,Keterangan,Kelompok,N_Iterasi,Median_Telat_Persen,Persen_Telat_di_atas_3pct
+0.485472,θ* Youden,"Tepat waktu, pernah diperingatkan",1681,0.035772,0.672814
+0.485472,θ* Youden,"Tepat waktu, tidak pernah diperingatkan",2737,0.028301,0.448301
+0.35,Batas Kuning,"Tepat waktu, pernah diperingatkan",2231,0.034959,0.64545
+0.35,Batas Kuning,"Tepat waktu, tidak pernah diperingatkan",2187,0.027534,0.419753
+0.65,Batas Merah,"Tepat waktu, pernah diperingatkan",970,0.037304,0.707216
+0.65,Batas Merah,"Tepat waktu, tidak pernah diperingatkan",3448,0.029403,0.484919

@@ -1,0 +1,5 @@
+Model,ECE_Raw,ECE_Platt_Subproyek_Lain,ECE_Platt_Oracle,Brier_Raw,Brier_Platt_Subproyek_Lain,Brier_Platt_Oracle
+Gradient Boosting,0.161529,0.204618,0.027135,0.171813,0.190706,0.122256
+Logistic Regression,0.177971,0.221306,0.028442,0.1958,0.205803,0.136771
+MLP Neural Network,0.300635,0.292355,0.038657,0.285912,0.256026,0.134331
+Random Forest,0.18157,0.190785,0.035634,0.176076,0.186697,0.126495

@@ -1,0 +1,5 @@
+Model,Persen_Prediksi_Ekstrem,Persen_Ekstrem_yang_Salah,Log_Loss_Kontribusi_Ekstrem_Salah
+Logistic Regression,0.029458,0.050919,0.008111
+Random Forest,0.0,,0.0
+Gradient Boosting,0.0,,0.0
+MLP Neural Network,0.272208,0.315934,1.00497

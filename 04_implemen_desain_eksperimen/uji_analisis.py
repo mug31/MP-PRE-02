@@ -15,6 +15,8 @@ PRE-02: Uji analisis data (Pertemuan 6)
 7. Ambang & deteksi dini: recall/specificity pada θ* = tabel Pertemuan 5; deteksi s.d. 25% = recall di titik 25%;
                   deteksi kumulatif tidak turun.
 8. Reproduksi   : (opsional) dua kali jalan → seluruh tabel CSV identik.
+9. Bukti pembahasan (Pertemuan 7): E5 'fitur asli' = hasil utama; slope LR latih ≈ 1; rata-rata ECE Platt oracle < Raw < Platt subproyek lain;
+                  porsi prediksi ekstrem NN dihitung ulang; contoh kasus E7 sesuai kriteria.
 """
 
 import argparse
@@ -156,6 +158,28 @@ def uji_ambang():
     return f'θ* recall {s.Recall:.4f} & specificity {s.Specificity:.4f} = Pertemuan 5; deteksi dini konsisten'
 
 
+def uji_bukti(p):
+    B = HASIL / 'bukti_pembahasan'
+    e5 = pd.read_csv(B / 'e5_posthoc_fitur_relatif.csv')
+    asli = e5[(e5.Subproyek == 'Semua') & (e5.Varian.str.startswith('Fitur asli'))].iloc[0]
+    t5 = pd.read_csv(EKSP / 'tabel_metrik_evaluasi.csv')
+    gb = t5[(t5.Model == 'Gradient Boosting') & (t5.Kalibrasi == 'Raw')].iloc[0]
+    assert abs(asli.Brier - gb.Brier) < 2e-6 and abs(asli.ROC_AUC - gb.ROC_AUC) < 2e-6
+    e3 = pd.read_csv(B / 'e3_slope_lr_latih_uji.csv')
+    assert (e3.Slope_Latih.sub(1).abs() < 0.01).all() and (e3.Intercept_Latih.abs() < 0.01).all()
+    e2 = pd.read_csv(B / 'e2_transfer_kalibrasi.csv').groupby('Model').mean(numeric_only=True)
+    # klaim Bab V 5.4 tentang rata-rata: oracle < Raw; Platt dari subproyek lain > Raw untuk LR, RF, GB
+    assert (e2.ECE_Platt_Oracle < e2.ECE_Raw).all()
+    assert (e2.drop('MLP Neural Network').ECE_Platt_Subproyek_Lain > e2.drop('MLP Neural Network').ECE_Raw).all()
+    e1 = pd.read_csv(B / 'e1_prediksi_ekstrem.csv').set_index('Model')
+    q = p[an.kolom('MLP Neural Network', 'Raw')].to_numpy()
+    assert abs(((q <= 0.01) | (q >= 0.99)).mean() - e1.loc['MLP Neural Network', 'Persen_Prediksi_Ekstrem']) < 1e-6
+    e7 = pd.read_csv(B / 'e7_contoh_kasus.csv')
+    a, b = e7.iloc[0], e7.iloc[1]
+    assert a.Telat_Persen > 0.05 and a.P_25 >= 0.65 and b.Telat_Persen <= 0.05 and max(b.P_25, b.P_50, b.P_75) >= 0.485
+    return 'E1, E2, E3, E5, E7 konsisten dengan hasil utama dan kriteria'
+
+
 def uji_reproduksi():
     with tempfile.TemporaryDirectory() as tmp:
         an.main(['--keluaran', tmp])
@@ -172,7 +196,8 @@ def main():
     p, _ = an.muat_prediksi(EKSP / 'tabel_prediksi_oof.csv')
     uji = [('Konsistensi dengan Pertemuan 5', uji_konsistensi), ('Metrik berbobot', lambda: uji_berbobot(p)),
            ('Kalibrasi logistik', lambda: uji_kalibrasi_logistik(p)), ('Selang kepercayaan', uji_ci),
-           ('Dekomposisi Brier', uji_murphy), ('Prosedur uji', uji_prosedur), ('Ambang & deteksi dini', uji_ambang)]
+           ('Dekomposisi Brier', uji_murphy), ('Prosedur uji', uji_prosedur), ('Ambang & deteksi dini', uji_ambang),
+           ('Bukti pembahasan', lambda: uji_bukti(p))]
     if a.reproduksi:
         uji.append(('Reproduksi', uji_reproduksi))
     gagal = 0
