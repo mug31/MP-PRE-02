@@ -21,7 +21,7 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 
 | Kelompok | Jumlah | ✅ | 🟡 | ❌ |
 | :--- | ---: | ---: | ---: | ---: |
-| Matriks No. 1–28 | 28 | 10 | 17 | 1 |
+| Matriks No. 1–28 | 28 | 10 | 16 | 2 |
 | Rujukan metode Bab III | 13 | 11 | 2 | 0 |
 
 **Yang paling penting diperbaiki sebelum dikutip di Bab II/V**
@@ -35,6 +35,7 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 | 28 | Cabanillas et al. (2014) | Matriks menulis metrik "Alert Timeliness, False Alarm Rate, Brier Score". Paper (workshop BPM 2014) memakai **SVM** untuk mengklasifikasi eksekusi tugas aman/anomali pada kasus *smart logistics*; tidak ada Brier Score maupun false alarm rate | Hapus metrik itu; jangan dikutip sebagai rujukan Brier |
 | 25 | Browning & Yassine (2010) | Klaim "bottleneck sumber daya bersama memicu efek domino" tidak ada di abstrak. Isi paper: 20 *priority rule* pada 12.320 problem RCMPSP; aturan populer bisa berkinerja buruk; aturan terbaik berbeda untuk tujuan proyek vs portofolio | Ubah temuan kunci sesuai abstrak, atau cek teks lengkap |
 | 20 | Editorial IJACSEAI (2026) | Tidak ditemukan sama sekali (judul, jurnal, maupun ISSN 3143-438X) | **Buang** dari matriks |
+| 12 | Bimantara et al. (2025) | Daftar pustaka berisi rujukan yang tampak fiktif (Breiman 2023, DOI XGBoost palsu); DOI artikel tidak terdaftar; angka di matriks tidak cocok dengan abstrak | **Buang** dari matriks |
 | 16 | Saurav & Shafi (2022) | Bukan model ML: studi **kuesioner** (292 responden) dengan regresi atas persepsi responden | Koreksi kolom metode; turunkan relevansinya |
 
 ---
@@ -54,7 +55,7 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 | 9 | Kumar & Shrivas (2025) | 🟡 | Sebenarnya terbit di ***RICERCA, International Journal of Multidisciplinary Research and Innovation* 5(12), 8–16** (Des 2025); Zenodo 10.5281/zenodo.17898268 hanya salinan | ✅ RF, ANN, GB, LSTM dibandingkan dengan CPM/PERT/EVM; EWS. Metrik spesifik belum dicek | Abstrak | Jurnal multidisiplin kecil; pendukung saja |
 | 10 | Balaji & Poyyamozhi (2026) | 🟡 | S. Balaji, N. Poyyamozhi. IJSRET 12(2), Mar–Apr 2026. DOI Zenodo **10.5281/zenodo.19483001** | ✅ TAM-Lite; akurasi 97,6%, precision 97,2%, recall 97,8%, F1 97,5%, **Brier 0,024**. Dataset: "Project Management Risk Dataset" (sumber tidak dijelaskan) | Teks lengkap | IJSRET: jurnal berbiaya publikasi, *peer review* diragukan. Jika dipakai sebagai satu-satunya rujukan "Brier di proyek software", sebutkan keterbatasannya |
 | 11 | Grzelak et al. (2026) | ✅ | Judul lengkap: *Predictive Maintenance in Logistics Fleets: A Comparative Evaluation of Random Forest, XGBoost and Logistic Regression*. Grzelak, Voicu, Stoica, Vilau. *Logistics* 10(8), 183 | ✅ RF AUC 0,855 ≈ XGBoost 0,853 > LR 0,822; uji signifikansi CV. Topiknya kebutuhan perawatan, bukan keterlambatan | Abstrak | MDPI. Relevansi metodologis saja |
-| 12 | Bimantara et al. (2025) | 🟡 | Ditemukan di *Jurnal Media Akademik* (penulis utama Henri Caesar Bimantara). DOI di matriks (10.62281/jma.v3i7) **tingkat edisi dan tidak terdaftar** | 🟡 Prediktor kompleksitas, ketersediaan material, antrean; 100 proyek. Angka RMSE/MAE/R²/MAPE belum bisa dicek (situs meminta CAPTCHA, 12 Nov 2026) | – | Jurnal nasional; cek DOI artikel |
+| 12 | Bimantara et al. (2025) | ❌ | Henri Caesar Bimantara, Abdul Rokim, Elkin Rilvani (Universitas Pelita Bangsa). *Jurnal Media Akademik* 3(7), terbit 27 Juli 2025. DOI tertulis 10.62281/v3i7.2629 **tidak terdaftar** (404) | ⚠️ Abstrak: RF, GB, SVR; **500 proyek** prefabrikasi 2020–2024 (bukan 100); GB terbaik dengan RMSE 2,3 hari (produksi) dan 1,8 hari (pengiriman); prediktor: kompleksitas, ketersediaan material, antrean. Angka di matriks (RMSE 0,513; R² 0,9687; MAPE 3,83%) tidak ada di abstrak | Abstrak (dibuka lewat browser) | **Daftar pustakanya memuat rujukan yang tampak fiktif**, misalnya "Breiman (2023), JMLR 45(2)" (Breiman wafat 2005) dan "Chen & Guestrin (2023), DOI 10.1145/acm.2023.xgboost"; kedua DOI tidak terdaftar. **Sebaiknya dibuang** |
 | 13 | Restrepo Ramirez & Rua-Machado (2025) | ✅ | *Revista EIA* 22(44). DOI 10.24050/reia.v22i44.1861 | ✅ 6 model regresi termasuk RFR; deviasi 2,09% (progres) dan 11,05% (keterlambatan); 102 dan 81 data | Abstrak | Jurnal ilmiah |
 | 14 | Ingole (2026) | ✅ | *International Journal of Creative and Open Research in Engineering and Management* 2(7), 1–9. DOI 10.55041/ijcope.v2i7.142 | ✅ SLR PRISMA 30 studi; RF/XGBoost akurasi > 85% | Abstrak | Jurnal kecil; SLR sebagai pendukung |
 | 15 | Purnomo et al. (2025) | 🟡 | Judul lengkap: *Predictive Modeling of Delivery Delays in Transportation Using Machine Learning: A Comparative Study of Service Types*. Agus Purnomo, Nava Gia Ginasta, Syafrianita, Syafrial Fachri Pane. DIJEMSS 7(2), 1765–1779. DOI artikel **10.38035/dijemss.v7i2.5736** (di matriks hanya DOI edisi) | ✅ RF & XGBoost akurasi ≈ 65%, AUC 0,73; 10.999 data PT Pos Indonesia | Halaman artikel | Jurnal manajemen pendidikan & sosial; domain jauh |
