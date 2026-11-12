@@ -107,3 +107,11 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 | Sivakumar (dependensi r = 0,61) dari 150 tugas di jurnal kurang kuat | Perbedaan dengan temuan kita (dependency lemah) dibahas, dengan catatan kekuatan buktinya |
 | Kula: dependensi (*out-degree*) faktor risiko; propagasi keterlambatan masih arah lanjutan | Mendukung posisi gap *delay propagation* |
 | Guo et al.: NN *overconfident* | Mendukung penjelasan H4 |
+
+## D. Rujukan tambahan untuk paper (P8)
+
+| Rujukan | Status | Metadata terverifikasi | Catatan |
+| :--- | :---: | :--- | :--- |
+| Ananta, Pamungkas & Ainul Yaqin (2026) | ✅ | *Analisis Domain Kinerja Stakeholder pada Proyek ERP Menggunakan Social Network Analysis*. Jurnal Pustaka Data 6(5), 833–847, terbit 31 Okt 2026. DOI 10.55382/jurnalpustakadata.v6i5.2152 (tertulis di situs jurnal, belum aktif di doi.org per 12 Nov 2026) | Dibuka langsung di situs jurnal (SINTA 5). Dosen pembimbing sebagai penulis ketiga; terbit di jurnal tujuan |
+| Waridi, Fikri & Yaqin, *Memprediksi Keberhasilan Proyek ERP Menggunakan Indikator Kinerja Multi-Domain dan Machine Learning* | ❌ belum dipakai | Hanya ditemukan sebagai naskah template JACIS di ResearchGate; volume, nomor, dan tahun masih kosong | Belum terbit, jangan dikutip sebagai publikasi |
+
