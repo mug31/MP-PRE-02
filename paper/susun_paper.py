@@ -185,6 +185,249 @@ def rapikan_docx():
     d.save(KELUARAN_DOCX)
 
 
+TEMPLATE_DOC = HERE / 'Template_Pustaka_Data.doc'
+
+
+def _template_docx(sementara):
+    """Ubah template .doc asli ke .docx (LibreOffice) agar bisa diisi."""
+    profil = sementara / 'lo-profil'
+    subprocess.run(['soffice', f'-env:UserInstallation=file://{profil}', '--headless', '--convert-to', 'docx',
+                    '--outdir', str(sementara), str(TEMPLATE_DOC)], check=True, capture_output=True)
+    return sementara / (TEMPLATE_DOC.stem + '.docx')
+
+
+def isi_template(polos, keluaran, gambar):
+    """Pindahkan isi naskah (docx hasil pandoc) ke dalam template asli Jurnal Pustaka Data.
+
+    Kop jurnal, logo, header, footer, dan pemisah kolom dari template dipertahankan; setiap paragraf naskah
+    memakai gaya paragraf template (Heading1 tanpa nomor otomatis, Heading2, Normal, Caption, Rujukan)."""
+    from copy import deepcopy
+    from docx import Document
+    from docx.oxml.ns import qn
+    from docx.shared import Cm
+    from docx.text.paragraph import Paragraph
+
+    t = Document(TEMPLATE_DOCX_SEMENTARA[0])
+    src = Document(polos)
+    tb = list(t.element.body.iterchildren())
+
+    def teks(el):
+        return ''.join(x.text or '' for x in el.iter(qn('w:t')))
+
+    def cari(awal, syarat):
+        for i, el in enumerate(tb):
+            if i >= awal and el.tag == qn('w:p') and syarat(teks(el)):
+                return i
+        raise SystemExit('Penanda template tidak ditemukan')
+
+    i_judul = cari(0, lambda x: x.startswith('Judul Ditulis'))
+    i_penulis, i_afil1, i_afil2, i_email = i_judul + 1, i_judul + 2, i_judul + 3, i_judul + 4
+    i_abs = cari(i_judul, lambda x: x.startswith('The abstract is'))
+    i_kw = cari(i_abs, lambda x: x.startswith('Keywords'))
+    i_abk = cari(i_kw, lambda x: x.startswith('Isi abstrak'))
+    i_kk = cari(i_abk, lambda x: x.startswith('Kata kunci'))
+    i_cr = cari(i_kk, lambda x: x.startswith('©'))
+    i_pend = cari(i_cr, lambda x: x.strip().startswith('Pendahuluan'))
+    i_h1 = cari(i_pend, lambda x: x.startswith('3.') and 'Hasil' in x)       # Heading1 bernomor manual
+    i_h2 = cari(i_pend, lambda x: x.startswith('2.1.'))
+    i_par = i_pend + 1
+    i_cap_tabel = next(i for i in range(i_pend, len(tb) - 1) if tb[i + 1].tag == qn('w:tbl'))
+    i_tabel = i_cap_tabel + 1
+    assert tb[i_tabel].tag == qn('w:tbl')
+    i_cap_gambar = cari(i_tabel, lambda x: x.startswith('Gambar 1'))
+    i_gambar = i_cap_gambar - 1
+    i_rujukan = cari(i_cap_gambar, lambda x: x.startswith('Ikhsan'))
+    i_sect2 = next(i for i in range(i_rujukan, len(tb)) if tb[i].tag == qn('w:p') and tb[i].find(qn('w:pPr')) is not None
+                   and tb[i].find(qn('w:pPr')).find(qn('w:sectPr')) is not None)
+
+    ppr = lambda i: deepcopy(tb[i].find(qn('w:pPr')))
+    PPR = {'h1': ppr(i_h1), 'h2': ppr(i_h2), 'par': ppr(i_par), 'cap_tabel': ppr(i_cap_tabel),
+           'cap_gambar': ppr(i_cap_gambar), 'gambar': ppr(i_gambar), 'rujukan': ppr(i_rujukan)}
+    kn = PPR['cap_tabel'].makeelement(qn('w:keepNext'), {})
+    PPR['cap_tabel'].insert(1, kn)
+    tblpr_t = deepcopy(tb[i_tabel].find(qn('w:tblPr')))
+    sel_t = tb[i_tabel].find('.//' + qn('w:tc'))
+    ppr_sel = deepcopy(sel_t.find('.//' + qn('w:pPr'))) if sel_t.find('.//' + qn('w:pPr')) is not None else None
+
+    def rpr_contoh(el):
+        r = el.find(qn('w:r'))
+        x = r.find(qn('w:rPr')) if r is not None else None
+        return deepcopy(x) if x is not None else None
+
+    def gabung_rpr(r, dasar):
+        """rPr run = rPr contoh template + atribut khas dari naskah (miring, tebal, superskrip)."""
+        if dasar is None or r.tag != qn('w:r'):
+            return
+        lama = r.find(qn('w:rPr'))
+        baru = deepcopy(dasar)
+        for tag in ('w:i', 'w:b', 'w:vertAlign'):
+            for x in baru.findall(qn(tag)):
+                baru.remove(x)
+        if lama is not None:
+            for tag in ('w:i', 'w:iCs', 'w:b', 'w:bCs', 'w:vertAlign'):
+                for x in lama.findall(qn(tag)):
+                    baru.append(deepcopy(x))
+            r.remove(lama)
+        r.insert(0, baru)
+
+    def isi_runs(tujuan, asal, dasar='auto'):
+        if dasar == 'auto':
+            dasar = rpr_contoh(tujuan)
+        for c in list(tujuan):
+            if c.tag != qn('w:pPr'):
+                tujuan.remove(c)
+        for c in asal:
+            if c.tag != qn('w:pPr'):
+                salinan = deepcopy(c)
+                gabung_rpr(salinan, dasar)
+                tujuan.append(salinan)
+
+    RPR = {'h1': rpr_contoh(tb[i_h1]), 'h2': rpr_contoh(tb[i_h2]), 'par': None, 'cap_tabel': None, 'cap_gambar': None,
+           'rujukan': None}
+
+    sp = [el for el in src.element.body.iterchildren()]
+    def gaya(el):
+        pp = el.find(qn('w:pPr'))
+        st = pp.find(qn('w:pStyle')) if pp is not None else None
+        return st.get(qn('w:val')) if st is not None else ''
+    para = [el for el in sp if el.tag == qn('w:p')]
+    cari_src = lambda f: next(el for el in para if f(el))
+    isi_runs(tb[i_judul], cari_src(lambda e: gaya(e) == 'Title'))
+    for r_ in tb[i_judul].iter(qn('w:r')):                 # template: judul 15 pt tidak cetak tebal
+        rpr_ = r_.find(qn('w:rPr'))
+        if rpr_ is None:
+            rpr_ = r_.makeelement(qn('w:rPr'), {}); r_.insert(0, rpr_)
+        for tag in ('w:b', 'w:bCs'):
+            for x in rpr_.findall(qn(tag)):
+                rpr_.remove(x)
+            el_ = rpr_.makeelement(qn(tag), {qn('w:val'): '0'})
+            rpr_.insert(0, el_)
+    penulis = [el for el in para if gaya(el) == 'Penulis']
+    afil = [el for el in para if gaya(el) == 'Afiliasi']
+    isi_runs(tb[i_penulis], penulis[0])
+    isi_runs(tb[i_afil1], afil[0])
+    isi_runs(tb[i_email], afil[1])
+    t.element.body.remove(tb[i_afil2])
+    isi_runs(tb[i_abs], cari_src(lambda e: teks(e).startswith('Project managers')))
+    isi_runs(tb[i_kw], cari_src(lambda e: teks(e).startswith('Keywords')))
+    isi_runs(tb[i_abk], cari_src(lambda e: teks(e).startswith('Manajer proyek')))
+    isi_runs(tb[i_kk], cari_src(lambda e: teks(e).startswith('Kata kunci')))
+    for r in tb[i_cr].iter(qn('w:t')):
+        r.text = r.text.replace('20xx', '2026')
+
+    # buang isi contoh template (dari Pendahuluan sampai sebelum pemisah kolom) dan halaman petunjuk referensi
+    for el in tb[i_pend:i_sect2] + [x for x in tb[i_sect2 + 1:] if x.tag != qn('w:sectPr')]:
+        t.element.body.remove(el)
+    jangkar = tb[i_sect2]
+
+    mulai = next(i for i, el in enumerate(sp) if el.tag == qn('w:p') and teks(el).startswith('1. Pendahuluan'))
+    antrian_gambar = list(gambar)
+    nomor_rumus = [0]
+    for el in sp[mulai:]:
+        if el.tag == qn('w:sectPr'):
+            continue
+        if el.tag == qn('w:tbl'):
+            baru = deepcopy(el)
+            lama = baru.find(qn('w:tblPr'))
+            baru.replace(lama, deepcopy(tblpr_t))
+            tw = baru.find(qn('w:tblPr')).find(qn('w:tblW'))
+            if tw is not None:
+                tw.set(qn('w:type'), 'pct'); tw.set(qn('w:w'), '5000')
+            for gc in baru.iter(qn('w:gridCol')):
+                gc.attrib.pop(qn('w:w'), None)
+            for tcw in baru.iter(qn('w:tcW')):
+                tcw.set(qn('w:type'), 'auto'); tcw.set(qn('w:w'), '0')
+            for pp in baru.iter(qn('w:p')):
+                lama_ppr = pp.find(qn('w:pPr'))
+                jc = lama_ppr.find(qn('w:jc')) if lama_ppr is not None else None
+                if lama_ppr is not None:
+                    pp.remove(lama_ppr)
+                if ppr_sel is not None:
+                    np_ = deepcopy(ppr_sel)
+                    old = np_.find(qn('w:jc'))
+                    if old is not None:
+                        np_.remove(old)
+                    if jc is not None:
+                        np_.append(deepcopy(jc))
+                    pp.insert(0, np_)
+                for r in pp.iter(qn('w:r')):
+                    rpr = r.find(qn('w:rPr'))
+                    if rpr is None:
+                        rpr = r.makeelement(qn('w:rPr'), {}); r.insert(0, rpr)
+                    for tag in ('w:sz', 'w:szCs'):
+                        x = rpr.find(qn(tag))
+                        if x is None:
+                            x = rpr.makeelement(qn(tag), {}); rpr.append(x)
+                        x.set(qn('w:val'), '16')
+            baris = baru.findall(qn('w:tr'))
+            for tr in baris:                                   # baris tabel tidak dipecah antarkolom
+                trpr = tr.find(qn('w:trPr'))
+                if trpr is None:
+                    trpr = tr.makeelement(qn('w:trPr'), {}); tr.insert(0, trpr)
+                trpr.append(trpr.makeelement(qn('w:cantSplit'), {}))
+            for tr in baris[:-1]:                              # seluruh tabel tetap satu blok
+                for pp in tr.iter(qn('w:pPr')):
+                    pp.insert(1 if pp.find(qn('w:pStyle')) is not None else 0, pp.makeelement(qn('w:keepNext'), {}))
+            jangkar.addprevious(baru)
+            continue
+        g = gaya(el)
+        if list(el.iter(qn('w:drawing'))):
+            baru = el.makeelement(qn('w:p'), {})
+            baru.append(deepcopy(PPR['gambar']))
+            jangkar.addprevious(baru)
+            Paragraph(baru, t._body).add_run().add_picture(str(antrian_gambar.pop(0)), width=Cm(7.6))
+            continue
+        kunci = {'Heading1': 'h1', 'Heading2': 'h2', 'JudulTabel': 'cap_tabel', 'ImageCaption': 'cap_gambar',
+                 'Rujukan': 'rujukan'}.get(g, 'par')
+        baru = el.makeelement(qn('w:p'), {})
+        baru.append(deepcopy(PPR[kunci]))
+        isi_runs(baru, el, RPR.get(kunci))
+        if kunci == 'rujukan':                       # nomor [n] dibuat otomatis oleh gaya Rujukan template
+            for x in baru.iter(qn('w:t')):
+                x.text = re.sub(r'^\[\d+\]\s*', '', x.text or '')
+                break
+        M = '{http://schemas.openxmlformats.org/officeDocument/2006/math}'
+        mpara = baru.find('.//' + M + 'oMathPara')
+        if kunci == 'par' and mpara is not None and teks(el).strip() == '' :
+            nomor_rumus[0] += 1
+            pp = baru.find(qn('w:pPr'))
+            for tag in ('w:ind', 'w:jc', 'w:tabs'):
+                for x in pp.findall(qn(tag)):
+                    pp.remove(x)
+            tabs = pp.makeelement(qn('w:tabs'), {})
+            for jenis, pos in (('center', '2160'), ('right', '4320')):
+                tab = tabs.makeelement(qn('w:tab'), {qn('w:val'): jenis, qn('w:pos'): pos})
+                tabs.append(tab)
+            pp.append(tabs)
+            omath = deepcopy(mpara.find(M + 'oMath'))
+            for c in list(baru):
+                if c.tag != qn('w:pPr'):
+                    baru.remove(c)
+            def run_tab(teks_=None):
+                r = baru.makeelement(qn('w:r'), {})
+                if teks_ is None:
+                    r.append(r.makeelement(qn('w:tab'), {}))
+                else:
+                    x = r.makeelement(qn('w:t'), {}); x.text = teks_; r.append(x)
+                return r
+            baru.append(run_tab()); baru.append(omath); baru.append(run_tab()); baru.append(run_tab(f'({nomor_rumus[0]})'))
+        jangkar.addprevious(baru)
+    assert not antrian_gambar, 'Jumlah gambar tidak sesuai'
+
+    for s in t.sections:
+        for h in (s.header, s.first_page_header, s.even_page_header):
+            for p in h.paragraphs:
+                if 'Penulis' in p.text and p.runs:
+                    p.runs[0].text = 'Kusbianto, Al Akmal, Ainul Yaqin'
+                    p.runs[0].font.superscript = False
+                    for r in p.runs[1:]:
+                        r.text = ''
+    t.save(keluaran)
+
+
+TEMPLATE_DOCX_SEMENTARA = []
+
+
 def main():
     teks = SUMBER.read_text(encoding='utf-8')
     teks = re.sub(r'<!--.*?-->\n?', '', teks, flags=re.S)
@@ -197,11 +440,18 @@ def main():
     teks = teks.rstrip() + '\n\n# Daftar Rujukan {.unnumbered}\n\n' + daftar + '\n'
     teks = teks.replace('---\n\n', '---\n\n<!-- Dihasilkan otomatis oleh susun_paper.py dari naskah_sumber.md. Jangan disunting. -->\n\n', 1)
     KELUARAN_MD.write_text(teks, encoding='utf-8')
-    buat_gaya()
-    subprocess.run(['pandoc', str(KELUARAN_MD.name), '-o', str(KELUARAN_DOCX.name),
-                    f'--reference-doc={REFERENSI_DOCX.name}', '--resource-path=.'], cwd=HERE, check=True)
-    rapikan_docx()
-    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name}')
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        buat_gaya()
+        polos = tmp / 'polos.docx'
+        subprocess.run(['pandoc', str(KELUARAN_MD.name), '-o', str(polos), f'--reference-doc={REFERENSI_DOCX.name}',
+                        '--resource-path=.'], cwd=HERE, check=True)
+        REFERENSI_DOCX.unlink()
+        TEMPLATE_DOCX_SEMENTARA[:] = [_template_docx(tmp)]
+        gambar = [HERE / g for g in re.findall(r'!\[[^\]]*\]\(([^)]+)\)', teks)]
+        isi_template(polos, KELUARAN_DOCX, gambar)
+    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name} (diisi ke template asli)')
 
 
 if __name__ == '__main__':

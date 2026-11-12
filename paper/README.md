@@ -6,17 +6,17 @@ Naskah untuk **Jurnal Pustaka Data** (Pustaka Galeri Mandiri, ISSN 2809-7483), m
 | Berkas | Isi | Disunting? |
 | :--- | :--- | :--- |
 | `naskah_sumber.md` | **Naskah yang disunting.** Sitasi ditulis `[@kunci]` | Ya, sunting di sini |
-| `susun_paper.py` | Menomori sitasi sesuai urutan muncul, menyusun Daftar Rujukan dari kamus `RUJUKAN` (metadata dari `../02_Studi Literatur/Verifikasi_Literatur.md`), menomori gambar/tabel, lalu membuat .md dan .docx | Tambah rujukan baru di `RUJUKAN` |
+| `susun_paper.py` | Menomori sitasi sesuai urutan muncul, menyusun Daftar Rujukan dari kamus `RUJUKAN` (metadata dari `../02_Studi Literatur/Verifikasi_Literatur.md`), menomori gambar/tabel/rumus, lalu mengisi template asli | Tambah rujukan baru di `RUJUKAN` |
 | `Paper_PRE02_Pustaka_Data.md` | Naskah final bersitasi nomor (hasil skrip) | Tidak |
-| `Paper_PRE02_Pustaka_Data.docx` | Naskah final berformat template: Times New Roman 10 pt, judul 15 pt, A4 margin 25 mm, abstrak satu kolom, isi dua kolom (hasil skrip) | Tidak |
-| `gaya_pustaka_data.docx` | Dokumen gaya untuk pandoc (hasil skrip) | Tidak |
+| `Paper_PRE02_Pustaka_Data.docx` | **Naskah final yang sudah diisi langsung ke template asli** (kop jurnal, logo, header, footer, kolom, dan gaya paragraf template; rujukan bernomor otomatis gaya *Rujukan*) | Tidak |
+| `Template_Pustaka_Data.doc` | Template asli Jurnal Pustaka Data yang diisi oleh skrip | Tidak |
 | `buat_slide.js` | Pembuat slide (pptxgenjs) | Ya |
 | `Presentasi_Hasil_PRE02.pptx` | Slide presentasi hasil penelitian, 12 slide | Tidak |
 
 ## Cara menjalankan
 
 ```bash
-# naskah (butuh pandoc dan python-docx)
+# naskah (butuh pandoc, LibreOffice, dan python-docx)
 python susun_paper.py
 
 # slide (butuh node + pptxgenjs; APPLY_THEME = scripts/apply_theme.js dari skill pptx)
@@ -31,7 +31,7 @@ Unggah `Paper_PRE02_Pustaka_Data.docx` ke Google Drive → klik kanan → **Buka
 
 | No | Yang perlu dilakukan tim |
 | :---: | :--- |
-| 1 | Tempel isi ke file template asli agar kop jurnal, logo, dan tata letak dua kolom persis sama; rumus dibuat ulang dengan *equation editor* agar nomornya rata kanan |
+| 1 | Buka .docx di Word/Google Docs dan cek tata letak akhir (pemisah kolom dan posisi gambar bisa sedikit bergeser antara LibreOffice, Word, dan Google Docs) |
 | 2 | Lengkapi afiliasi (template meminta jurusan dan nomor WhatsApp) dan baris *Submitted/Reviewed/Accepted* diisi redaksi |
 | 3 | Cek ulang tiga DOI yang belum aktif di doi.org per 12 Nov 2026 (Haekal, Mandapatti, Ananta; lihat `Verifikasi_Literatur.md`). Di naskah, DOI Haekal dan Mandapatti tidak dicantumkan |
 | 4 | Template meminta rujukan dikelola dengan Mendeley/Zotero; daftar di sini sudah urut dan lengkap, bisa diimpor bila redaksi memintanya |

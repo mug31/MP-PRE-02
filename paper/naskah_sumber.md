@@ -51,7 +51,7 @@ Proyek belum dilaksanakan sehingga data realisasi belum tersedia. Data historis 
 
 Pada setiap iterasi, setiap aktivitas terkena CR dengan peluang 0,10. Kelas kesulitan CR rendah, sedang, dan tinggi (60%, 30%, 10%) menambah durasi aktivitas sebesar 10–20%, 30%, dan 50%. Setiap risiko $r$ terjadi dengan peluang $p_r$ dari register, yaitu skala 1–5 yang dikonversi menjadi 0,1; 0,3; 0,5; 0,7; 0,9 sesuai *Probability-Impact Matrix* PMP-01. Risiko yang terjadi menimpa satu aktivitas yang sedang berjalan pada hari acak dan menambah durasinya sebesar
 
-$$\Delta d_i = d_i \times s(\ell_r) \times f \text{          (1)}$$
+$$\Delta d_i = d_i \times s(\ell_r) \times f $$
 
 dengan $s(\ell_r)$ skala dampak jadwal PMP-01 untuk level dampak 1–5 (0,5%; 3%; 7,5%; 15%; 25%) dan $f$ faktor mitigasi. Nilai $f = 0{,}4$ dipilih karena menghasilkan median keterlambatan P-FNE-08 sebesar 5,3%, paling dekat dengan hasil analisis risiko kuantitatif dokumen PMP-08 (target 20 minggu, P50 21 minggu).
 
@@ -84,11 +84,11 @@ Observasi dari subproyek yang sama sangat mirip, sehingga validasi dilakukan den
 
 Akurasi probabilitas diukur dengan *Brier score* [@brier]
 
-$$\mathrm{BS} = \frac{1}{N}\sum_{i=1}^{N}(p_i - y_i)^2 \text{          (2)}$$
+$$\mathrm{BS} = \frac{1}{N}\sum_{i=1}^{N}(p_i - y_i)^2 $$
 
 dan *Brier skill score* $\mathrm{BSS} = 1 - \mathrm{BS}_{\text{model}}/\mathrm{BS}_{\text{naif}}$, dengan nilai positif berarti lebih baik daripada pembanding naif. Kalibrasi diukur dengan *expected calibration error* [@guo]
 
-$$\mathrm{ECE} = \sum_{m=1}^{10}\frac{|B_m|}{N}\left|\bar{y}(B_m) - \bar{p}(B_m)\right| \text{          (3)}$$
+$$\mathrm{ECE} = \sum_{m=1}^{10}\frac{|B_m|}{N}\left|\bar{y}(B_m) - \bar{p}(B_m)\right| $$
 
 serta *calibration intercept* dan *slope* yang idealnya 0 dan 1 [@vancalster]. *Brier score* juga diuraikan menjadi komponen *reliability* dan *resolution* [@murphy]. Daya beda diukur dengan ROC-AUC, dan ambang peringatan $\theta^*$ dipilih dengan statistik Youden [@youden]. Probabilitas dipetakan ke zona Hijau ($P < 0{,}35$), Kuning ($0{,}35 \le P < 0{,}65$), dan Merah ($P \ge 0{,}65$).
 
