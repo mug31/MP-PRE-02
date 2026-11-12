@@ -25,8 +25,10 @@ MP-datasetRaw/*.docx ──ekstraksi_pmp.py──▶ data/P-FNE-0X_aktivitas.csv
 | `simulasi_iterasi.py` | Penjadwalan dengan antrian resource (FCFS/SPT), simulasi CR, iterasi, ringkasan | 6–11 |
 | `buat_excel.py` | Pembuat workbook Excel (dipanggil otomatis) | – |
 | `ekstraksi_risiko.py` | Membaca register risiko di 8 PMP → `data/P-FNE-0X_risiko.csv` (peluang & dampak asli + hasil normalisasi) | Deskripsi Penelitian |
+| `kalibrasi_risiko.py` | Mencari faktor mitigasi dampak risiko agar median keterlambatan P-FNE-08 sama dengan analisis kuantitatif PMP-08 §9.6.2 | Deskripsi Penelitian |
 | `buat_dataset_ml.py` | Simulasi + kejadian risiko, dipantau di 25/50/75% jadwal → dataset untuk 4 model ML | Deskripsi Penelitian |
-| `dataset_ml/` | `dataset_ml.csv` (24.000 baris, 7 fitur + label) dan `README.md` (kamus variabel, karakteristik, asumsi) | Pertemuan 3 → 4 |
+| `uji_dataset_ml.py` | 4 uji validasi dataset: kewajaran, kebocoran label, risiko vs teks PMP, kualitas data | – |
+| `dataset_ml/` | `dataset_ml.csv` (24.000 baris, 7 fitur + label), `kalibrasi_risiko.csv`, dan `README.md` (kamus variabel, rujukan parameter, karakteristik) | Pertemuan 3 → 4 |
 | `excel/P-FNE-0X.xlsx` | Untuk dosen: jadwal rencana & 1 iterasi CR dengan rumus hidup (`RAND()`/`IF`, tekan F9), jadwal per orang, 1000 iterasi | 4–10 |
 | `hasil/00_RINGKASAN_SEMUA.md` | Ringkasan 8 subproyek (digenerate) | 10, 11 |
 | `hasil/histogram_semua.png` | Sebaran keterlambatan 8 subproyek | 11 |

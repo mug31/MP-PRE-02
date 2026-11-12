@@ -14,7 +14,9 @@ Aturan pemilihan tabel:
     dipakai untuk melengkapi kategori. Tabel tanpa ID (risiko biaya, komunikasi, vendor) tidak dipakai.
   - PMP-07 menulis tiap risiko sebagai tabel "Aspek | Detail" sendiri; tabel tersebut dibaca satu per satu.
 
-Aturan normalisasi (urutan prioritas: persen > desimal > skala 1–5 > kata):
+Aturan normalisasi (urutan prioritas: persen > desimal > skala 1–5 > kata). Konversi skala peluang 1–5 memakai
+nilai tengah rentang di PMP-01 §9.3.1 Probability-Impact Matrix (Very Low < 20%, Low 20–40%, Medium 40–60%,
+High 60–80%, Very High > 80%):
   Peluang : "60%" -> 0,6 ; "(0.6)" -> 0,6 ; skala 1..5 -> 0,1/0,3/0,5/0,7/0,9 ;
             Very Low/Low/Medium/High/Very High -> 0,1/0,3/0,5/0,7/0,9
   Dampak  : skala 1..5 apa adanya ; desimal 0–1 -> level (<=0,1:1, <=0,3:2, <=0,5:3, <=0,8:4, >0,8:5) ;

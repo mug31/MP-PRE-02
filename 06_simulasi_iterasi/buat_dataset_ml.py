@@ -9,10 +9,11 @@ masa depan (tidak ada kebocoran label).
 Gangguan yang disimulasikan (FCFS, skenario CR "dosen"):
   1. Change request (CR) per aktivitas, persis seperti simulasi_iterasi.py.
   2. Kejadian risiko dari register risiko PMP (data/P-FNE-0X_risiko.csv, hanya Dipakai_Simulasi = 1):
-     - risiko terjadi dengan peluang residual = FAKTOR_PELUANG x peluang di PMP;
+     - risiko terjadi dengan peluang di register PMP (skala 1–5 dikonversi menurut PMP-01 §9.3.1);
      - waktu kejadian acak seragam di antara hari 1 dan hari selesai rencana;
      - mengenai satu aktivitas yang sedang berjalan saat itu (jika tidak ada, aktivitas berikutnya yang mulai);
-     - durasi aktivitas itu bertambah: DAMPAK_RISIKO[level dampak] x durasi rencana;
+     - durasi aktivitas itu bertambah: DAMPAK_RISIKO[level dampak] x durasi rencana, dengan skala dampak
+       jadwal PMP-01 §9.3.1 dan faktor mitigasi yang dikalibrasi ke PMP-08 §9.6.2 (lihat kalibrasi_risiko.py);
      - risiko dihitung "belum dimitigasi" sejak terjadi sampai aktivitas yang terkena selesai.
 
 Fitur (7 variabel Deskripsi Penelitian §2):
@@ -26,14 +27,14 @@ Fitur (7 variabel Deskripsi Penelitian §2):
                                 dimulai, dibanding rencana (proksi kinerja dependency; dependency antarproyek
                                 tidak tercatat terpisah di PMP)
 Label:
-  Keterlambatan_Akhir_Hari, Telat (>0 hari), Telat_Lebih_5_Hari, Telat_Lebih_10_Persen (ambang eskalasi
-  "Schedule Delay > 10% dari baseline" pada PMP-01)
+  Keterlambatan_Akhir_Hari, Telat (>0 hari),
+  Telat_Lebih_5_Persen  (LABEL UTAMA; PMP-01 change control: perubahan jadwal > 5% baseline harus ke Sponsor),
+  Telat_Lebih_10_Persen (PMP-01: "Schedule Delay > 10% dari baseline" -> eskalasi ke Sponsor)
 
 Jalankan:  python buat_dataset_ml.py          (butuh data/P-FNE-0X_risiko.csv dari ekstraksi_risiko.py)
 """
 
 import csv
-import math
 import random
 import statistics
 from pathlib import Path
@@ -47,22 +48,24 @@ N_ITERASI = sim.N_ITERASI
 SKENARIO = 'dosen'
 KEBIJAKAN = 'FCFS'
 TITIK_MONITORING = [0.25, 0.50, 0.75]
-# Kalibrasi kejadian risiko (ASUMSI KELOMPOK, perlu disepakati):
-# - Peluang di register PMP adalah peluang inheren (sebelum mitigasi), padahal tiap risiko di register sudah
-#   punya strategi respons. Peluang residual dianggap FAKTOR_PELUANG x peluang dokumen.
-# - Tambahan durasi per level dampak = SKALA_DAMPAK x FAKTOR_DAMPAK (fraksi durasi rencana aktivitas yang terkena).
-#   SKALA_DAMPAK memakai skala contoh dosen untuk CR (10–20% / 30% / 50%) yang diperluas ke 5 level;
-#   FAKTOR_DAMPAK < 1 karena risiko termitigasi diasumsikan berdampak lebih kecil dari CR.
-# Tanpa kalibrasi (faktor 1 dan 1), 100% iterasi di semua subproyek telat sehingga label tidak bervariasi.
-FAKTOR_PELUANG = 0.5
-FAKTOR_DAMPAK = 0.25
-SKALA_DAMPAK = {1: 0.05, 2: 0.10, 3: 0.20, 4: 0.30, 5: 0.50}
+# Parameter kejadian risiko — setiap angka punya rujukan dokumen:
+# - FAKTOR_PELUANG = 1: peluang dipakai apa adanya dari register risiko PMP.
+# - SKALA_DAMPAK: PMP-01 §9.3.1 Probability-Impact Matrix, "Dampak (Biaya, Jadwal, Kualitas)":
+#   Very Low < 1%, Low 1–5%, Medium 5–10%, High 10–20%, Very High > 20%. Dipakai nilai tengah rentang;
+#   untuk "> 20%" dipakai 25% (rentang 20–30%). Fraksi dikenakan pada durasi rencana aktivitas yang terkena.
+# - FAKTOR_DAMPAK (faktor mitigasi): register memuat risiko sebelum respons, padahal semua risiko punya rencana
+#   respons. Faktor dikalibrasi agar median keterlambatan P-FNE-08 sama dengan analisis kuantitatif PMP-08 §9.6.2
+#   (target 20 minggu, P50 21 minggu = +5%). Pencarian nilainya: kalibrasi_risiko.py.
+FAKTOR_PELUANG = 1.0
+FAKTOR_DAMPAK = 0.4
+SKALA_DAMPAK = {1: 0.005, 2: 0.03, 3: 0.075, 4: 0.15, 5: 0.25}
 DAMPAK_RISIKO = {k: v * FAKTOR_DAMPAK for k, v in SKALA_DAMPAK.items()}
+BATAS_LABEL_UTAMA = 0.05  # PMP-01 change control: perubahan jadwal > 5% baseline harus disetujui Sponsor
 
 KOLOM = ['Subproyek', 'Iterasi', 'Titik_Monitoring', 'Hari_Monitoring',
          'SPI_Jadwal', 'Sisa_Waktu_Hari', 'Backlog_Sisa_Persen', 'Utilisasi_Resource',
          'Risiko_Belum_Dimitigasi', 'Frekuensi_CR', 'Pergeseran_Dependency_Hari',
-         'Keterlambatan_Akhir_Hari', 'Telat', 'Telat_Lebih_5_Hari', 'Telat_Lebih_10_Persen']
+         'Keterlambatan_Akhir_Hari', 'Telat', 'Telat_Lebih_5_Persen', 'Telat_Lebih_10_Persen']
 FITUR = KOLOM[4:11]
 LABEL = KOLOM[11:]
 
@@ -159,7 +162,7 @@ def proses(kode):
         cr, durasi_cr, jadwal, terjadi = iterasi(rng, aktivitas, orang, risiko, kelas_cr, selesai_rencana)
         telat = round(max(j['selesai'] for j in jadwal.values()) - selesai_rencana, 4)
         label = {'Keterlambatan_Akhir_Hari': telat, 'Telat': int(telat > 0),
-                 'Telat_Lebih_5_Hari': int(telat > 5),
+                 'Telat_Lebih_5_Persen': int(telat > BATAS_LABEL_UTAMA * selesai_rencana),
                  'Telat_Lebih_10_Persen': int(telat > 0.10 * selesai_rencana)}
         for titik in TITIK_MONITORING:
             t = round(titik * selesai_rencana, 4)
@@ -179,7 +182,7 @@ def main():
         akhir = [b for b in baris if b['Titik_Monitoring'] == TITIK_MONITORING[0]]
         p = {k: sum(b[k] for b in akhir) / len(akhir) for k in LABEL[1:]}
         print(f'P-FNE-{kode}: selesai rencana {selesai:g}, risiko {n_risiko}, '
-              f'P(telat) {p["Telat"]:.1%}, P(>5 hari) {p["Telat_Lebih_5_Hari"]:.1%}, '
+              f'P(telat) {p["Telat"]:.1%}, P(>5%) {p["Telat_Lebih_5_Persen"]:.1%}, '
               f'P(>10%) {p["Telat_Lebih_10_Persen"]:.1%}')
     with open(OUT / 'dataset_ml.csv', 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, fieldnames=KOLOM)
