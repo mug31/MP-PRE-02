@@ -133,7 +133,7 @@ Catatan membaca korelasi:
 | Label (y) | `Telat_Lebih_5_Persen` |
 | Kelompok validasi | `Subproyek`: latih di 7 subproyek, uji di 1, bergantian 8 kali (*leave-one-subproject-out*). Baris dari iterasi yang sama (3 titik) tidak boleh terpisah ke latih dan uji. Karena P-FNE-02 dan P-FNE-04 hampir satu kelas, metrik (AUC, Brier) dihitung dari gabungan prediksi semua lipatan, bukan rata-rata per lipatan |
 | Analisis per titik | `Titik_Monitoring` untuk melihat kapan peringatan dini mulai akurat |
-| Analisis sensitivitas (disarankan) | Ulangi dengan `FAKTOR_DAMPAK` 0,2 dan 1,0 di `buat_dataset_ml.py` |
+| Analisis sensitivitas (Skenario 7) | Dataset dengan faktor dampak 0,2 dan 1,0 ada di `sensitivitas/` (dibuat dengan opsi `--faktor-dampak` dan `--keluaran`, lihat di bawah); dipakai `experiment_pipeline.py --sensitivitas` |
 
 ## Menjalankan ulang
 
@@ -143,4 +143,7 @@ python ekstraksi_risiko.py     # hanya jika PMP/aturan ekstraksi risiko berubah
 python kalibrasi_risiko.py     # ±20 detik; memastikan FAKTOR_DAMPAK sesuai PMP-08 §9.6.2
 python buat_dataset_ml.py      # ±1,5 menit; hasil identik setiap dijalankan
 python uji_dataset_ml.py       # ±15 detik; 4 uji validasi
+# dataset analisis sensitivitas (dataset utama tidak berubah)
+python buat_dataset_ml.py --faktor-dampak 0.2 --keluaran dataset_ml/sensitivitas/dataset_ml_faktor_0.2.csv
+python buat_dataset_ml.py --faktor-dampak 1.0 --keluaran dataset_ml/sensitivitas/dataset_ml_faktor_1.0.csv
 ```

@@ -1,51 +1,72 @@
 # 04_implemen_desain_eksperimen
-## Capaian Pertemuan 4: Implementasi Desain Eksperimen
-**Topik:** PRE-02 — Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas  
-**Studi Kasus:** Portofolio Modul Super ERP Farm Nation Enterprise (FNE) 2026  
+## Capaian Pertemuan 4 (Implementasi Desain Eksperimen) dan Pertemuan 5 (Pelaksanaan Eksperimen) — versi 2
+**Topik:** PRE-02 — Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas
+**Studi Kasus:** 8 subproyek Super ERP Farm Nation Enterprise (FNE) 2026
+
+Versi 2 (November 2026) menggantikan versi September 2026 setelah revisi dosen 7 Oktober 2026: data kini berasal
+dari simulasi jadwal & risiko PMP (`../06_simulasi_iterasi/dataset_ml/`), bukan dataset 26 modul. Versi 1 tetap ada di
+riwayat git.
 
 ---
 
-### 📂 Struktur Berkas pada Folder Ini:
+### Struktur berkas
 
-| Berkas | Jenis Output | Deskripsi & Isi |
-| :--- | :---: | :--- |
-| [`01_Flow_dan_Skenario_Eksperimen.md`](01_Flow_dan_Skenario_Eksperimen.md) | **Flow Eksperimen & Skenario** | Flowchart pipeline ML (Mermaid), rincian 5 skenario eksperimen, penentuan parameter, dan protokol replikasi. |
-| [`02_Draft_Metodologi_Eksperimen_Bab3.md`](02_Draft_Metodologi_Eksperimen_Bab3.md) | **Draft Bagian Metodologi** | Naskah ilmiah Bab III Metodologi Penelitian (standar paper IEEE/SINTA) mencakup operasionalisasi variabel, formulasi matematis Brier Score, ECE, dan zonasi EWS. |
-| [`experiment_pipeline.py`](experiment_pipeline.py) | **Script/Tools Eksperimen** | Program Python untuk mengeksekusi pelatihan 4 model ML (LR, RF, GB, MLP), kalibrasi Platt Scaling & Isotonic Regression (nested, tanpa kebocoran data), evaluasi 5-fold CV + hold-out 80:20, threshold analysis Youden, dan ekspor grafik/tabel. |
-| [`generate_pertemuan4_pptx.py`](generate_pertemuan4_pptx.py) | **Generator Presentasi** | Script otomasi pembuatan slide deck presentasi Pertemuan 4 berdesain *Swiss Academic Style*; slide hasil membaca angka langsung dari `hasil_eksperimen/`. Jalankan setelah `experiment_pipeline.py` (butuh `pip install python-pptx`). |
-| [`PRE02_Pertemuan4_Implementasi_Desain_Eksperimen.pptx`](PRE02_Pertemuan4_Implementasi_Desain_Eksperimen.pptx) | **Slide Deck Presentasi** | 10 slide siap presentasi ke dosen pembimbing: desain eksperimen, hasil 5-fold CV, dan temuan kunci. |
+| Berkas | Isi | Status |
+| :--- | :--- | :--- |
+| [`01_Flow_dan_Skenario_Eksperimen.md`](01_Flow_dan_Skenario_Eksperimen.md) | **Desain eksperimen versi 2**: flowchart, variabel, Skenario 0–7, protokol validasi, hyperparameter, metrik, peringatan dini | Aktif |
+| [`experiment_pipeline.py`](experiment_pipeline.py) | Script eksperimen versi 2 (scikit-learn): Skenario 0–7, validasi *leave-one-subproject-out*, kalibrasi, evaluasi, grafik, ringkasan otomatis | Aktif |
+| [`uji_pipeline.py`](uji_pipeline.py) | Uji pipeline (desain Bagian 9.3): pemisahan data, pembanding naif, label acak, arah koefisien, konsistensi luaran, reproduksi | Aktif |
+| [`hasil_eksperimen/`](hasil_eksperimen/) | Luaran eksperimen (tabel CSV, grafik, ringkasan, log) | Aktif (luaran Pertemuan 5) |
+| [`../draft/Bab_III_Metodologi_Penelitian.md`](../draft/Bab_III_Metodologi_Penelitian.md) | Draf Bab III versi baru | Aktif (draf) |
+| [`02_Draft_Metodologi_Eksperimen_Bab3.md`](02_Draft_Metodologi_Eksperimen_Bab3.md) | Draf Bab III versi 1 (dataset 26 modul) | Arsip, digantikan `../draft/` |
+| [`generate_pertemuan4_pptx.py`](generate_pertemuan4_pptx.py), [`PRE02_Pertemuan4_Implementasi_Desain_Eksperimen.pptx`](PRE02_Pertemuan4_Implementasi_Desain_Eksperimen.pptx) | Slide presentasi Pertemuan 4 versi 1 | Arsip; generator membaca berkas hasil versi 1 sehingga tidak kompatibel dengan luaran versi 2 |
 
 ---
 
-### 🚀 Cara Menjalankan Script Eksperimen:
+### Cara menjalankan
 
-Pastikan dependensi telah terpasang:
 ```bash
-pip install numpy matplotlib
+pip install numpy pandas scikit-learn matplotlib joblib
+
+# 1) Dataset (sudah tersedia; jalankan ulang hanya bila simulasi berubah) — dari folder 06_simulasi_iterasi/
+python buat_dataset_ml.py
+python uji_dataset_ml.py
+python buat_dataset_ml.py --faktor-dampak 0.2 --keluaran dataset_ml/sensitivitas/dataset_ml_faktor_0.2.csv
+python buat_dataset_ml.py --faktor-dampak 1.0 --keluaran dataset_ml/sensitivitas/dataset_ml_faktor_1.0.csv
+
+# 2) Eksperimen — dari folder ini
+python experiment_pipeline.py --sensitivitas   # Skenario 0–7, beberapa menit (paralel semua inti CPU)
+python uji_pipeline.py --reproduksi            # uji pipeline + jalan ulang untuk reproduksi
 ```
 
-Jalankan pipeline eksperimen:
-```bash
-python experiment_pipeline.py
-```
+### Luaran di `hasil_eksperimen/`
 
-Luaran yang akan otomatis digenerate ke sub-folder `hasil_eksperimen/`:
-1. `tabel_metrik_evaluasi.csv` (ROC-AUC, Brier Score, Log Loss, ECE, Accuracy, Precision, Recall, Specificity, F1, confusion matrix per model × kalibrasi Raw/Platt/Isotonic).
-2. `kurva_roc_perbandingan.png` (Plot kurva ROC 4 algoritma).
-3. `kurva_kalibrasi_probabilitas.png` (Reliability Diagram: 4 model mentah & efek Platt/Isotonic pada model rekomendasi).
-4. `feature_importance_comparison.png` (Diagram batang kontribusi fitur pemicu delay); nilainya di `tabel_feature_importance.csv`).
-5. `tabel_prediksi_probabilitas_task.csv` (Prediksi probabilitas $P(\text{Delay})$ tiap model, probabilitas model rekomendasi, dan zona EWS per aktivitas modul FNE).
-6. `tabel_metrik_holdout_80_20.csv` (Validasi pembanding hold-out stratified 80:20).
-7. `00_RINGKASAN_TEMUAN_EKSPERIMEN.md` (Laporan ringkasan untuk Bab IV & V; seluruh kalimat temuan digenerate otomatis dari hasil).
-
-Catatan: `hasil_eksperimen/log_pelaksanaan_eksperimen.md` (luaran Pertemuan 5) ditulis manual dan mencatat identitas eksekusi, tahapan, checksum luaran, serta hasil verifikasi replikasi — perbarui bila pipeline dijalankan ulang dengan konfigurasi berbeda.
+| Berkas | Isi |
+| :--- | :--- |
+| `00_RINGKASAN_TEMUAN_EKSPERIMEN.md` | Ringkasan semua skenario (digenerate otomatis dari angka) |
+| `log_pelaksanaan_eksperimen.md` | Lingkungan, MD5 dataset, durasi tiap model, model rekomendasi (digenerate otomatis) |
+| `tabel_metrik_evaluasi.csv` | Skenario 0–5: Brier, BSS, Log Loss, ECE, ROC-AUC, ambang Youden, recall, specificity, precision, F1, confusion matrix, penanda rekomendasi |
+| `tabel_metrik_per_titik.csv` | Skenario 6: metrik per titik monitoring 25/50/75% |
+| `tabel_metrik_per_subproyek.csv` | Metrik per subproyek uji |
+| `tabel_zona_peringatan.csv` | Zona Hijau/Kuning/Merah & ambang θ* per subproyek × titik |
+| `tabel_feature_importance.csv` | Koefisien LR, MDI RF, permutation importance RF |
+| `tabel_sensitivitas.csv` | Skenario 7 |
+| `tabel_prediksi_oof.csv` | Prediksi out-of-fold setiap baris untuk 13 kombinasi model × kalibrasi |
+| `kurva_roc_perbandingan.png`, `kurva_kalibrasi_probabilitas.png`, `feature_importance_comparison.png`, `metrik_per_titik.png` | Grafik |
 
 ---
 
-### 📋 Checklist Pemenuhan Silabus Pertemuan 4:
-- [x] **Implementasi metode sesuai instruksi:** 4 model probabilitas + kalibrasi Platt & Isotonic terimplementasi dalam script Python (diverifikasi terhadap scikit-learn).
-- [x] **Penyusunan skenario eksperimen:** 5 skenario (LR, RF, GB, MLP, Kalibrasi) terdokumentasi lengkap.
-- [x] **Penentuan parameter dan variabel kontrol:** Variabel $X_1 \dots X_7$ & $Y$, hyperparameter tuning, dan fixed seed 42 terkunci.
-- [x] **Flow eksperimen:** Diagram pipeline flowchart visual tersedia di dokumen.
-- [x] **Script/tools eksperimen:** `experiment_pipeline.py` siap pakai.
-- [x] **Draft bagian metodologi:** Bab III lengkap tersedia di `02_Draft_Metodologi_Eksperimen_Bab3.md`.
+### Checklist Pertemuan 4 (`progres_penelitian_MP.md`)
+
+- [x] **Implementasi metode sesuai instruksi:** 4 model probabilistik + kalibrasi Platt & Isotonic sesuai `Deskripsi_Penelitian.md`.
+- [x] **Penyusunan skenario eksperimen:** Skenario 1–5 sesuai Deskripsi Penelitian + 0 (pembanding naif), 6 (per titik), 7 (sensitivitas).
+- [x] **Parameter & variabel kontrol:** 7 fitur & label terdokumentasi; hyperparameter tetap; seed 42; validasi per subproyek.
+- [x] **Flow eksperimen:** `01_Flow_dan_Skenario_Eksperimen.md` Bagian 2.
+- [x] **Script/tools eksperimen:** `experiment_pipeline.py` + `uji_pipeline.py`.
+- [x] **Draf bagian metodologi:** `../draft/Bab_III_Metodologi_Penelitian.md` (draf awal).
+
+### Checklist Pertemuan 5
+
+- [x] **Eksekusi eksperimen & pengumpulan luaran:** `hasil_eksperimen/`.
+- [x] **Validasi awal hasil:** `uji_pipeline.py`.
+- [x] **Dataset hasil eksperimen & log pelaksanaan:** `tabel_prediksi_oof.csv`, `log_pelaksanaan_eksperimen.md`.

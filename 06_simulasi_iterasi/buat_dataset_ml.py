@@ -32,6 +32,8 @@ Label:
   Telat_Lebih_10_Persen (PMP-01: "Schedule Delay > 10% dari baseline" -> eskalasi ke Sponsor)
 
 Jalankan:  python buat_dataset_ml.py          (butuh data/P-FNE-0X_risiko.csv dari ekstraksi_risiko.py)
+Sensitivitas (Skenario 7 desain eksperimen):
+           python buat_dataset_ml.py --faktor-dampak 0.2 --keluaran dataset_ml/sensitivitas/dataset_ml_faktor_0.2.csv
 """
 
 import csv
@@ -173,8 +175,14 @@ def proses(kode):
     return baris, selesai_rencana, len(risiko)
 
 
-def main():
-    OUT.mkdir(exist_ok=True)
+def main(faktor_dampak=None, keluaran=None):
+    """faktor_dampak/keluaran hanya untuk analisis sensitivitas (Skenario 7); bawaan = dataset utama."""
+    global DAMPAK_RISIKO
+    if faktor_dampak is not None:
+        DAMPAK_RISIKO = {k: v * faktor_dampak for k, v in SKALA_DAMPAK.items()}
+    keluaran = Path(keluaran) if keluaran else OUT / 'dataset_ml.csv'
+    keluaran.parent.mkdir(parents=True, exist_ok=True)
+    print(f'Faktor dampak risiko: {faktor_dampak if faktor_dampak is not None else FAKTOR_DAMPAK}')
     semua = []
     for kode in sim.SUBPROYEK:
         baris, selesai, n_risiko = proses(kode)
@@ -184,12 +192,17 @@ def main():
         print(f'P-FNE-{kode}: selesai rencana {selesai:g}, risiko {n_risiko}, '
               f'P(telat) {p["Telat"]:.1%}, P(>5%) {p["Telat_Lebih_5_Persen"]:.1%}, '
               f'P(>10%) {p["Telat_Lebih_10_Persen"]:.1%}')
-    with open(OUT / 'dataset_ml.csv', 'w', newline='', encoding='utf-8') as f:
+    with open(keluaran, 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, fieldnames=KOLOM)
         w.writeheader()
         w.writerows(semua)
-    print(f'{len(semua)} baris -> {OUT / "dataset_ml.csv"}')
+    print(f'{len(semua)} baris -> {keluaran}')
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__.split('\n')[1])
+    ap.add_argument('--faktor-dampak', type=float, help='ganti FAKTOR_DAMPAK (analisis sensitivitas)')
+    ap.add_argument('--keluaran', help='berkas CSV keluaran (bawaan: dataset_ml/dataset_ml.csv)')
+    a = ap.parse_args()
+    main(a.faktor_dampak, a.keluaran)

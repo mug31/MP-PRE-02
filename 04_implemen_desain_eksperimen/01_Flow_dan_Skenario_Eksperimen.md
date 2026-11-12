@@ -286,6 +286,9 @@ lipatan luar maupun lipatan dalam kalibrasi.
 | Reproduksi | Dua kali jalan → seluruh tabel hasil identik |
 | Kewajaran | Pembanding naif: BSS = 0; model dengan fitur acak (label diacak): AUC ≈ 0,5 |
 | Arah koefisien LR | `SPI_Jadwal` negatif, `Pergeseran_Dependency_Hari` positif (sesuai korelasi di README dataset) |
+| Konsistensi luaran | Brier & AUC yang dihitung ulang dari `tabel_prediksi_oof.csv` sama dengan `tabel_metrik_evaluasi.csv`; rekomendasi = Brier terendah |
+
+Semua uji ada di `uji_pipeline.py` (`--reproduksi` untuk uji jalan ulang).
 
 ---
 
@@ -299,6 +302,7 @@ lipatan luar maupun lipatan dalam kalibrasi.
 | `tabel_zona_peringatan.csv` | Zona per subproyek & titik monitoring |
 | `tabel_feature_importance.csv` | Koefisien LR, MDI & *permutation importance* RF |
 | `tabel_sensitivitas.csv` | Skenario 7 |
+| `tabel_prediksi_oof.csv` | Prediksi *out-of-fold* setiap baris untuk 13 kombinasi model × kalibrasi + zona model rekomendasi (dasar uji konsistensi dan analisis Pertemuan 6) |
 | `kurva_roc_perbandingan.png`, `kurva_kalibrasi_probabilitas.png`, `feature_importance_comparison.png`, `metrik_per_titik.png` | Visualisasi |
 | `00_RINGKASAN_TEMUAN_EKSPERIMEN.md`, `log_pelaksanaan_eksperimen.md` | Ringkasan & log (luaran Pertemuan 5) |
 

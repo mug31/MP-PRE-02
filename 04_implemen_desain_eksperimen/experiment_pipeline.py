@@ -1,898 +1,597 @@
 """
-PRE-02: Pipeline Eksperimen Prediksi Probabilitas Keterlambatan Proyek
-Studi Kasus: Portofolio Modul Super ERP Farm Nation Enterprise (FNE) 2026
+PRE-02: Pipeline Eksperimen Prediksi Probabilitas Keterlambatan Proyek — versi 2
+Studi kasus: 8 subproyek Super ERP Farm Nation Enterprise (FNE) 2026
 
-Script Mandiri (Standalone Scientific ML Pipeline):
-- 100% Bebas Dependensi Eksternal yang Rentan Blokir DLL (Tidak bergantung pada C-extensions pandas/sklearn)
-- Menggunakan built-in csv, math, random, serta numpy dan matplotlib (Agg backend)
-- Mengimplementasikan 5 Skenario Eksperimen (sesuai Deskripsi_Penelitian.md & 01_Flow_dan_Skenario_Eksperimen.md):
-  1. Logistic Regression (Baseline, L2 C=1.0, solver Newton-Raphson)
-  2. Random Forest (Ensemble Tree predict_proba & Feature Importance)
-  3. Gradient Boosting (Log-loss deviance, regression trees, subsample 0.8)
-  4. Multi-Layer Perceptron (Neural Network 16-8, ReLU, Adam, Output Sigmoid)
-  5. Kalibrasi Probabilitas (Platt Scaling & Isotonic Regression) + Threshold Analysis (Youden J) & EWS
+Mengimplementasikan 01_Flow_dan_Skenario_Eksperimen.md versi 2:
+  Skenario 0  Pembanding naif (proporsi telat di data latih)
+  Skenario 1  Logistic Regression            Skenario 2  Random Forest (predict_proba)
+  Skenario 3  Gradient Boosting              Skenario 4  MLP Neural Network (output sigmoid)
+  Skenario 5  Kalibrasi Raw / Platt / Isotonic + rekomendasi model (Brier terendah; seri: ECE, Log Loss)
+  Skenario 6  Analisis per titik monitoring (25%, 50%, 75%)
+  Skenario 7  Analisis sensitivitas faktor dampak risiko (opsi --sensitivitas)
+
+Data   : 06_simulasi_iterasi/dataset_ml/dataset_ml.csv (24.000 baris; 7 fitur Deskripsi Penelitian §2)
+Label  : Telat_Lebih_5_Persen (PMP-01 §4.7.3)
+Validasi: leave-one-subproject-out (8 lipatan). Kalibrator dilatih dengan inner GroupKFold(3) per subproyek
+          di dalam data latih. Semua metrik dihitung dari prediksi out-of-fold.
+
+Jalankan (dari folder ini):
+  python experiment_pipeline.py                  # Skenario 0–6
+  python experiment_pipeline.py --sensitivitas   # + Skenario 7 (butuh dataset sensitivitas, lihat pesan galat)
+Kebutuhan: pandas, numpy, scikit-learn, matplotlib, joblib
 """
 
-import os
-import sys
-import csv
-import math
-import random
-import numpy as np
+import argparse
+import hashlib
+import platform
+import time
+from datetime import datetime
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import sklearn
+from joblib import Parallel, delayed
+from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+from sklearn.dummy import DummyClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score, roc_curve
+from sklearn.model_selection import GroupKFold, LeaveOneGroupOut
+from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 # ============================================================
-# 1. STRUKTUR DATA & UTILITIES
+# 1. KONFIGURASI (dokumen desain Bagian 3, 5, 6)
 # ============================================================
 
-def set_seed(seed=42):
-    random.seed(seed)
-    np.random.seed(seed)
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+DATASET = ROOT / '06_simulasi_iterasi' / 'dataset_ml' / 'dataset_ml.csv'
+DATASET_SENSITIVITAS = {f: ROOT / '06_simulasi_iterasi' / 'dataset_ml' / 'sensitivitas' / f'dataset_ml_faktor_{f}.csv'
+                        for f in (0.2, 1.0)}
+FAKTOR_DAMPAK_UTAMA = 0.4  # sama dengan FAKTOR_DAMPAK di 06_simulasi_iterasi/buat_dataset_ml.py
 
-def sigmoid(z):
-    z = np.clip(z, -30.0, 30.0)
-    return 1.0 / (1.0 + np.exp(-z))
+FITUR = ['SPI_Jadwal', 'Sisa_Waktu_Hari', 'Backlog_Sisa_Persen', 'Utilisasi_Resource',
+         'Risiko_Belum_Dimitigasi', 'Frekuensi_CR', 'Pergeseran_Dependency_Hari']
+LABEL = 'Telat_Lebih_5_Persen'
+GRUP = 'Subproyek'
+TITIK = 'Titik_Monitoring'
+N_SUBPROYEK, BARIS_PER_SUBPROYEK = 8, 3000
 
-def logit(p, eps=1e-6):
-    p = np.clip(p, eps, 1.0 - eps)
-    return np.log(p / (1.0 - p))
+SEED = 42
+N_LIPATAN_DALAM = 3
+N_BIN_ECE = 10
+ZONA = (0.35, 0.65)  # Hijau < 0,35 <= Kuning < 0,65 <= Merah (desain Bagian 8)
 
-def compute_roc_auc(y_true, y_prob):
-    """Kalkulasi ROC-AUC dengan aturan trapesium; probabilitas yang sama (ties) diproses sebagai satu ambang batas"""
-    y_true = np.array(y_true)
-    y_prob = np.array(y_prob)
-    n_pos = int(np.sum(y_true))
-    n_neg = len(y_true) - n_pos
-    if n_pos == 0 or n_neg == 0:
-        return 0.5, [0.0, 1.0], [0.0, 1.0]
+NAIF = 'Pembanding Naif'
+MODEL = ['Logistic Regression', 'Random Forest', 'Gradient Boosting', 'MLP Neural Network']
+KALIBRASI = ['Raw', 'Platt', 'Isotonic']
+METODE_SKLEARN = {'Platt': 'sigmoid', 'Isotonic': 'isotonic'}
 
-    tpr_list, fpr_list = [0.0], [0.0]
-    for thresh in np.unique(y_prob)[::-1]:
-        pred = y_prob >= thresh
-        tpr_list.append(float(np.sum(pred & (y_true == 1))) / n_pos)
-        fpr_list.append(float(np.sum(pred & (y_true == 0))) / n_neg)
+# Warna kategori tetap (palet tervalidasi buta warna) + gaya garis sebagai pengenal kedua
+WARNA = {'Logistic Regression': '#2a78d6', 'Random Forest': '#eb6834',
+         'Gradient Boosting': '#1baf7a', 'MLP Neural Network': '#eda100', NAIF: '#52514e'}
+GARIS = {'Logistic Regression': '-', 'Random Forest': '--', 'Gradient Boosting': '-.',
+         'MLP Neural Network': ':', NAIF: (0, (1, 3))}
+TINTA, TINTA_2, PERMUKAAN = '#0b0b0b', '#52514e', '#fcfcfb'
 
-    auc = 0.0
-    for i in range(1, len(fpr_list)):
-        width = fpr_list[i] - fpr_list[i - 1]
-        avg_height = (tpr_list[i] + tpr_list[i - 1]) / 2.0
-        auc += width * avg_height
-    return auc, fpr_list, tpr_list
 
-def compute_brier_score(y_true, y_prob):
-    return float(np.mean((np.array(y_prob) - np.array(y_true)) ** 2))
+def buat_model(nama):
+    """Pipeline(StandardScaler, model) dengan hyperparameter desain Bagian 6."""
+    if nama == NAIF:
+        est = DummyClassifier(strategy='prior')
+    elif nama == 'Logistic Regression':
+        est = LogisticRegression(C=1.0, solver='lbfgs', max_iter=1000)  # penalti L2 (bawaan)
+    elif nama == 'Random Forest':
+        est = RandomForestClassifier(n_estimators=100, max_depth=3, max_features='sqrt', criterion='gini',
+                                     random_state=SEED)
+    elif nama == 'Gradient Boosting':
+        est = GradientBoostingClassifier(n_estimators=100, learning_rate=0.05, max_depth=2, subsample=0.8,
+                                         random_state=SEED)
+    elif nama == 'MLP Neural Network':
+        est = MLPClassifier(hidden_layer_sizes=(16, 8), activation='relu', solver='adam', alpha=0.01,
+                            learning_rate_init=0.01, max_iter=1000, random_state=SEED)
+    else:
+        raise ValueError(nama)
+    return Pipeline([('skala', StandardScaler()), ('model', est)])
 
-def compute_log_loss(y_true, y_prob, eps=1e-15):
-    y_prob = np.clip(y_prob, eps, 1.0 - eps)
-    y_true = np.array(y_true)
-    return float(-np.mean(y_true * np.log(y_prob) + (1.0 - y_true) * np.log(1.0 - y_prob)))
-
-def compute_ece(y_true, y_prob, n_bins=5):
-    """Menghitung Expected Calibration Error (ECE)"""
-    y_prob = np.array(y_prob)
-    y_true = np.array(y_true)
-    bins = np.linspace(0.0, 1.0, n_bins + 1)
-    ece = 0.0
-    n = len(y_true)
-
-    bin_confs, bin_accs = [], []
-    for i in range(n_bins):
-        mask = (y_prob >= bins[i]) & (y_prob < bins[i+1]) if i < n_bins - 1 else (y_prob >= bins[i]) & (y_prob <= bins[i+1])
-        if np.any(mask):
-            acc = float(np.mean(y_true[mask]))
-            conf = float(np.mean(y_prob[mask]))
-            weight = np.sum(mask) / n
-            ece += weight * abs(acc - conf)
-            bin_confs.append(conf)
-            bin_accs.append(acc)
-    return float(ece), bin_confs, bin_accs
-
-def compute_classification_metrics(y_true, y_prob, threshold=0.5):
-    """Confusion matrix, Precision, Recall (Sensitivity), Specificity, F1 pada ambang batas operasional"""
-    y_true = np.array(y_true)
-    pred_bin = (np.array(y_prob) >= threshold).astype(int)
-    tp = int(np.sum((pred_bin == 1) & (y_true == 1)))
-    fp = int(np.sum((pred_bin == 1) & (y_true == 0)))
-    tn = int(np.sum((pred_bin == 0) & (y_true == 0)))
-    fn = int(np.sum((pred_bin == 0) & (y_true == 1)))
-    prec = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-    rec = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-    spec = tn / (tn + fp) if (tn + fp) > 0 else 0.0
-    f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) > 0 else 0.0
-    acc = (tp + tn) / len(y_true)
-    return {'Accuracy': acc, 'Precision': prec, 'Recall': rec, 'Specificity': spec, 'F1_Score': f1,
-            'TP': tp, 'FP': fp, 'TN': tn, 'FN': fn}
-
-def evaluate_probs(y_true, y_prob):
-    auc, _, _ = compute_roc_auc(y_true, y_prob)
-    ece, _, _ = compute_ece(y_true, y_prob, n_bins=5)
-    metrics = {
-        'ROC_AUC': auc,
-        'Brier_Score': compute_brier_score(y_true, y_prob),
-        'Log_Loss': compute_log_loss(y_true, y_prob),
-        'ECE': ece,
-    }
-    metrics.update(compute_classification_metrics(y_true, y_prob))
-    return metrics
-
-def youden_threshold(y_true, y_prob):
-    """Ambang batas optimal theta* = argmax J (Sensitivity + Specificity - 1); tie-break: terdekat ke 0.5.
-    Kandidat ambang = titik tengah antar-probabilitas unik, sehingga theta* berada di tengah interval optimal."""
-    y_true = np.array(y_true)
-    y_prob = np.array(y_prob)
-    uniq = np.unique(y_prob)
-    candidates = np.concatenate([[uniq[0]], (uniq[:-1] + uniq[1:]) / 2.0])
-    best = None
-    for thresh in candidates:
-        m = compute_classification_metrics(y_true, y_prob, threshold=thresh)
-        j = m['Recall'] + m['Specificity'] - 1.0
-        key = (round(j, 10), -abs(thresh - 0.5))
-        if best is None or key > best[0]:
-            best = (key, float(thresh), j, m['Recall'], m['Specificity'])
-    _, thresh, j, sens, spec = best
-    return thresh, j, sens, spec
 
 # ============================================================
-# 2. STANDARISASI & STRATIFIED K-FOLD
+# 2. DATA
 # ============================================================
 
-class CustomStandardScaler:
-    def fit(self, X):
-        self.mean = np.mean(X, axis=0)
-        self.std = np.std(X, axis=0)
-        self.std[self.std == 0.0] = 1.0
-        return self
+def md5(path):
+    return hashlib.md5(Path(path).read_bytes()).hexdigest()
 
-    def transform(self, X):
-        return (X - self.mean) / self.std
 
-def stratified_k_fold(y, n_splits=5, seed=42):
-    rng = random.Random(seed)
-    pos_idx = [i for i, val in enumerate(y) if val == 1]
-    neg_idx = [i for i, val in enumerate(y) if val == 0]
+def muat_data(path):
+    """Baca dataset dan pastikan sesuai kontrak data (README dataset)."""
+    d = pd.read_csv(path)
+    kurang = [c for c in FITUR + [LABEL, GRUP, TITIK, 'Iterasi'] if c not in d.columns]
+    assert not kurang, f'Kolom tidak ada: {kurang}'
+    assert not d[FITUR + [LABEL, GRUP, TITIK]].isna().any().any(), 'Ada nilai kosong'
+    assert set(d[LABEL].unique()) <= {0, 1}, 'Label bukan biner'
+    ukuran = d.groupby(GRUP).size()
+    assert len(ukuran) == N_SUBPROYEK and (ukuran == BARIS_PER_SUBPROYEK).all(), f'Ukuran per subproyek: {ukuran}'
+    return d.reset_index(drop=True)
 
-    rng.shuffle(pos_idx)
-    rng.shuffle(neg_idx)
-
-    pos_folds = [pos_idx[i::n_splits] for i in range(n_splits)]
-    neg_folds = [neg_idx[i::n_splits] for i in range(n_splits)]
-
-    folds = []
-    for i in range(n_splits):
-        test_idx = pos_folds[i] + neg_folds[i]
-        train_idx = [j for j in range(len(y)) if j not in test_idx]
-        folds.append((train_idx, test_idx))
-    return folds
-
-def stratified_train_test_split(y, test_size=0.2, seed=42):
-    rng = random.Random(seed)
-    pos_idx = [i for i, val in enumerate(y) if val == 1]
-    neg_idx = [i for i, val in enumerate(y) if val == 0]
-    rng.shuffle(pos_idx)
-    rng.shuffle(neg_idx)
-    n_pos_test = max(1, int(round(len(pos_idx) * test_size)))
-    n_neg_test = max(1, int(round(len(neg_idx) * test_size)))
-    test_idx = pos_idx[:n_pos_test] + neg_idx[:n_neg_test]
-    train_idx = [j for j in range(len(y)) if j not in test_idx]
-    return train_idx, test_idx
 
 # ============================================================
-# 3. IMPLEMENTASI ALGORITMA MACHINE LEARNING
+# 3. PEMBAGIAN DATA & PREDIKSI OUT-OF-FOLD (desain Bagian 5)
 # ============================================================
 
-class CustomLogisticRegression:
-    """Regresi logistik L2 (setara sklearn penalty='l2', C=1.0).
-    Fungsi objektif konveks diminimalkan hingga konvergen dengan Newton-Raphson,
-    sehingga solusi optimumnya identik dengan solver L-BFGS."""
-    def __init__(self, C=1.0, max_iter=1000, tol=1e-8):
-        self.C = C
-        self.max_iter = max_iter
-        self.tol = tol
-        self.weights = None
-        self.bias = 0.0
-
-    def fit(self, X, y):
-        n_samples, n_features = X.shape
-        Xb = np.hstack([X, np.ones((n_samples, 1))])
-        theta = np.zeros(n_features + 1)
-        reg = np.eye(n_features + 1) / self.C
-        reg[-1, -1] = 0.0  # bias tidak diregularisasi
-
-        for _ in range(self.max_iter):
-            p = sigmoid(Xb @ theta)
-            grad = Xb.T @ (p - y) + reg @ theta
-            hess = Xb.T @ (Xb * (p * (1.0 - p))[:, None]) + reg + 1e-10 * np.eye(n_features + 1)
-            step = np.linalg.solve(hess, grad)
-            theta -= step
-            if np.max(np.abs(step)) < self.tol:
-                break
-        self.weights = theta[:-1]
-        self.bias = theta[-1]
-        return self
-
-    def predict_proba(self, X):
-        linear = np.dot(X, self.weights) + self.bias
-        return sigmoid(linear)
+def pembagian_luar(g):
+    """Leave-one-subproject-out: 8 lipatan, satu subproyek uji per lipatan."""
+    return list(LeaveOneGroupOut().split(np.zeros(len(g)), groups=g))
 
 
-class DecisionNode:
-    def __init__(self, feature=None, threshold=None, left=None, right=None, prob=None):
-        self.feature = feature
-        self.threshold = threshold
-        self.left = left
-        self.right = right
-        self.prob = prob
+def pembagian_dalam(g_latih):
+    """Inner GroupKFold(3) per subproyek, indeks relatif terhadap data latih (untuk kalibrator)."""
+    return list(GroupKFold(n_splits=N_LIPATAN_DALAM).split(np.zeros(len(g_latih)), groups=g_latih))
 
-    @property
-    def is_leaf(self):
-        return self.prob is not None
 
-class CustomDecisionTree:
-    def __init__(self, max_depth=3, min_samples_split=2, max_features=None):
-        self.max_depth = max_depth
-        self.min_samples_split = min_samples_split
-        self.max_features = max_features
-        self.root = None
-        self.feature_importances_ = None
+def buat_estimator(nama, kalibrasi, g_latih):
+    dasar = buat_model(nama)
+    if kalibrasi == 'Raw':
+        return dasar
+    return CalibratedClassifierCV(dasar, method=METODE_SKLEARN[kalibrasi], cv=pembagian_dalam(g_latih),
+                                  ensemble=False)
 
-    def _gini(self, y):
-        if len(y) == 0:
-            return 0.0
-        p = np.mean(y)
-        return 1.0 - (p ** 2 + (1.0 - p) ** 2)
 
-    def _best_split(self, X, y, feat_indices):
-        best_gain = -1.0
-        best_feat, best_thresh = None, None
-        current_gini = self._gini(y)
-        n = len(y)
+def _satu_lipatan(nama, kalibrasi, X, y, g, latih, uji):
+    est = buat_estimator(nama, kalibrasi, g[latih])
+    est.fit(X[latih], y[latih])
+    return uji, est.predict_proba(X[uji])[:, 1]
 
-        for feat in feat_indices:
-            thresholds = np.unique(X[:, feat])
-            for thresh in thresholds:
-                left_mask = X[:, feat] <= thresh
-                right_mask = ~left_mask
-                if np.sum(left_mask) == 0 or np.sum(right_mask) == 0:
-                    continue
 
-                gini_left = self._gini(y[left_mask])
-                gini_right = self._gini(y[right_mask])
-                weighted_gini = (np.sum(left_mask)/n) * gini_left + (np.sum(right_mask)/n) * gini_right
-                gain = current_gini - weighted_gini
+def prediksi_oof(nama, kalibrasi, X, y, g, lipatan, n_jobs):
+    hasil = Parallel(n_jobs=n_jobs)(delayed(_satu_lipatan)(nama, kalibrasi, X, y, g, tr, te) for tr, te in lipatan)
+    oof = np.full(len(y), np.nan)
+    hitung = np.zeros(len(y), dtype=int)
+    for uji, p in hasil:
+        oof[uji] = p
+        hitung[uji] += 1
+    assert (hitung == 1).all(), 'Setiap baris harus diprediksi tepat satu kali'
+    return oof
 
-                if gain > best_gain:
-                    best_gain = gain
-                    best_feat = feat
-                    best_thresh = thresh
 
-        return best_feat, best_thresh, best_gain
+# ============================================================
+# 4. METRIK (desain Bagian 7)
+# ============================================================
 
-    def _build_tree(self, X, y, depth=0):
-        n_samples, n_features = X.shape
-        if depth >= self.max_depth or n_samples < self.min_samples_split or len(np.unique(y)) == 1:
-            leaf_prob = float(np.mean(y)) if len(y) > 0 else 0.5
-            return DecisionNode(prob=leaf_prob)
+def ece(y, p, n_bin=N_BIN_ECE):
+    """Expected Calibration Error dengan bin lebar sama (Guo et al., 2017)."""
+    idx = np.minimum((p * n_bin).astype(int), n_bin - 1)
+    total = 0.0
+    for b in range(n_bin):
+        m = idx == b
+        if m.any():
+            total += m.mean() * abs(y[m].mean() - p[m].mean())
+    return total
 
-        feat_pool = list(range(n_features))
-        if self.max_features and self.max_features < n_features:
-            feat_indices = random.sample(feat_pool, self.max_features)
+
+def ambang_youden(y, p):
+    """Ambang dengan statistik Youden J = Recall + Specificity − 1 maksimum."""
+    fpr, tpr, thr = roc_curve(y, p)
+    i = int(np.argmax(tpr - fpr))
+    return float(min(thr[i], 1.0)), float(tpr[i] - fpr[i])
+
+
+def metrik(y, p, brier_naif, ambang=None):
+    dua_kelas = len(np.unique(y)) == 2
+    bs = brier_score_loss(y, p)
+    hasil = {'N': len(y), 'Prevalensi': y.mean(), 'Brier': bs,
+             'BSS': 1 - bs / brier_naif if brier_naif > 0 else np.nan,
+             'Log_Loss': log_loss(y, np.clip(p, 1e-15, 1 - 1e-15), labels=[0, 1]),
+             'ECE': ece(y, p), 'ROC_AUC': roc_auc_score(y, p) if dua_kelas else np.nan}
+    if ambang is not None:
+        pred = (p >= ambang).astype(int)
+        tp, fp = int(((pred == 1) & (y == 1)).sum()), int(((pred == 1) & (y == 0)).sum())
+        tn, fn = int(((pred == 0) & (y == 0)).sum()), int(((pred == 0) & (y == 1)).sum())
+        rec = tp / (tp + fn) if tp + fn else np.nan
+        pre = tp / (tp + fp) if tp + fp else np.nan
+        hasil.update({'Ambang': ambang, 'Recall': rec, 'Specificity': tn / (tn + fp) if tn + fp else np.nan,
+                      'Precision': pre, 'F1': 2 * pre * rec / (pre + rec) if pre and rec else 0.0,
+                      'Akurasi': (tp + tn) / len(y), 'TP': tp, 'FP': fp, 'TN': tn, 'FN': fn})
+    return hasil
+
+
+def zona(p):
+    return np.where(p < ZONA[0], 'Hijau', np.where(p < ZONA[1], 'Kuning', 'Merah'))
+
+
+# ============================================================
+# 5. EKSPERIMEN UTAMA (Skenario 0–6)
+# ============================================================
+
+def jalankan_semua(d, n_jobs, log):
+    X, y, g = d[FITUR].to_numpy(float), d[LABEL].to_numpy(int), d[GRUP].to_numpy()
+    lipatan = pembagian_luar(g)
+    for tr, te in lipatan:
+        assert not set(g[tr]) & set(g[te]), 'Subproyek uji bocor ke data latih'
+    oof, durasi = {}, {}
+    kombinasi = [(NAIF, 'Raw')] + [(m, k) for m in MODEL for k in KALIBRASI]
+    for nama, kal in kombinasi:
+        t = time.time()
+        oof[(nama, kal)] = prediksi_oof(nama, kal, X, y, g, lipatan, n_jobs)
+        durasi[(nama, kal)] = time.time() - t
+        log.append(f'- {nama} / {kal}: {durasi[(nama, kal)]:.1f} detik')
+        print(f'  {nama:<20} {kal:<9} {durasi[(nama, kal)]:6.1f} s  Brier {brier_score_loss(y, oof[(nama, kal)]):.4f}')
+    return X, y, g, lipatan, oof
+
+
+def tabel_utama(y, oof):
+    bs_naif = brier_score_loss(y, oof[(NAIF, 'Raw')])
+    baris = []
+    for (nama, kal), p in oof.items():
+        a, j = ambang_youden(y, p)
+        baris.append({'Skenario': 0 if nama == NAIF else MODEL.index(nama) + 1, 'Model': nama, 'Kalibrasi': kal,
+                      **metrik(y, p, bs_naif, a), 'Youden_J': j})
+    t = pd.DataFrame(baris)
+    kandidat = t[t.Model != NAIF].sort_values(['Brier', 'ECE', 'Log_Loss'])
+    t['Rekomendasi'] = 0
+    t.loc[kandidat.index[0], 'Rekomendasi'] = 1
+    return t
+
+
+def tabel_per_kelompok(d, y, oof, kolom):
+    baris = []
+    for nilai, idx in d.groupby(kolom).indices.items():
+        bs_naif = brier_score_loss(y[idx], oof[(NAIF, 'Raw')][idx])
+        for (nama, kal), p in oof.items():
+            baris.append({kolom: nilai, 'Model': nama, 'Kalibrasi': kal, **metrik(y[idx], p[idx], bs_naif)})
+    return pd.DataFrame(baris)
+
+
+def tabel_zona(d, y, p, ambang):
+    z = zona(p)
+    baris = []
+    kelompok = [('Semua', 'Semua', np.arange(len(y)))]
+    kelompok += [('Semua', t, idx) for t, idx in d.groupby(TITIK).indices.items()]
+    kelompok += [(s, t, idx) for (s, t), idx in d.groupby([GRUP, TITIK]).indices.items()]
+    for sub, titik, idx in kelompok:
+        telat, tepat = y[idx] == 1, y[idx] == 0
+        r = {GRUP: sub, TITIK: titik, 'N': len(idx), 'Prevalensi': y[idx].mean(),
+             **{f'Persen_{k}': (z[idx] == k).mean() for k in ('Hijau', 'Kuning', 'Merah')},
+             'Telat_di_Merah': (z[idx][telat] == 'Merah').mean() if telat.any() else np.nan,
+             'Tepat_di_Merah': (z[idx][tepat] == 'Merah').mean() if tepat.any() else np.nan,
+             'Telat_di_atas_Ambang': (p[idx][telat] >= ambang).mean() if telat.any() else np.nan,
+             'Tepat_di_atas_Ambang': (p[idx][tepat] >= ambang).mean() if tepat.any() else np.nan}
+        baris.append(r)
+    return pd.DataFrame(baris)
+
+
+def _perm_lipatan(X, y, latih, uji):
+    m = buat_model('Random Forest').fit(X[latih], y[latih])
+    r = permutation_importance(m, X[uji], y[uji], scoring='neg_brier_score', n_repeats=5, random_state=SEED)
+    return r.importances_mean
+
+
+def tabel_kepentingan(X, y, lipatan, n_jobs):
+    """Koefisien LR & MDI RF (dilatih pada seluruh data); permutation importance RF pada subproyek uji tiap lipatan."""
+    lr = buat_model('Logistic Regression').fit(X, y)
+    rf = buat_model('Random Forest').fit(X, y)
+    perm = np.array(Parallel(n_jobs=n_jobs)(delayed(_perm_lipatan)(X, y, tr, te) for tr, te in lipatan))
+    koef = lr.named_steps['model'].coef_[0]
+    return pd.DataFrame({'Fitur': FITUR, 'Koefisien_LR': koef, 'Odds_Ratio_LR': np.exp(koef),
+                         'MDI_RF': rf.named_steps['model'].feature_importances_,
+                         'Permutation_RF_Rata2': perm.mean(0), 'Permutation_RF_SD': perm.std(0)})
+
+
+# ============================================================
+# 6. SENSITIVITAS (Skenario 7)
+# ============================================================
+
+def jalankan_sensitivitas(rek, data_utama, oof_utama, n_jobs):
+    baris = []
+    for faktor, path in [(FAKTOR_DAMPAK_UTAMA, DATASET)] + sorted(DATASET_SENSITIVITAS.items()):
+        if faktor == FAKTOR_DAMPAK_UTAMA:
+            d, oof_rek, oof_naif = data_utama, oof_utama[rek], oof_utama[(NAIF, 'Raw')]
         else:
-            feat_indices = feat_pool
+            if not path.exists():
+                raise SystemExit(f'Dataset sensitivitas belum ada: {path}\nBuat dengan (dari 06_simulasi_iterasi/):\n'
+                                 f'  python buat_dataset_ml.py --faktor-dampak {faktor} '
+                                 f'--keluaran dataset_ml/sensitivitas/{path.name}')
+            d = muat_data(path)
+            X, y, g = d[FITUR].to_numpy(float), d[LABEL].to_numpy(int), d[GRUP].to_numpy()
+            lip = pembagian_luar(g)
+            oof_rek = prediksi_oof(*rek, X, y, g, lip, n_jobs)
+            oof_naif = prediksi_oof(NAIF, 'Raw', X, y, g, lip, n_jobs)
+        y = d[LABEL].to_numpy(int)
+        m = metrik(y, oof_rek, brier_score_loss(y, oof_naif))
+        baris.append({'Faktor_Dampak': faktor, 'Model': rek[0], 'Kalibrasi': rek[1], 'Dataset': path.name,
+                      'MD5_Dataset': md5(path), **m,
+                      **{f'Prevalensi_{s}': v for s, v in d.groupby(GRUP)[LABEL].mean().items()}})
+        print(f'  faktor {faktor}: prevalensi {m["Prevalensi"]:.3f}, Brier {m["Brier"]:.4f}, BSS {m["BSS"]:.3f}, '
+              f'AUC {m["ROC_AUC"]:.3f}')
+    return pd.DataFrame(baris)
 
-        best_feat, best_thresh, gain = self._best_split(X, y, feat_indices)
-        if best_feat is None or gain <= 1e-6:
-            return DecisionNode(prob=float(np.mean(y)))
-
-        self.feature_importances_[best_feat] += gain * n_samples
-
-        left_mask = X[:, best_feat] <= best_thresh
-        right_mask = ~left_mask
-        left_child = self._build_tree(X[left_mask], y[left_mask], depth + 1)
-        right_child = self._build_tree(X[right_mask], y[right_mask], depth + 1)
-        return DecisionNode(feature=best_feat, threshold=best_thresh, left=left_child, right=right_child)
-
-    def fit(self, X, y):
-        self.feature_importances_ = np.zeros(X.shape[1])
-        self.root = self._build_tree(X, y, depth=0)
-        total_imp = np.sum(self.feature_importances_)
-        if total_imp > 0:
-            self.feature_importances_ /= total_imp
-        return self
-
-    def _predict_row(self, node, x):
-        if node.is_leaf:
-            return node.prob
-        if x[node.feature] <= node.threshold:
-            return self._predict_row(node.left, x)
-        return self._predict_row(node.right, x)
-
-    def predict_proba(self, X):
-        return np.array([self._predict_row(self.root, row) for row in X])
-
-
-class CustomRandomForest:
-    def __init__(self, n_estimators=100, max_depth=3, seed=42):
-        self.n_estimators = n_estimators
-        self.max_depth = max_depth
-        self.seed = seed
-        self.trees = []
-        self.feature_importances_ = None
-
-    def fit(self, X, y):
-        random.seed(self.seed)
-        np.random.seed(self.seed)
-        n_samples, n_features = X.shape
-        max_feat = max(1, int(math.sqrt(n_features)))
-
-        self.trees = []
-        all_importances = np.zeros(n_features)
-
-        for _ in range(self.n_estimators):
-            # Bootstrap sampling
-            boot_idx = np.random.choice(n_samples, size=n_samples, replace=True)
-            X_b, y_b = X[boot_idx], y[boot_idx]
-
-            tree = CustomDecisionTree(max_depth=self.max_depth, max_features=max_feat)
-            tree.fit(X_b, y_b)
-            self.trees.append(tree)
-            all_importances += tree.feature_importances_
-
-        total = np.sum(all_importances)
-        self.feature_importances_ = all_importances / total if total > 0 else np.ones(n_features)/n_features
-        return self
-
-    def predict_proba(self, X):
-        # Rata-rata probabilitas daun seluruh pohon (setara sklearn RandomForestClassifier.predict_proba)
-        tree_preds = np.array([tree.predict_proba(X) for tree in self.trees])
-        return np.mean(tree_preds, axis=0)
-
-
-class CustomRegressionTree:
-    """Pohon regresi (kriteria reduksi SSE) untuk pseudo-residual Gradient Boosting.
-    Nilai daun memakai langkah Newton Friedman (2001): gamma = sum(r) / sum(p(1-p))."""
-    def __init__(self, max_depth=2, min_samples_leaf=1):
-        self.max_depth = max_depth
-        self.min_samples_leaf = min_samples_leaf
-        self.root = None
-
-    def _leaf(self, r, h):
-        return DecisionNode(prob=float(np.sum(r) / (np.sum(h) + 1e-12)))
-
-    def _build(self, X, r, h, depth):
-        n = len(r)
-        if depth >= self.max_depth or n < 2 * self.min_samples_leaf:
-            return self._leaf(r, h)
-
-        best_gain, best_feat, best_thresh = 1e-12, None, None
-        total_sse = np.sum((r - np.mean(r)) ** 2)
-        for feat in range(X.shape[1]):
-            for thresh in np.unique(X[:, feat])[:-1]:
-                left_mask = X[:, feat] <= thresh
-                n_left = np.sum(left_mask)
-                if n_left < self.min_samples_leaf or n - n_left < self.min_samples_leaf:
-                    continue
-                r_left, r_right = r[left_mask], r[~left_mask]
-                sse = np.sum((r_left - r_left.mean()) ** 2) + np.sum((r_right - r_right.mean()) ** 2)
-                gain = total_sse - sse
-                if gain > best_gain:
-                    best_gain, best_feat, best_thresh = gain, feat, thresh
-
-        if best_feat is None:
-            return self._leaf(r, h)
-        left_mask = X[:, best_feat] <= best_thresh
-        return DecisionNode(feature=best_feat, threshold=best_thresh,
-                            left=self._build(X[left_mask], r[left_mask], h[left_mask], depth + 1),
-                            right=self._build(X[~left_mask], r[~left_mask], h[~left_mask], depth + 1))
-
-    def fit(self, X, r, h):
-        self.root = self._build(X, r, h, 0)
-        return self
-
-    def _predict_row(self, node, x):
-        if node.is_leaf:
-            return node.prob
-        if x[node.feature] <= node.threshold:
-            return self._predict_row(node.left, x)
-        return self._predict_row(node.right, x)
-
-    def predict(self, X):
-        return np.array([self._predict_row(self.root, row) for row in X])
-
-
-class CustomGradientBoosting:
-    """Gradient Tree Boosting dengan loss deviance (log-loss) biner dan stochastic subsampling baris."""
-    def __init__(self, n_estimators=100, lr=0.05, max_depth=2, subsample=0.8, seed=42):
-        self.n_estimators = n_estimators
-        self.lr = lr
-        self.max_depth = max_depth
-        self.subsample = subsample
-        self.seed = seed
-        self.trees = []
-        self.base_pred = 0.0
-
-    def fit(self, X, y):
-        rng = np.random.RandomState(self.seed)
-        n_samples = len(y)
-        p_mean = np.clip(np.mean(y), 1e-6, 1.0 - 1e-6)
-        self.base_pred = math.log(p_mean / (1.0 - p_mean))
-
-        F = np.full(n_samples, self.base_pred)
-        self.trees = []
-        n_sub = max(2, int(round(self.subsample * n_samples)))
-
-        for _ in range(self.n_estimators):
-            prob = sigmoid(F)
-            residuals = y - prob            # gradien negatif log-loss
-            hessian = prob * (1.0 - prob)
-
-            idx = rng.choice(n_samples, size=n_sub, replace=False)
-            tree = CustomRegressionTree(max_depth=self.max_depth).fit(X[idx], residuals[idx], hessian[idx])
-            self.trees.append(tree)
-            F += self.lr * tree.predict(X)
-        return self
-
-    def predict_proba(self, X):
-        F = np.full(len(X), self.base_pred)
-        for tree in self.trees:
-            F += self.lr * tree.predict(X)
-        return sigmoid(F)
-
-
-class CustomMLP:
-    """MLP 2 lapis tersembunyi (ReLU) + output sigmoid, dioptimasi Adam (full-batch),
-    regularisasi L2 alpha seperti sklearn MLPClassifier."""
-    def __init__(self, hidden=(16, 8), lr=0.01, alpha=0.01, max_iter=1000, seed=42):
-        self.hidden = hidden
-        self.lr = lr
-        self.alpha = alpha
-        self.max_iter = max_iter
-        self.seed = seed
-        self.params = None
-
-    def _forward(self, X):
-        w1, b1, w2, b2, w3, b3 = self.params
-        z1 = X @ w1 + b1
-        a1 = np.maximum(0.0, z1)
-        z2 = a1 @ w2 + b2
-        a2 = np.maximum(0.0, z2)
-        return z1, a1, z2, a2, sigmoid(a2 @ w3 + b3)
-
-    def fit(self, X, y):
-        rng = np.random.RandomState(self.seed)
-        n_samples, n_feat = X.shape
-        h1, h2 = self.hidden
-
-        # He initialization
-        self.params = [
-            rng.randn(n_feat, h1) * math.sqrt(2.0 / n_feat), np.zeros(h1),
-            rng.randn(h1, h2) * math.sqrt(2.0 / h1), np.zeros(h2),
-            rng.randn(h2) * math.sqrt(2.0 / h2), np.zeros(1),
-        ]
-        beta1, beta2, eps = 0.9, 0.999, 1e-8
-        m = [np.zeros_like(p) for p in self.params]
-        v = [np.zeros_like(p) for p in self.params]
-
-        for t in range(1, self.max_iter + 1):
-            w1, b1, w2, b2, w3, b3 = self.params
-            z1, a1, z2, a2, a3 = self._forward(X)
-
-            # Backpropagation
-            dz3 = (a3 - y) / n_samples
-            dw3 = a2.T @ dz3 + (self.alpha / n_samples) * w3
-            db3 = np.array([np.sum(dz3)])
-            dz2 = np.outer(dz3, w3) * (z2 > 0)
-            dw2 = a1.T @ dz2 + (self.alpha / n_samples) * w2
-            db2 = np.sum(dz2, axis=0)
-            dz1 = (dz2 @ w2.T) * (z1 > 0)
-            dw1 = X.T @ dz1 + (self.alpha / n_samples) * w1
-            db1 = np.sum(dz1, axis=0)
-            grads = [dw1, db1, dw2, db2, dw3, db3]
-
-            # Adam update
-            for i, g in enumerate(grads):
-                m[i] = beta1 * m[i] + (1.0 - beta1) * g
-                v[i] = beta2 * v[i] + (1.0 - beta2) * g ** 2
-                m_hat = m[i] / (1.0 - beta1 ** t)
-                v_hat = v[i] / (1.0 - beta2 ** t)
-                self.params[i] = self.params[i] - self.lr * m_hat / (np.sqrt(v_hat) + eps)
-        return self
-
-    def predict_proba(self, X):
-        return self._forward(X)[-1]
 
 # ============================================================
-# 4. KALIBRASI PROBABILITAS (SKENARIO 5)
+# 7. GRAFIK
 # ============================================================
 
-class PlattScaler:
-    """Platt (1999): p_cal = 1 / (1 + exp(A f + B)), f = logit skor model,
-    dengan target smoothing Platt untuk sampel kecil."""
-    def fit(self, scores, y, max_iter=100):
-        f = logit(scores)
-        n_pos, n_neg = np.sum(y), len(y) - np.sum(y)
-        t = np.where(y == 1, (n_pos + 1.0) / (n_pos + 2.0), 1.0 / (n_neg + 2.0))
-        A, B = 0.0, math.log((n_neg + 1.0) / (n_pos + 1.0))
-        for _ in range(max_iter):
-            p = 1.0 / (1.0 + np.exp(np.clip(A * f + B, -30, 30)))
-            # gradien & Hessian negative log-likelihood terhadap (A, B)
-            d = t - p
-            g = np.array([np.sum(d * f), np.sum(d)])
-            w = p * (1.0 - p)
-            H = np.array([[np.sum(w * f * f), np.sum(w * f)], [np.sum(w * f), np.sum(w)]]) + 1e-8 * np.eye(2)
-            step = np.linalg.solve(H, g)
-            A, B = A - step[0], B - step[1]
-            if np.max(np.abs(step)) < 1e-10:
-                break
-        self.A, self.B = A, B
-        return self
-
-    def transform(self, scores):
-        return 1.0 / (1.0 + np.exp(np.clip(self.A * logit(scores) + self.B, -30, 30)))
+def _gaya(ax, judul, xl, yl):
+    ax.set_facecolor(PERMUKAAN)
+    ax.set_title(judul, fontsize=11, color=TINTA, loc='left')
+    ax.set_xlabel(xl, fontsize=9, color=TINTA_2)
+    ax.set_ylabel(yl, fontsize=9, color=TINTA_2)
+    ax.tick_params(colors=TINTA_2, labelsize=8)
+    ax.grid(color='#e6e5e0', linewidth=0.6)
+    ax.set_axisbelow(True)  # grid di belakang batang/garis data
+    for s in ('top', 'right'):
+        ax.spines[s].set_visible(False)
+    for s in ('left', 'bottom'):
+        ax.spines[s].set_color('#c3c2b7')
 
 
-class IsotonicCalibrator:
-    """Isotonic Regression via Pool Adjacent Violators (PAV), interpolasi linear antar-titik (seperti sklearn)."""
-    def fit(self, scores, y):
-        order = np.argsort(scores, kind='mergesort')
-        xs, ys = np.array(scores)[order], np.array(y, dtype=float)[order]
-        blocks = []  # [nilai, bobot, x_min, x_max]
-        for xi, yi in zip(xs, ys):
-            blocks.append([yi, 1.0, xi, xi])
-            while len(blocks) > 1 and blocks[-2][0] >= blocks[-1][0]:
-                v2, w2, lo2, hi2 = blocks.pop()
-                v1, w1, lo1, hi1 = blocks.pop()
-                blocks.append([(v1 * w1 + v2 * w2) / (w1 + w2), w1 + w2, lo1, hi2])
-        self.x_knots, self.y_knots = [], []
-        for v, _, lo, hi in blocks:
-            self.x_knots += [lo, hi]
-            self.y_knots += [v, v]
-        return self
-
-    def transform(self, scores):
-        return np.clip(np.interp(scores, self.x_knots, self.y_knots), 0.0, 1.0)
-
-
-class CalibratedModel:
-    """Kalibrasi post-hoc tanpa kebocoran data: kalibrator dilatih pada prediksi out-of-fold
-    (inner stratified 3-fold) dari fold training, lalu model dasar dilatih ulang pada seluruh fold training."""
-    def __init__(self, base_ctor, method, inner_splits=3, seed=42):
-        self.base_ctor = base_ctor
-        self.method = method
-        self.inner_splits = inner_splits
-        self.seed = seed
-
-    def fit(self, X, y):
-        inner_scores = np.zeros(len(y))
-        for tr, te in stratified_k_fold(y, n_splits=self.inner_splits, seed=self.seed):
-            inner_scores[te] = self.base_ctor().fit(X[tr], y[tr]).predict_proba(X[te])
-        self.calibrator = (PlattScaler() if self.method == 'Platt' else IsotonicCalibrator()).fit(inner_scores, y)
-        self.base = self.base_ctor().fit(X, y)
-        return self
-
-    def predict_proba(self, X):
-        return self.calibrator.transform(self.base.predict_proba(X))
-
-# ============================================================
-# 5. RUN PIPELINE EKSPERIMEN UTAMA
-# ============================================================
-
-EWS_LOW, EWS_HIGH = 0.35, 0.65
-CALIBRATION_METHODS = ['Raw', 'Platt', 'Isotonic']
-
-def ews_zone(p):
-    if p < EWS_LOW:
-        return "HIJAU (Low Risk)"
-    if p < EWS_HIGH:
-        return "KUNING (Watchlist)"
-    return "MERAH (Critical Alert)"
-
-def cv_predict(ctor, X_raw, y_raw, folds):
-    """Prediksi out-of-fold dengan penskalaan terisolasi per fold"""
-    oof_probs = np.zeros(len(y_raw))
-    for train_idx, test_idx in folds:
-        scaler = CustomStandardScaler().fit(X_raw[train_idx])
-        model = ctor().fit(scaler.transform(X_raw[train_idx]), y_raw[train_idx])
-        oof_probs[test_idx] = model.predict_proba(scaler.transform(X_raw[test_idx]))
-    return oof_probs
-
-def make_ctor(base_ctor, method):
-    if method == 'Raw':
-        return base_ctor
-    return lambda: CalibratedModel(base_ctor, method)
-
-def fmt_models(names):
-    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " dan " + names[-1]
-
-def run_pipeline():
-    set_seed(42)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    possible_paths = [
-        os.path.join(script_dir, "..", "dataset_pre02_fne_v3.csv"),
-        os.path.join(script_dir, "dataset_pre02_fne_v3.csv"),
-        os.path.abspath(os.path.join(script_dir, "..", "..", "MP-PRE-02-github", "dataset_pre02_fne_v3.csv"))
-    ]
-
-    dataset_path = None
-    for p in possible_paths:
-        if os.path.exists(p):
-            dataset_path = os.path.normpath(p)
-            break
-
-    if not dataset_path:
-        print("[ERROR] File 'dataset_pre02_fne_v3.csv' tidak ditemukan.")
-        sys.exit(1)
-
-    print(f"[INFO] Membaca dataset dari: {dataset_path}")
-
-    rows = []
-    with open(dataset_path, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for r in reader:
-            rows.append(r)
-
-    feature_names = [
-        'Planned_Duration_Days',
-        'Planned_Effort_Hours',
-        'Predecessor_Count',
-        'Resource_Utilization_Rate',
-        'Risk_Score',
-        'SPI_Value',
-        'Change_Request_Count'
-    ]
-
-    X_raw = np.array([[float(r[col]) for col in feature_names] for r in rows])
-    y_raw = np.array([int(r['Status_Delay']) for r in rows])
-    n_samples = len(y_raw)
-
-    print(f"[INFO] Berhasil memuat {n_samples} baris task modul Super ERP FNE.")
-    print(f"[INFO] Kelas Delay=1: {sum(y_raw)} ({sum(y_raw)/n_samples*100:.1f}%), Kelas Delay=0: {n_samples - sum(y_raw)} ({(n_samples-sum(y_raw))/n_samples*100:.1f}%)")
-
-    # Output directory
-    output_dir = os.path.join(script_dir, "hasil_eksperimen")
-    os.makedirs(output_dir, exist_ok=True)
-
-    # 5-Fold Cross Validation Folds
-    folds = stratified_k_fold(y_raw, n_splits=5, seed=42)
-
-    # Hyperparameter sesuai Matriks Hyperparameter (01_Flow_dan_Skenario_Eksperimen.md, Bagian 4.3)
-    model_constructors = {
-        'Logistic Regression (Baseline)': lambda: CustomLogisticRegression(C=1.0, max_iter=1000),
-        'Random Forest': lambda: CustomRandomForest(n_estimators=100, max_depth=3, seed=42),
-        'Gradient Boosting': lambda: CustomGradientBoosting(n_estimators=100, lr=0.05, max_depth=2, subsample=0.8, seed=42),
-        'MLP Neural Network': lambda: CustomMLP(hidden=(16, 8), lr=0.01, alpha=0.01, max_iter=1000, seed=42)
-    }
-    model_names = list(model_constructors)
-
-    results = []
-    oof_predictions = {}  # key: (model, kalibrasi)
-
-    print("\n" + "="*92)
-    print(f"{'HASIL EVALUASI STRATIFIED 5-FOLD CROSS-VALIDATION (PRE-02)':^92}")
-    print("="*92)
-    print(f"{'Model':<30} | {'Kalibrasi':<9} | {'ROC-AUC':<7} | {'Brier':<6} | {'LogLoss':<7} | {'ECE':<6} | {'Akurasi':<7} | {'F1':<6}")
-    print("-"*92)
-
-    for name, base_ctor in model_constructors.items():
-        for method in CALIBRATION_METHODS:
-            oof_probs = cv_predict(make_ctor(base_ctor, method), X_raw, y_raw, folds)
-            oof_predictions[(name, method)] = oof_probs
-            m = evaluate_probs(y_raw, oof_probs)
-            results.append({'Model': name, 'Kalibrasi': method, **m})
-            print(f"{name:<30} | {method:<9} | {m['ROC_AUC']:.4f}  | {m['Brier_Score']:.4f} | {m['Log_Loss']:.4f}  | {m['ECE']:.4f} | {m['Accuracy']*100:5.1f}%  | {m['F1_Score']:.4f}")
-
-    print("="*92)
-
-    # 1. Simpan Tabel Metrik CSV
-    metric_fields = ['Model', 'Kalibrasi', 'ROC_AUC', 'Brier_Score', 'Log_Loss', 'ECE', 'Accuracy',
-                     'Precision', 'Recall', 'Specificity', 'F1_Score', 'TP', 'FP', 'TN', 'FN']
-    metrics_csv = os.path.join(output_dir, "tabel_metrik_evaluasi.csv")
-    with open(metrics_csv, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=metric_fields)
-        writer.writeheader()
-        for r in results:
-            writer.writerow(r)
-    print(f"\n[INFO] Tabel metrik tersimpan di: {metrics_csv}")
-
-    # Rekomendasi model dengan kalibrasi terbaik (Deskripsi_Penelitian.md, Eksperimen Kelima):
-    # Brier Score terendah, tie-break ECE lalu Log Loss
-    best = min(results, key=lambda r: (round(r['Brier_Score'], 6), round(r['ECE'], 6), r['Log_Loss']))
-    best_key = (best['Model'], best['Kalibrasi'])
-    best_label = f"{best['Model']} + {best['Kalibrasi']}" if best['Kalibrasi'] != 'Raw' else f"{best['Model']} (tanpa kalibrasi)"
-    best_probs = oof_predictions[best_key]
-    print(f"[INFO] Model rekomendasi (Brier terendah): {best_label}")
-
-    # 2. Kurva ROC Comparison Plot (output mentah; kalibrasi monoton tidak mengubah urutan skor)
-    plt.figure(figsize=(8, 6))
-    colors = ['#1E4220', '#2B6CB0', '#E8A33D', '#B83280']
-    for idx, name in enumerate(model_names):
-        fpr, tpr = compute_roc_auc(y_raw, oof_predictions[(name, 'Raw')])[1:]
-        auc_val = next(r['ROC_AUC'] for r in results if r['Model'] == name and r['Kalibrasi'] == 'Raw')
-        plt.plot(fpr, tpr, color=colors[idx % len(colors)], lw=2.2, label=f"{name} (AUC = {auc_val:.3f})")
-    plt.plot([0, 1], [0, 1], 'k--', lw=1.5, label='Random Chance (AUC = 0.500)')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate (1 - Specificity)', fontsize=11)
-    plt.ylabel('True Positive Rate (Sensitivity)', fontsize=11)
-    plt.title('Kurva ROC Perbandingan 4 Algoritma PRE-02', fontsize=12, fontweight='bold')
-    plt.legend(loc='lower right', fontsize=9.5)
-    plt.grid(True, linestyle=':', alpha=0.6)
-    roc_plot = os.path.join(output_dir, "kurva_roc_perbandingan.png")
-    plt.savefig(roc_plot, dpi=300, bbox_inches='tight')
-    plt.close()
-    print(f"[INFO] Plot Kurva ROC tersimpan di: {roc_plot}")
-
-    # 3. Calibration Curves (Reliability Diagram): kiri = 4 model mentah, kanan = Raw vs Platt vs Isotonic model rekomendasi
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    for idx, name in enumerate(model_names):
-        _, bin_confs, bin_accs = compute_ece(y_raw, oof_predictions[(name, 'Raw')], n_bins=5)
-        axes[0].plot(bin_confs, bin_accs, marker='o', lw=2, color=colors[idx % len(colors)], label=name)
-    for idx, method in enumerate(CALIBRATION_METHODS):
-        probs = oof_predictions[(best['Model'], method)]
-        ece_val, bin_confs, bin_accs = compute_ece(y_raw, probs, n_bins=5)
-        axes[1].plot(bin_confs, bin_accs, marker='o', lw=2, color=['#1E4220', '#E8A33D', '#4A7C59'][idx], label=f"{method} (ECE = {ece_val:.3f})")
-    for ax, title in zip(axes, ['Output Mentah 4 Algoritma', f"Efek Kalibrasi: {best['Model']}"]):
-        ax.plot([0, 1], [0, 1], 'k--', lw=1.5, label='Perfect Calibration')
-        ax.set_xlim([0.0, 1.0])
-        ax.set_ylim([0.0, 1.05])
-        ax.set_xlabel('Mean Predicted Probability', fontsize=11)
-        ax.set_ylabel('Empirical Fraction of Delays', fontsize=11)
-        ax.set_title(title, fontsize=11, fontweight='bold')
-        ax.legend(loc='upper left', fontsize=9)
-        ax.grid(True, linestyle=':', alpha=0.6)
-    fig.suptitle('Diagram Reliabilitas (Calibration Curves) PRE-02, 5 bin', fontsize=12, fontweight='bold')
-    cal_plot = os.path.join(output_dir, "kurva_kalibrasi_probabilitas.png")
-    fig.savefig(cal_plot, dpi=300, bbox_inches='tight')
+def grafik_roc(y, oof, tabel, path):
+    fig, ax = plt.subplots(figsize=(6.4, 5.2), facecolor=PERMUKAAN)
+    for nama in MODEL:
+        fpr, tpr, _ = roc_curve(y, oof[(nama, 'Raw')])
+        auc = tabel.query('Model == @nama and Kalibrasi == "Raw"').ROC_AUC.iloc[0]
+        ax.plot(fpr, tpr, color=WARNA[nama], ls=GARIS[nama], lw=2, label=f'{nama} (AUC {f(auc, 3)})')
+    ax.plot([0, 1], [0, 1], color=WARNA[NAIF], ls=GARIS[NAIF], lw=1.5, label='Tebakan acak (AUC 0,5)')
+    _gaya(ax, 'Kurva ROC — prediksi out-of-fold (tanpa kalibrasi)', 'False positive rate (1 − specificity)',
+          'True positive rate (recall)')
+    ax.legend(fontsize=8, frameon=False, loc='lower right')
+    fig.tight_layout()
+    fig.savefig(path, dpi=200)
     plt.close(fig)
-    print(f"[INFO] Plot Kalibrasi tersimpan di: {cal_plot}")
 
-    # 4. Feature Importance dari Random Forest (Full Dataset)
-    scaler_full = CustomStandardScaler().fit(X_raw)
-    X_full_scaled = scaler_full.transform(X_raw)
-    rf_full = CustomRandomForest(n_estimators=100, max_depth=3, seed=42).fit(X_full_scaled, y_raw)
 
-    fi = rf_full.feature_importances_
-    sorted_idx = np.argsort(fi)
-    top_features = [feature_names[i] for i in sorted_idx[::-1][:2]]
+def grafik_kalibrasi(y, oof, rek, path):
+    fig, axs = plt.subplots(1, 2, figsize=(11, 5), facecolor=PERMUKAAN)
+    for ax in axs:
+        ax.plot([0, 1], [0, 1], color=WARNA[NAIF], ls=GARIS[NAIF], lw=1.5, label='Kalibrasi sempurna')
+    for nama in MODEL:
+        fp, mp = calibration_curve(y, oof[(nama, 'Raw')], n_bins=N_BIN_ECE, strategy='uniform')
+        axs[0].plot(mp, fp, color=WARNA[nama], ls=GARIS[nama], lw=2, marker='o', ms=4, label=nama)
+    gaya_kal = {'Raw': '-', 'Platt': '--', 'Isotonic': ':'}
+    for kal in KALIBRASI:
+        fp, mp = calibration_curve(y, oof[(rek[0], kal)], n_bins=N_BIN_ECE, strategy='uniform')
+        axs[1].plot(mp, fp, color=WARNA[rek[0]], ls=gaya_kal[kal], lw=2, marker='o', ms=4, label=kal,
+                    alpha=1.0 if kal == rek[1] else 0.6)
+    _gaya(axs[0], 'Reliability diagram — 4 model tanpa kalibrasi', 'Rata-rata probabilitas prediksi',
+          'Proporsi telat aktual')
+    _gaya(axs[1], f'Efek kalibrasi — {rek[0]} (rekomendasi: {rek[1]})', 'Rata-rata probabilitas prediksi',
+          'Proporsi telat aktual')
+    for ax in axs:
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.legend(fontsize=8, frameon=False, loc='upper left')
+    fig.tight_layout()
+    fig.savefig(path, dpi=200)
+    plt.close(fig)
 
-    plt.figure(figsize=(9, 5))
-    y_pos = np.arange(len(sorted_idx))
-    plt.barh(y_pos, fi[sorted_idx], height=0.55, color='#2C5F2D', edgecolor='#1E4220')
-    plt.yticks(y_pos, [feature_names[i] for i in sorted_idx], fontsize=10)
-    plt.xlabel('Relative Feature Importance (MDI Gini Reduction)', fontsize=11)
-    plt.title('Feature Importance Pemicu Keterlambatan Modul Super ERP FNE', fontsize=12, fontweight='bold')
-    plt.grid(True, axis='x', linestyle=':', alpha=0.6)
-    fi_plot = os.path.join(output_dir, "feature_importance_comparison.png")
-    plt.savefig(fi_plot, dpi=300, bbox_inches='tight')
-    plt.close()
-    print(f"[INFO] Plot Feature Importance tersimpan di: {fi_plot}")
 
-    fi_csv = os.path.join(output_dir, "tabel_feature_importance.csv")
-    with open(fi_csv, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Feature', 'Importance_MDI'])
-        for i in sorted_idx[::-1]:
-            writer.writerow([feature_names[i], f"{fi[i]:.4f}"])
-    print(f"[INFO] Tabel Feature Importance tersimpan di: {fi_csv}")
+def grafik_kepentingan(kep, path):
+    fig, axs = plt.subplots(1, 3, figsize=(14, 4.6), facecolor=PERMUKAAN)
+    urut = kep.reindex(kep.Permutation_RF_Rata2.sort_values().index)
+    pos = np.arange(len(urut))
+    panel = [('Koefisien_LR', None, 'Logistic Regression: koefisien\n(per simpangan baku fitur)', WARNA['Logistic Regression']),
+             ('MDI_RF', None, 'Random Forest: MDI\n(dilatih pada seluruh data)', WARNA['Random Forest']),
+             ('Permutation_RF_Rata2', 'Permutation_RF_SD',
+              'Random Forest: permutation\n(kenaikan Brier, subproyek uji)', WARNA['Random Forest'])]
+    for ax, (kol, sd, judul, warna) in zip(axs, panel):
+        ax.barh(pos, urut[kol], height=0.6, color=warna, xerr=urut[sd] if sd else None,
+                error_kw={'ecolor': TINTA_2, 'lw': 1})
+        ax.axvline(0, color=TINTA_2, lw=0.8)
+        ax.set_yticks(pos, urut.Fitur, fontsize=8)
+        _gaya(ax, judul, '', '')
+    fig.tight_layout()
+    fig.savefig(path, dpi=200)
+    plt.close(fig)
 
-    # 5. Threshold Analysis (Youden J) & Tabel Prediksi Probabilitas per Aktivitas & Zonasi EWS
-    theta, j_stat, sens, spec = youden_threshold(y_raw, best_probs)
-    print(f"[INFO] Youden theta* = {theta:.4f} (J = {j_stat:.3f}, Sensitivity = {sens:.3f}, Specificity = {spec:.3f})")
 
-    task_csv = os.path.join(output_dir, "tabel_prediksi_probabilitas_task.csv")
-    zones = [ews_zone(p) for p in best_probs]
-    with open(task_csv, 'w', newline='', encoding='utf-8') as f:
-        fieldnames = ['Task_ID', 'Sub_Project', 'Task_Name', 'Status_Delay_Aktual',
-                      'P_Delay_Logistic_Regression', 'P_Delay_Random_Forest',
-                      'P_Delay_Gradient_Boosting', 'P_Delay_MLP', 'P_Delay_Rekomendasi', 'EWS_Risk_Zone']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
+def grafik_per_titik(per_titik, terbaik_per_model, path):
+    fig, axs = plt.subplots(1, 2, figsize=(11, 4.6), facecolor=PERMUKAAN)
+    for nama, kal in [(NAIF, 'Raw')] + terbaik_per_model:
+        s = per_titik.query('Model == @nama and Kalibrasi == @kal').sort_values(TITIK)
+        x = s[TITIK] * 100
+        label = nama if nama == NAIF else f'{nama} ({kal})'
+        axs[0].plot(x, s.Brier, color=WARNA[nama], ls=GARIS[nama], lw=2, marker='o', ms=6, label=label)
+        if nama != NAIF:
+            axs[1].plot(x, s.ROC_AUC, color=WARNA[nama], ls=GARIS[nama], lw=2, marker='o', ms=6, label=label)
+    _gaya(axs[0], 'Brier Score per titik monitoring (lebih kecil lebih baik)', 'Titik monitoring (% jadwal rencana)',
+          'Brier Score')
+    _gaya(axs[1], 'ROC-AUC per titik monitoring (lebih besar lebih baik)', 'Titik monitoring (% jadwal rencana)',
+          'ROC-AUC')
+    for ax in axs:
+        ax.set_xticks([25, 50, 75])
+        ax.legend(fontsize=8, frameon=False)
+    fig.tight_layout()
+    fig.savefig(path, dpi=200)
+    plt.close(fig)
 
-        for i, r in enumerate(rows):
-            writer.writerow({
-                'Task_ID': r['Task_ID'],
-                'Sub_Project': r['Sub_Project'],
-                'Task_Name': r['Task_Name'],
-                'Status_Delay_Aktual': r['Status_Delay'],
-                'P_Delay_Logistic_Regression': f"{oof_predictions[('Logistic Regression (Baseline)', 'Raw')][i]:.4f}",
-                'P_Delay_Random_Forest': f"{oof_predictions[('Random Forest', 'Raw')][i]:.4f}",
-                'P_Delay_Gradient_Boosting': f"{oof_predictions[('Gradient Boosting', 'Raw')][i]:.4f}",
-                'P_Delay_MLP': f"{oof_predictions[('MLP Neural Network', 'Raw')][i]:.4f}",
-                'P_Delay_Rekomendasi': f"{best_probs[i]:.4f}",
-                'EWS_Risk_Zone': zones[i]
-            })
-    print(f"[INFO] Tabel Prediksi Probabilitas per Task tersimpan di: {task_csv}")
 
-    zone_counts = {}
-    for z, y in zip(zones, y_raw):
-        key = z.split()[0]
-        zone_counts.setdefault(key, [0, 0])[int(y)] += 1  # [tepat waktu, delay]
-    n_delay = int(np.sum(y_raw))
-    red_hit, red_false = zone_counts.get('MERAH', [0, 0])[1], zone_counts.get('MERAH', [0, 0])[0]
-    yellow_delay, yellow_ok = zone_counts.get('KUNING', [0, 0])[1], zone_counts.get('KUNING', [0, 0])[0]
-    green_miss = zone_counts.get('HIJAU', [0, 0])[1]
+# ============================================================
+# 8. LAPORAN
+# ============================================================
 
-    # 6. Validasi pembanding: Hold-out Stratified Train-Test Split 80:20 (01_Flow Bagian 4.2)
-    tr_idx, te_idx = stratified_train_test_split(y_raw, test_size=0.2, seed=42)
-    holdout_results = []
-    for name, base_ctor in model_constructors.items():
-        for method in CALIBRATION_METHODS:
-            scaler = CustomStandardScaler().fit(X_raw[tr_idx])
-            model = make_ctor(base_ctor, method)().fit(scaler.transform(X_raw[tr_idx]), y_raw[tr_idx])
-            probs = model.predict_proba(scaler.transform(X_raw[te_idx]))
-            holdout_results.append({'Model': name, 'Kalibrasi': method, **evaluate_probs(y_raw[te_idx], probs)})
-    holdout_csv = os.path.join(output_dir, "tabel_metrik_holdout_80_20.csv")
-    with open(holdout_csv, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=metric_fields)
-        writer.writeheader()
-        for r in holdout_results:
-            writer.writerow(r)
-    print(f"[INFO] Tabel metrik hold-out 80:20 (n_test = {len(te_idx)}) tersimpan di: {holdout_csv}")
+def f(x, n=4):
+    return 'n/a' if pd.isna(x) else f'{x:.{n}f}'.replace('.', ',')
 
-    # 7. Ringkasan Temuan Ilmiah (Markdown Report), seluruh kalimat diturunkan dari hasil di atas
-    raw_results = [r for r in results if r['Kalibrasi'] == 'Raw']
-    max_auc = max(r['ROC_AUC'] for r in raw_results)
-    top_auc = [r['Model'] for r in raw_results if abs(r['ROC_AUC'] - max_auc) < 1e-9]
-    min_auc = min(raw_results, key=lambda r: r['ROC_AUC'])
-    best_raw = min(raw_results, key=lambda r: r['Brier_Score'])
-    get = lambda name, method: next(r for r in results if r['Model'] == name and r['Kalibrasi'] == method)
 
-    summary_md = os.path.join(output_dir, "00_RINGKASAN_TEMUAN_EKSPERIMEN.md")
-    with open(summary_md, 'w', encoding='utf-8') as f:
-        f.write("# RINGKASAN TEMUAN EKSPERIMEN PRE-02\n")
-        f.write("## Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas\n\n")
-        f.write("> Dokumen ini digenerate otomatis oleh `experiment_pipeline.py`; seluruh angka dan kalimat temuan diturunkan langsung dari hasil eksperimen.\n\n")
-        f.write(f"**Dataset:** N = {n_samples} task ({n_delay} Delay : {n_samples - n_delay} On-Time). "
-                "**Protokol:** Stratified 5-Fold Cross-Validation, seed 42, standardisasi per fold, "
-                "kalibrasi dilatih pada inner 3-fold di dalam fold training.\n\n")
-        f.write("### 1. Tabel Kinerja Evaluasi 5-Fold Cross-Validation\n\n")
-        f.write("| Model Algoritma | Kalibrasi | ROC-AUC | Brier Score | Log Loss | ECE | Akurasi | Recall | Specificity | F1-Score |\n")
-        f.write("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n")
-        for r in results:
-            mark = "**" if (r['Model'], r['Kalibrasi']) == best_key else ""
-            f.write(f"| {mark}{r['Model']}{mark} | {r['Kalibrasi']} | {r['ROC_AUC']:.4f} | {r['Brier_Score']:.4f} | {r['Log_Loss']:.4f} | {r['ECE']:.4f} | "
-                    f"{r['Accuracy']*100:.1f}% | {r['Recall']:.3f} | {r['Specificity']:.3f} | {r['F1_Score']:.4f} |\n")
-        f.write("\n*Metrik klasifikasi (Akurasi, Recall, Specificity, F1) dihitung pada ambang batas 0.5. Baris tebal = model rekomendasi.*\n")
+def pct(x, n=1):
+    return 'n/a' if pd.isna(x) else f'{100 * x:.{n}f}%'.replace('.', ',')
 
-        f.write("\n### 2. Temuan Kunci\n\n")
-        f.write(f"1. **Kekuatan Diskriminasi (ROC-AUC, output mentah):** ROC-AUC tertinggi dicapai oleh {fmt_models(top_auc)} "
-                f"({max_auc:.4f}); terendah {min_auc['Model']} ({min_auc['ROC_AUC']:.4f}).\n")
-        f.write(f"2. **Kualitas Probabilitas sebelum kalibrasi:** Brier Score terendah dimiliki {best_raw['Model']} "
-                f"(Brier = {best_raw['Brier_Score']:.4f}, ECE = {best_raw['ECE']:.4f}).\n")
-        f.write("3. **Efek Kalibrasi (Brier Score Raw → Platt → Isotonic):**\n")
-        for name in model_names:
-            b = [get(name, m)['Brier_Score'] for m in CALIBRATION_METHODS]
-            f.write(f"   - {name}: {b[0]:.4f} → {b[1]:.4f} → {b[2]:.4f}\n")
-        f.write(f"4. **Rekomendasi model dengan kalibrasi terbaik:** {best_label} "
-                f"(Brier = {best['Brier_Score']:.4f}, ECE = {best['ECE']:.4f}, Log Loss = {best['Log_Loss']:.4f}, ROC-AUC = {best['ROC_AUC']:.4f}).\n")
-        f.write(f"5. **Prediktor Dominan (Feature Importance RF, MDI):** dua fitur dengan bobot tertinggi adalah "
-                f"`{top_features[0]}` ({fi[feature_names.index(top_features[0])]:.3f}) dan `{top_features[1]}` ({fi[feature_names.index(top_features[1])]:.3f}).\n")
-        f.write(f"6. **Threshold Analysis (Youden J):** pada model rekomendasi, ambang optimal θ* = {theta:.4f} "
-                f"(J = {j_stat:.3f}; Sensitivity = {sens:.3f}; Specificity = {spec:.3f}).\n")
-        f.write(f"7. **Early Warning System (Hijau < {EWS_LOW}, Kuning {EWS_LOW}–{EWS_HIGH}, Merah ≥ {EWS_HIGH}), model rekomendasi:** "
-                f"zona Merah menangkap {red_hit} dari {n_delay} modul yang aktual terlambat dengan {red_false} alarm palsu; "
-                f"zona Kuning berisi {yellow_delay} modul terlambat dan {yellow_ok} modul tepat waktu; "
-                f"{green_miss} modul terlambat lolos ke zona Hijau.\n")
 
-        f.write("\n### 3. Validasi Pembanding: Hold-out Stratified 80:20\n\n")
-        f.write(f"n_train = {len(tr_idx)}, n_test = {len(te_idx)}. Karena data uji hanya {len(te_idx)} task, hasil ini bersifat indikatif dan "
-                "tidak dipakai untuk pemilihan model (detail: `tabel_metrik_holdout_80_20.csv`).\n\n")
-        f.write("| Model Algoritma | Kalibrasi | ROC-AUC | Brier Score | Akurasi |\n| :--- | :---: | :---: | :---: | :---: |\n")
-        for r in holdout_results:
-            f.write(f"| {r['Model']} | {r['Kalibrasi']} | {r['ROC_AUC']:.4f} | {r['Brier_Score']:.4f} | {r['Accuracy']*100:.1f}% |\n")
+def tulis_ringkasan(path, d, tabel, per_titik, per_sub, zona_t, kep, sens, rek):
+    r = tabel[tabel.Rekomendasi == 1].iloc[0]
+    m_rek, k_rek = rek
+    naif = tabel[tabel.Model == NAIF].iloc[0]
+    raw = tabel[(tabel.Kalibrasi == 'Raw') & (tabel.Model != NAIF)]
+    L = ['# Ringkasan Temuan Eksperimen PRE-02 (versi 2)\n',
+         '> Digenerate otomatis oleh `experiment_pipeline.py`. Semua angka berasal dari prediksi out-of-fold '
+         '*leave-one-subproject-out* (8 lipatan) pada `dataset_ml.csv`. Jangan diedit manual.\n',
+         f'- Data: {len(d)} baris, {d[GRUP].nunique()} subproyek, label `{LABEL}` = 1 pada {pct(d[LABEL].mean())} baris',
+         f'- Pembanding naif: Brier {f(naif.Brier)}, AUC {f(naif.ROC_AUC, 3)}',
+         f'- **Model rekomendasi: {r.Model} + {r.Kalibrasi}** — Brier {f(r.Brier)}, Brier Skill Score {f(r.BSS, 3)}, '
+         f'ROC-AUC {f(r.ROC_AUC, 3)}, ECE {f(r.ECE)}, Log Loss {f(r.Log_Loss)}\n',
+         '## Skenario 0–5: perbandingan model\n',
+         '| Model | Kalibrasi | Brier | BSS | Log Loss | ECE | ROC-AUC | Ambang Youden | Recall | Specificity | F1 |',
+         '| :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+    for _, t in tabel.sort_values(['Skenario', 'Kalibrasi'], key=lambda c: c.map(KALIBRASI.index) if c.name == 'Kalibrasi' else c).iterrows():
+        tebal = '**' if t.Rekomendasi else ''
+        L.append(f'| {tebal}{t.Model}{tebal} | {t.Kalibrasi} | {f(t.Brier)} | {f(t.BSS, 3)} | {f(t.Log_Loss)} | '
+                 f'{f(t.ECE)} | {f(t.ROC_AUC, 3)} | {f(t.Ambang, 3)} | {pct(t.Recall)} | {pct(t.Specificity)} | {f(t.F1, 3)} |')
+    terbaik_auc = raw.sort_values('ROC_AUC', ascending=False).iloc[0]
+    L += ['',
+          f'- Semua model berada di atas pembanding naif: BSS terendah di antara 12 kombinasi = '
+          f'{f(tabel[tabel.Model != NAIF].BSS.min(), 3)}.' if (tabel[tabel.Model != NAIF].BSS > 0).all() else
+          f'- Ada kombinasi dengan BSS ≤ 0 (tidak lebih baik dari pembanding naif): '
+          f'{", ".join(tabel[(tabel.Model != NAIF) & (tabel.BSS <= 0)].apply(lambda t: t.Model + "/" + t.Kalibrasi, axis=1))}.',
+          f'- ROC-AUC tertinggi tanpa kalibrasi: {terbaik_auc.Model} ({f(terbaik_auc.ROC_AUC, 3)}).',
+          *[(f'- {m}: Platt maupun Isotonic tidak memperbaiki Brier (Raw {f(raw_m.Brier)} tetap terbaik).'
+             if b.Kalibrasi == 'Raw' else
+             f'- {m}: kalibrasi terbaik menurut Brier = {b.Kalibrasi} (Brier Raw {f(raw_m.Brier)} → '
+             f'{f(b.Brier)}; ROC-AUC Raw {f(raw_m.ROC_AUC, 3)} → {f(b.ROC_AUC, 3)}).')
+            for m in MODEL
+            for b, raw_m in [(tabel[tabel.Model == m].sort_values(['Brier', 'ECE', 'Log_Loss']).iloc[0],
+                              tabel[(tabel.Model == m) & (tabel.Kalibrasi == 'Raw')].iloc[0])]],
+          '- ROC-AUC gabungan dapat berubah setelah kalibrasi walaupun kalibrasi bersifat monoton: setiap lipatan '
+          'memakai pemetaan kalibrasi sendiri (dilatih pada subproyek lain), sehingga urutan prediksi antarsubproyek '
+          'berubah, dan isotonic menghasilkan nilai seri.\n',
+          '## Skenario 6: per titik monitoring (model rekomendasi)\n',
+          '| Titik | Prevalensi | Brier | BSS | ROC-AUC | ECE |', '| ---: | ---: | ---: | ---: | ---: | ---: |']
+    for _, t in per_titik.query('Model == @m_rek and Kalibrasi == @k_rek').sort_values(TITIK).iterrows():
+        L.append(f'| {pct(t[TITIK], 0)} | {pct(t.Prevalensi)} | {f(t.Brier)} | {f(t.BSS, 3)} | {f(t.ROC_AUC, 3)} | {f(t.ECE)} |')
+    L += ['', '## Brier per subproyek uji (model rekomendasi vs pembanding naif)\n',
+          '| Subproyek | Prevalensi | Brier model | Brier naif | BSS |', '| :--- | ---: | ---: | ---: | ---: |']
+    for sub in sorted(d[GRUP].unique()):
+        m = per_sub.query(f'{GRUP} == @sub and Model == @m_rek and Kalibrasi == @k_rek').iloc[0]
+        n = per_sub.query(f'{GRUP} == @sub and Model == @NAIF').iloc[0]
+        L.append(f'| {sub} | {pct(m.Prevalensi)} | {f(m.Brier)} | {f(n.Brier)} | {f(m.BSS, 3)} |')
+    kalah = per_sub.query('Model == @m_rek and Kalibrasi == @k_rek and BSS <= 0')[GRUP].tolist()
+    L += ['', f'Model rekomendasi lebih buruk dari pembanding naif (BSS ≤ 0) pada: {", ".join(kalah)}.' if kalah else
+          'Model rekomendasi lebih baik dari pembanding naif (BSS > 0) pada semua subproyek uji.']
+    L += ['', '## Peringatan dini (model rekomendasi)\n',
+          f'Ambang Youden θ* = {f(r.Ambang, 3)} (Recall {pct(r.Recall)}, Specificity {pct(r.Specificity)}). '
+          f'Zona: Hijau < {f(ZONA[0], 2)} ≤ Kuning < {f(ZONA[1], 2)} ≤ Merah.\n',
+          '| Titik | Proyek yang akhirnya telat & sudah di zona Merah | Proyek tepat waktu yang masuk zona Merah | '
+          'Telat terdeteksi ≥ θ* | Tepat waktu ≥ θ* |', '| ---: | ---: | ---: | ---: | ---: |']
+    for _, t in zona_t[(zona_t[GRUP] == 'Semua') & (zona_t[TITIK] != 'Semua')].iterrows():
+        L.append(f'| {pct(float(t[TITIK]), 0)} | {pct(t.Telat_di_Merah)} | {pct(t.Tepat_di_Merah)} | '
+                 f'{pct(t.Telat_di_atas_Ambang)} | {pct(t.Tepat_di_atas_Ambang)} |')
+    L += ['', '## Kepentingan fitur\n',
+          '| Fitur | Koefisien LR | Odds ratio LR | MDI RF | Permutation RF (± SD) |', '| :--- | ---: | ---: | ---: | ---: |']
+    for _, t in kep.sort_values('Permutation_RF_Rata2', ascending=False).iterrows():
+        L.append(f'| {t.Fitur} | {f(t.Koefisien_LR, 3)} | {f(t.Odds_Ratio_LR, 3)} | {f(t.MDI_RF, 3)} | '
+                 f'{f(t.Permutation_RF_Rata2)} (± {f(t.Permutation_RF_SD)}) |')
+    if sens is not None:
+        L += ['', '## Skenario 7: sensitivitas faktor dampak risiko\n',
+              f'Model {rek[0]} + {rek[1]} dijalankan ulang pada dataset dengan faktor dampak berbeda.\n',
+              '| Faktor dampak | Prevalensi label | Brier | BSS | ROC-AUC | ECE |', '| ---: | ---: | ---: | ---: | ---: | ---: |']
+        for _, t in sens.iterrows():
+            utama = ' (utama)' if t.Faktor_Dampak == FAKTOR_DAMPAK_UTAMA else ''
+            L.append(f'| {f(t.Faktor_Dampak, 1)}{utama} | {pct(t.Prevalensi)} | {f(t.Brier)} | {f(t.BSS, 3)} | '
+                     f'{f(t.ROC_AUC, 3)} | {f(t.ECE)} |')
+    L += ['', '## Catatan membaca\n',
+          '- BSS (Brier Skill Score) = 1 − Brier model / Brier pembanding naif; > 0 berarti lebih baik dari menebak '
+          'proporsi telat.',
+          '- Ambang Youden dipilih pada prediksi out-of-fold yang sama dengan yang dievaluasi, sehingga Recall/Specificity '
+          'pada ambang itu sedikit optimistis; metrik probabilitas (Brier, Log Loss, ECE, AUC) tidak bergantung ambang.',
+          '- ROC-AUC pembanding naif di bawah 0,5 adalah konsekuensi validasi per subproyek: prediksinya = proporsi telat '
+          'di 7 subproyek latih, yang justru lebih rendah ketika subproyek uji banyak telat (dan sebaliknya). Pembanding '
+          'naif dipakai untuk Brier/BSS, bukan untuk AUC.',
+          '- P-FNE-02 dan P-FNE-04 hampir satu kelas pada label ini; ROC-AUC per subproyek tidak dilaporkan.']
+    Path(path).write_text('\n'.join(L) + '\n', encoding='utf-8')
 
-        f.write("\n### 4. Catatan Keterbatasan\n\n")
-        f.write(f"- Ukuran sampel sangat kecil (N = {n_samples}); tiap fold uji hanya berisi ±{n_samples // 5} task, sehingga metrik memiliki varians tinggi.\n")
-        if max_auc >= 0.99:
-            f.write(f"- ROC-AUC ≈ {max_auc:.2f} menunjukkan kelas hampir terpisah sempurna pada data empiris-simulatif ini; "
-                    "hasil perlu divalidasi pada data proyek riil sebelum digeneralisasi.\n")
-        f.write("- Kalibrator dilatih pada ±20 sampel per fold; Isotonic Regression rawan overfitting pada ukuran ini, sehingga Platt Scaling lebih stabil secara teoretis (Niculescu-Mizil & Caruana, 2005).\n")
-        f.write("- Pemilihan model rekomendasi dan θ* dilakukan pada prediksi out-of-fold yang sama dengan yang dilaporkan, sehingga estimasi kinerjanya sedikit optimistis.\n")
 
-    print(f"[INFO] Dokumen Ringkasan Temuan tersimpan di: {summary_md}")
-    print("\n[SUCCESS] Seluruh pipeline eksperimen PRE-02 berhasil dijalankan.")
+def tulis_log(path, d, tabel, log, mulai, sens):
+    import joblib
+    L = ['# Log Pelaksanaan Eksperimen PRE-02 (versi 2)\n',
+         '> Digenerate otomatis oleh `experiment_pipeline.py`.\n',
+         f'- Waktu jalan: {mulai:%Y-%m-%d %H:%M}, durasi total {time.time() - mulai.timestamp():.0f} detik',
+         f'- Lingkungan: Python {platform.python_version()}, scikit-learn {sklearn.__version__}, numpy {np.__version__}, '
+         f'pandas {pd.__version__}, joblib {joblib.__version__}',
+         f'- Dataset: `{DATASET.relative_to(ROOT)}` (MD5 `{md5(DATASET)}`), {len(d)} baris',
+         f'- Fitur ({len(FITUR)}): {", ".join(FITUR)}', f'- Label: {LABEL}; grup validasi: {GRUP}', f'- Seed: {SEED}',
+         '- Pembagian luar: LeaveOneGroupOut (8 lipatan); pembagian dalam kalibrasi: GroupKFold(3) per subproyek',
+         '- Pemeriksaan otomatis: kolom & ukuran data sesuai kontrak; tidak ada subproyek uji di data latih; '
+         'setiap baris diprediksi tepat satu kali\n',
+         '## Durasi per model × kalibrasi (8 lipatan, paralel)\n', *log,
+         f'\n## Model rekomendasi\n\n{tabel[tabel.Rekomendasi == 1].iloc[0].Model} + '
+         f'{tabel[tabel.Rekomendasi == 1].iloc[0].Kalibrasi} (Brier terendah; seri: ECE, lalu Log Loss)']
+    if sens is not None:
+        L += ['\n## Dataset sensitivitas\n'] + [f'- faktor {t.Faktor_Dampak}: `{t.Dataset}` (MD5 `{t.MD5_Dataset}`)'
+                                                for _, t in sens.iterrows()]
+    Path(path).write_text('\n'.join(L) + '\n', encoding='utf-8')
 
-if __name__ == "__main__":
-    run_pipeline()
+
+# ============================================================
+# 9. MAIN
+# ============================================================
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description='Pipeline eksperimen PRE-02 versi 2')
+    ap.add_argument('--sensitivitas', action='store_true', help='jalankan juga Skenario 7')
+    ap.add_argument('--keluaran', default=str(HERE / 'hasil_eksperimen'), help='folder luaran')
+    ap.add_argument('--n-jobs', type=int, default=-1, help='jumlah proses paralel (bawaan: semua inti)')
+    a = ap.parse_args(argv)
+    out = Path(a.keluaran)
+    out.mkdir(parents=True, exist_ok=True)
+    mulai = datetime.now()
+    log = []
+
+    print(f'[1/6] Muat data: {DATASET}')
+    d = muat_data(DATASET)
+    print('[2/6] Skenario 0–5: prediksi out-of-fold (leave-one-subproject-out)')
+    X, y, g, lipatan, oof = jalankan_semua(d, a.n_jobs, log)
+
+    print('[3/6] Evaluasi')
+    tabel = tabel_utama(y, oof)
+    rek = tuple(tabel[tabel.Rekomendasi == 1].iloc[0][['Model', 'Kalibrasi']])
+    per_titik = tabel_per_kelompok(d, y, oof, TITIK)
+    per_sub = tabel_per_kelompok(d, y, oof, GRUP)
+    ambang = float(tabel[tabel.Rekomendasi == 1].iloc[0].Ambang)
+    zona_t = tabel_zona(d, y, oof[rek], ambang)
+    print(f'      rekomendasi: {rek[0]} + {rek[1]}')
+
+    print('[4/6] Kepentingan fitur')
+    kep = tabel_kepentingan(X, y, lipatan, a.n_jobs)
+
+    sens = None
+    if a.sensitivitas:
+        print('[5/6] Skenario 7: sensitivitas')
+        sens = jalankan_sensitivitas(rek, d, oof, a.n_jobs)
+    else:
+        print('[5/6] Skenario 7 dilewati (tambahkan --sensitivitas)')
+
+    print(f'[6/6] Tulis luaran ke {out}')
+    bulat = lambda t: t.round(6)
+    bulat(tabel).to_csv(out / 'tabel_metrik_evaluasi.csv', index=False)
+    bulat(per_titik).to_csv(out / 'tabel_metrik_per_titik.csv', index=False)
+    bulat(per_sub).to_csv(out / 'tabel_metrik_per_subproyek.csv', index=False)
+    bulat(zona_t).to_csv(out / 'tabel_zona_peringatan.csv', index=False)
+    bulat(kep).to_csv(out / 'tabel_feature_importance.csv', index=False)
+    pred = d[[GRUP, 'Iterasi', TITIK, LABEL]].copy()
+    for (nama, kal), p in oof.items():
+        pred[f'P_{nama.replace(" ", "_")}_{kal}'] = p
+    pred['Zona_Rekomendasi'] = zona(oof[rek])
+    # presisi penuh: pembulatan membuat probabilitas MLP yang sangat dekat 1 menjadi seri dan mengubah ROC-AUC
+    pred.to_csv(out / 'tabel_prediksi_oof.csv', index=False, float_format='%.17g')
+    if sens is not None:
+        bulat(sens).to_csv(out / 'tabel_sensitivitas.csv', index=False)
+
+    terbaik_per_model = [tuple(tabel[tabel.Model == m].sort_values(['Brier', 'ECE', 'Log_Loss']).iloc[0][['Model', 'Kalibrasi']])
+                         for m in MODEL]
+    grafik_roc(y, oof, tabel, out / 'kurva_roc_perbandingan.png')
+    grafik_kalibrasi(y, oof, rek, out / 'kurva_kalibrasi_probabilitas.png')
+    grafik_kepentingan(kep, out / 'feature_importance_comparison.png')
+    grafik_per_titik(per_titik, terbaik_per_model, out / 'metrik_per_titik.png')
+    tulis_ringkasan(out / '00_RINGKASAN_TEMUAN_EKSPERIMEN.md', d, tabel, per_titik, per_sub, zona_t, kep, sens, rek)
+    tulis_log(out / 'log_pelaksanaan_eksperimen.md', d, tabel, log, mulai, sens)
+    print('Selesai.')
+    return tabel
+
+
+if __name__ == '__main__':
+    main()
