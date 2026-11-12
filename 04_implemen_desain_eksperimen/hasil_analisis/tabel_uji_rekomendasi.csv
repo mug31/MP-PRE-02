@@ -1,0 +1,2 @@
+A,B,Metrik,Selisih_A_minus_B,CI_Bawah,CI_Atas,p_Dua_Arah
+Gradient Boosting + Raw,Random Forest + Raw,Brier,-0.004263,-0.006631,-0.002026,0.001

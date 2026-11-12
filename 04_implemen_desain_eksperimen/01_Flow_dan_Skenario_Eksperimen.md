@@ -319,8 +319,8 @@ Berkas hasil versi 1 di folder yang sama akan digantikan.
 | 3 | Uji pipeline (Bagian 9.3) | 4 |
 | 4 | Jalankan Skenario 0–6; simpan luaran & log | 5 |
 | 5 | Bangkitkan dataset sensitivitas; jalankan Skenario 7 | 5 |
-| 6 | Analisis tabel & grafik; draf bagian results | 6 |
-| 7 | Perbarui draf Bab III dari dokumen ini | 4 (menyusul) |
+| 6 | Analisis tabel & grafik; uji hipotesis H1–H5 (`analisis_data.py`); draf bagian results (`../draft/Bab_IV_Hasil_Penelitian.md`) | 6 (selesai) |
+| 7 | Perbarui draf Bab III dari dokumen ini | 4–6 (selesai: `../draft/Bab_III_Metodologi_Penelitian.md`) |
 
 ---
 

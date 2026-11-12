@@ -1,0 +1,4 @@
+Ambang,Keterangan,Telat_Diperingatkan_sd_25,Telat_Diperingatkan_sd_50,Telat_Diperingatkan_sd_75,Tepat_Diperingatkan_sd_25,Tepat_Diperingatkan_sd_50,Tepat_Diperingatkan_sd_75,Rata2_Sisa_Hari_Saat_Peringatan_Pertama,Median_Sisa_Hari_Saat_Peringatan_Pertama,Telat_Tidak_Pernah_Diperingatkan
+0.485472,θ* Youden,0.567002,0.73646,0.809883,0.224762,0.366908,0.380489,92.311272,90.0,0.190117
+0.35,Batas Kuning,0.676996,0.807649,0.8445,0.3445,0.493436,0.50498,97.69686,90.0,0.1555
+0.65,Batas Merah,0.399777,0.603573,0.743719,0.081711,0.206655,0.219556,82.72973,90.0,0.256281

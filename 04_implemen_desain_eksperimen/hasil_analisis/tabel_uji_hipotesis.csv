@@ -1,0 +1,18 @@
+Hipotesis,Kode_Uji,A,B,Metrik,Nilai_A,Nilai_B,Selisih_A_minus_B,CI_Bawah,CI_Atas,p_Bootstrap,Subproyek_Searah,p_Wilcoxon_Subproyek,p_Holm,Signifikan,Arah_Berlawanan_Signifikan
+H1,H1a,Logistic Regression + Raw,Pembanding Naif + Raw,Brier,0.1958,0.271489,-0.075688,-0.08132,-0.070323,0.0005,6,0.097656,0.008496,1,0
+H2,H2,Random Forest + Raw,Logistic Regression + Raw,Brier,0.176076,0.1958,-0.019724,-0.023163,-0.016347,0.0005,4,0.273438,0.008496,1,0
+H3,H3a,Gradient Boosting + Raw,Logistic Regression + Raw,Brier,0.171813,0.1958,-0.023987,-0.026643,-0.021401,0.0005,4,0.15625,0.008496,1,0
+H3,H3b,Gradient Boosting + Raw,Random Forest + Raw,Brier,0.171813,0.176076,-0.004263,-0.006631,-0.002026,0.0005,5,0.273438,0.008496,1,0
+H3,H3c,Gradient Boosting + Raw,MLP Neural Network + Raw,Brier,0.171813,0.285912,-0.114099,-0.122,-0.106575,0.0005,5,0.074219,0.008496,1,0
+H3,H3d,Gradient Boosting + Raw,Logistic Regression + Raw,ECE,0.055966,0.0939,-0.037933,-0.042517,-0.031042,0.0005,4,0.421875,0.008496,1,0
+H3,H3e,Gradient Boosting + Raw,Random Forest + Raw,ECE,0.055966,0.076182,-0.020216,-0.030559,-0.007818,0.0005,5,0.371094,0.008496,1,0
+H3,H3f,Gradient Boosting + Raw,MLP Neural Network + Raw,ECE,0.055966,0.218808,-0.162841,-0.173278,-0.152987,0.0005,6,0.039062,0.008496,1,0
+H4,H4,MLP Neural Network + Raw,Logistic Regression + Raw,Brier,0.285912,0.1958,0.090112,0.083186,0.097666,1.0,3,0.726562,1.0,0,1
+H5,H5a,Logistic Regression + Platt,Logistic Regression + Raw,ECE,0.102574,0.0939,0.008674,-0.000381,0.020306,0.972014,2,0.945312,1.0,0,0
+H5,H5b,Logistic Regression + Isotonic,Logistic Regression + Raw,ECE,0.105763,0.0939,0.011863,0.001647,0.023186,0.988006,3,0.808594,1.0,0,1
+H5,H5c,Random Forest + Platt,Random Forest + Raw,ECE,0.076487,0.076182,0.000305,-0.006485,0.009043,0.601199,4,0.472656,1.0,0,0
+H5,H5d,Random Forest + Isotonic,Random Forest + Raw,ECE,0.110051,0.076182,0.033869,0.024651,0.042817,1.0,4,0.527344,1.0,0,1
+H5,H5e,Gradient Boosting + Platt,Gradient Boosting + Raw,ECE,0.085672,0.055966,0.029706,0.021036,0.035833,1.0,1,0.988281,1.0,0,1
+H5,H5f,Gradient Boosting + Isotonic,Gradient Boosting + Raw,ECE,0.070113,0.055966,0.014147,0.004519,0.023616,0.997501,3,0.84375,1.0,0,1
+H5,H5g,MLP Neural Network + Platt,MLP Neural Network + Raw,ECE,0.14171,0.218808,-0.077098,-0.085713,-0.067495,0.0005,5,0.230469,0.008496,1,0
+H5,H5h,MLP Neural Network + Isotonic,MLP Neural Network + Raw,ECE,0.183979,0.218808,-0.034828,-0.041615,-0.029385,0.0005,4,0.320312,0.008496,1,0
