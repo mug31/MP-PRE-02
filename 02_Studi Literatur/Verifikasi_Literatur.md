@@ -2,8 +2,12 @@
 
 > Dicek 12 November 2026 sebelum Pertemuan 7 (pembahasan). Sumber pengecekan: Crossref API, DataCite API, doi.org,
 > arXiv API, Zenodo API, Semantic Scholar API, halaman penerbit, dan teks lengkap PDF bila terbuka. Berkas
-> `Tinjauan Pustaka.md`, `Pertemuan2_Matriks_Literatur.md`, `Research gap.md`, dan draf Bab II **tidak diubah**;
+> `Tinjauan Pustaka.md`, `Pertemuan2_Matriks_Literatur.md`, `Research gap.md`, dan draf Bab II awalnya **tidak diubah**;
 > koreksi di bawah perlu diterapkan oleh tim.
+>
+> **Pembaruan:** koreksi sudah diterapkan ke `Tinjauan Pustaka.md`, `Pertemuan2_Matriks_Literatur.md`,
+> `Sintesis Naratif.md`, `Research gap.md`, dan `Pertemuan2_Draft_Tinjauan_Pustaka.md` atas persetujuan tim.
+> No. 19 dan No. 20 dihapus dari matriks; Bimantara (No. 12) tetap dipertahankan dengan catatan.
 
 ## Arti status
 
@@ -32,7 +36,7 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 | 22 | Wauters & Vanhoucke (2016) | Matriks menulis "khususnya SVR dan ANN". Lima metode di paper: decision tree, bagging, random forest, boosting, SVM (tanpa ANN). Temuan: AI mengungguli EVM/ES **hanya jika data latih dan uji mirip** | Koreksi temuan kunci |
 | 21 | Batselier & Vanhoucke (2015) | Matriks menulis "Earned Schedule lebih stabil di akhir proyek". Abstrak mengevaluasi tiga teknik: perluasan EVM dengan *rework*, perluasan dengan *activity sensitivity*, dan EDM(t); EDM(t) setara metode EVM terbaik | Koreksi temuan kunci |
 | 23 | Choetkiertikul et al. (2017) | Matriks menulis metode "Deep Learning (RNN/LSTM)". Paper memakai **faktor risiko + classifier** (8 proyek open source), memprediksi tingkat **dan peluang** keterlambatan; rata-rata precision 79%, recall 61%, F 68%, AUC 83% | Koreksi metode & output (bukan murni biner) |
-| 28 | Cabanillas et al. (2014) | Matriks menulis metrik "Alert Timeliness, False Alarm Rate, Brier Score". Paper (workshop BPM 2014) memakai **SVM** untuk mengklasifikasi eksekusi tugas aman/anomali pada kasus *smart logistics*; tidak ada Brier Score maupun false alarm rate | Hapus metrik itu; jangan dikutip sebagai rujukan Brier |
+| 28 | Cabanillas et al. (2014) | Matriks menulis metrik "Alert Timeliness, False Alarm Rate, Brier Score". Paper (BPM 2014, makalah pendek) memakai **SVM** untuk mengklasifikasi eksekusi tugas aman/anomali pada kasus *smart logistics*; tidak ada Brier Score maupun false alarm rate | Hapus metrik itu; jangan dikutip sebagai rujukan Brier |
 | 25 | Browning & Yassine (2010) | Klaim "bottleneck sumber daya bersama memicu efek domino" tidak ada di abstrak. Isi paper: 20 *priority rule* pada 12.320 problem RCMPSP; aturan populer bisa berkinerja buruk; aturan terbaik berbeda untuk tujuan proyek vs portofolio | Ubah temuan kunci sesuai abstrak, atau cek teks lengkap |
 | 20 | Editorial IJACSEAI (2026) | Tidak ditemukan sama sekali (judul, jurnal, maupun ISSN 3143-438X) | **Buang** dari matriks |
 | 12 | Bimantara et al. (2025) | Daftar pustaka berisi rujukan yang tampak fiktif (Breiman 2023, DOI XGBoost palsu); DOI artikel tidak terdaftar; angka di matriks tidak cocok dengan abstrak | **Buang** dari matriks |
@@ -71,7 +75,7 @@ Tingkat pengecekan klaim: **teks lengkap** (PDF dibaca), **abstrak** (hanya abst
 | 25 | Browning & Yassine (2010) | 🟡 | *Int. J. Production Economics* 126(2), 212–228. DOI benar | ⚠️ Lihat tabel prioritas | Abstrak | Jurnal bereputasi |
 | 26 | Niculescu-Mizil & Caruana (2005) | 🟡 | ICML 2005, hlm. 625–632. DOI benar | ⚠️ Lihat tabel prioritas. Juga: Platt pada model yang sudah terkalibrasi baik justru mendorong probabilitas menjauhi 0 dan 1; isotonic lebih mudah *overfit* bila data kalibrasi sedikit | Teks lengkap | Rujukan fondasi |
 | 27 | Guo et al. (2017) | ✅ | Guo, Pleiss, Sun, Weinberger. ICML 2017, PMLR 70, 1321–1330; arXiv 1706.04599 | ✅ Neural network modern cenderung *overconfident*; ECE | Abstrak | Rujukan fondasi |
-| 28 | Cabanillas et al. (2014) | 🟡 | BPM 2014 **Workshops**, LNCS (Business Process Management Workshops), 424–432. DOI 10.1007/978-3-319-10172-9_31 benar | ❌ Lihat tabel prioritas | Teks lengkap (preprint Univ. Sevilla) | Makalah workshop |
+| 28 | Cabanillas et al. (2014) | 🟡 | BPM 2014 (LNCS 8659), 424–432, makalah pendek. DOI 10.1007/978-3-319-10172-9_31 benar | ❌ Lihat tabel prioritas | Teks lengkap (preprint Univ. Sevilla) | Makalah pendek konferensi |
 
 ## B. Rujukan metode di Bab III
 

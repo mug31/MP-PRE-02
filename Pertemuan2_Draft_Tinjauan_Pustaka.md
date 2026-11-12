@@ -4,7 +4,7 @@
 
 Dalam lingkungan industri modern, implementasi sistem teknologi informasi berskala masif umumnya dipecah menjadi beberapa sub-proyek independen yang dieksekusi secara simultan di bawah satu portofolio terpadu (*mega-enterprise system*). Kondisi ini secara teoritis dikenal sebagai *Resource-Constrained Multi-Project Scheduling Problem* (RCMPSP) (Browning & Yassine, 2010). Karakteristik utama dari lingkungan ini adalah keberadaan sumber daya kritis (*shared resources*)—seperti arsitek sistem, tim *DevOps*, atau infrastruktur bersama—yang dialokasikan ke berbagai sub-proyek sekaligus.
 
-Ketika suatu aktivitas mengalami peningkatan beban kerja (*effort overrun*) atau terjadi perubahan kebutuhan (*change request*), alokasi sumber daya bersama tersebut dapat melampaui kapasitas normal (*resource overallocation* / utilisasi > 1.0). Browning & Yassine (2010) menggarisbawahi bahwa hambatan pada sumber daya bersama (*resource bottlenecks*) tidak hanya berdampak lokal pada aktivitas yang bersangkutan, melainkan memicu efek domino keterlambatan (*cascading delays*) ke aktivitas hilir maupun sub-proyek lain yang saling terhubung melalui dependensi tugas (*predecessor-successor relationships*).
+Browning & Yassine (2010) menguji 20 aturan prioritas (*priority rules*) pada 12.320 problem RCMPSP dan menemukan bahwa kinerja penjadwalan, diukur dari keterlambatan proyek dan portofolio, sangat bergantung pada kompleksitas jaringan aktivitas serta distribusi dan tingkat perebutan (*contention*) sumber daya; aturan yang banyak dianjurkan pun dapat berkinerja buruk pada situasi tertentu. Ketika suatu aktivitas mengalami peningkatan beban kerja (*effort overrun*) atau perubahan kebutuhan (*change request*), sumber daya bersama yang sudah diperebutkan menunda aktivitas lain yang menunggu, sehingga keterlambatan dapat merambat ke aktivitas hilir melalui hubungan *predecessor-successor*.
 
 ---
 
@@ -16,7 +16,7 @@ $$SPI = \frac{EV}{PV}$$
 
 Di mana $EV$ (*Earned Value*) mencerminkan nilai pekerjaan yang telah terselesaikan secara riil, dan $PV$ (*Planned Value*) merepresentasikan rencana nilai pekerjaan yang seharusnya diselesaikan pada titik waktu evaluasi. Nilai $SPI < 1.0$ mengindikasikan bahwa laju pengerjaan proyek berada di belakang jadwal yang direncanakan.
 
-Meskipun $SPI$ dan ekstensinya—seperti *Earned Schedule* ($ES$) dan *Earned Duration* ($ED$)—terbukti berguna dalam evaluasi deterministik (Batselier & Vanhoucke, 2015), pendekatan ini memiliki keterbatasan intrinsik yang signifikan:
+Meskipun $SPI$ dan perluasannya—seperti integrasi *rework*, sensitivitas aktivitas, dan *Earned Duration Management*—terbukti berguna untuk peramalan durasi secara deterministik (Batselier & Vanhoucke, 2015), pendekatan ini memiliki keterbatasan intrinsik yang signifikan:
 1. **Asumsi Linieritas:** EVM mengasumsikan tren kinerja masa lalu akan berlanjut secara linier ke masa depan, mengabaikan kompleksitas interdependensi jaringan kerja (*network topology*).
 2. **Ketiadaan Informasi Ketidakpastian:** EVM hanya menghasilkan estimasi titik deterministik tunggal (misal estimasi waktu penyelesaian akhir / $EAC_t$) tanpa menyajikan derajat keyakinan atau distribusi probabilitas kegagalan.
 3. **Sifat Reaktif:** Metrik EVM merupakan indikator tertinggal (*lagging indicator*) yang baru mendeteksi anomali setelah defiasi fisik terjadi, sehingga membatasi ruang tindakan preventif.
@@ -29,8 +29,8 @@ Untuk mengatasi kelemahan model deterministik, penelitian manajemen proyek dekad
 
 *   **Logistic Regression (LR):** Digunakan secara luas sebagai model *baseline* parametrik. Keunggulan utamanya terletak pada sifat interpretabilitas bobot koefisien dan fungsi logistik (sigmoid) yang secara alami memetakan kombinasi linier fitur ke interval probabilitas $[0, 1]$ (Niculescu-Mizil & Caruana, 2005).
 *   **Random Forest (RF):** Merupakan metode *ensemble learning* berbasis *bagging* sejumlah pohon keputusan (*decision trees*). RF terbukti tangguh terhadap fenomena *overfitting* serta mampu menangkap interaksi non-linear tingkat tinggi antar-fitur seperti skor risiko dan frekuensi revisi (Choetkiertikul et al., 2017). Estimasi probabilitas kelas diperoleh melalui agregasi proporsi suara (*vote fraction*) dari seluruh pohon estimator via fungsi `predict_proba`.
-*   **Gradient Boosting Machine (GBM):** Membangun pohon keputusan secara sekuensial dengan mengoptimalkan fungsi kerugian (*loss function*). GBM kerap kali menghasilkan daya diskriminasi (*discriminative power*) tertinggi dalam data tabular kompleks (Gondia et al., 2020).
-*   **Artificial Neural Networks (ANN):** Mampu memodelkan fungsi aproksimasi non-linear yang sangat fleksibel melalui arsitektur multi-lapisan (*feedforward layers*). Dengan aktivasi output bertipe *sigmoid*, jaringan saraf menghasilkan nilai kontinu antara 0 dan 1 yang merepresentasikan estimasi peluang terjadinya keterlambatan (Wauters & Vanhoucke, 2016).
+*   **Gradient Boosting Machine (GBM):** Membangun pohon keputusan secara sekuensial; setiap pohon baru meminimalkan gradien fungsi kerugian (*loss function*) dari model sebelumnya (Friedman, 2001). Pada data proyek perangkat lunak, model *ensemble* seperti GB dan RF dilaporkan lebih akurat daripada *classifier* tunggal (Mandapatti, 2026).
+*   **Artificial Neural Networks (ANN):** Mampu memodelkan fungsi aproksimasi non-linear yang sangat fleksibel melalui arsitektur multi-lapisan (*feedforward layers*). Dengan aktivasi output bertipe *sigmoid*, jaringan saraf menghasilkan nilai kontinu antara 0 dan 1 yang merepresentasikan estimasi peluang terjadinya keterlambatan (Kannan et al., 2022). Namun, jaringan saraf modern cenderung terlalu yakin (*overconfident*) sehingga probabilitasnya perlu diperiksa kalibrasinya (Guo et al., 2017).
 
 ---
 
@@ -47,7 +47,7 @@ Dirumuskan oleh Glenn W. Brier (1950), *Brier Score* ($BS$) mengukur rata-rata k
 
 $$BS = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2$$
 
-Nilai $BS$ berkisar antara $0$ (kalibrasi sempurna) hingga $1$ (prediksi selalu salah total). Metrik ini dapat didekomposisi menjadi komponen reliabilitas, resolusi, dan ketidakpastian (*uncertainty*).
+Nilai $BS$ berkisar antara $0$ (prediksi sempurna) hingga $1$ (prediksi selalu salah total). Metrik ini dapat didekomposisi menjadi komponen reliabilitas, resolusi, dan ketidakpastian (*uncertainty*) (Murphy, 1973).
 
 ### 2. Logarithmic Loss (*Log Loss* / *Cross-Entropy*)
 *Log Loss* memberikan penalti eksponensial terhadap prediksi probabilitas yang sangat percaya diri tetapi keliru:
@@ -63,7 +63,7 @@ $$\text{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} \Big| \text{acc}(B_m) - \text{conf
 
 ## 2.5. Sistem Peringatan Dini (*Early Warning System*) Berbasis *Threshold* Probabilitas
 
-Penerapan luaran probabilitas terkalibrasi menjadi fondasi krusial bagi perancangan sistem peringatan dini (*early warning system* / EWS) (Cabanillas et al., 2014). Berbeda dengan sistem biner dengan batas tetap $0.5$, EWS adaptif memungkinkan *Project Manager* menetapkan ambang batas peringatan (*warning thresholds*) berdasarkan matriks dampak dan toleransi risiko organisasi:
+Monitoring prediktif memanfaatkan model yang dilatih dari data eksekusi untuk memberi sinyal penyimpangan sebelum proses selesai (Cabanillas et al., 2014). Bila sinyal itu berupa probabilitas yang terkalibrasi, ia menjadi fondasi sistem peringatan dini (*early warning system* / EWS) yang ambangnya dapat diatur. Berbeda dengan sistem biner dengan batas tetap $0.5$, EWS adaptif memungkinkan *Project Manager* menetapkan ambang batas peringatan (*warning thresholds*) berdasarkan matriks dampak dan toleransi risiko organisasi:
 
 *   **Zona Hijau ($P < \tau_{\text{low}}$):** Aktivitas berjalan stabil, tidak memerlukan intervensi.
 *   **Zona Kuning / Waspada ($\tau_{\text{low}} \le P < \tau_{\text{high}}$):** Terdeteksi gejala penyimpangan (misal: utilisasi mulai melebihi kapasitas atau terjadi akumulasi *predecessor delay*); sistem menyarankan peninjauan ulang sumber daya.
@@ -80,8 +80,8 @@ Pada penelitian PRE-02, ambang operasional tersebut ditetapkan secara konsisten 
 Melalui sintesis kritis terhadap literatur yang telah dipaparkan pada Sub-bab 2.1 hingga 2.5, diidentifikasi tiga celah penelitian (*research gaps*) utama:
 
 1.  **Kesenjangan Representasi Luaran (Label Diskret vs Probabilitas Kontinu Terkalibrasi):**
-    Sebagian besar penelitian terdahulu (misal Choetkiertikul et al., 2017; Gondia et al., 2020) mengklasifikasikan keterlambatan ke dalam label kategorial kaku (*Delay* / *No Delay* atau *Low/Med/High*). Pendekatan ini menghilangkan informasi nuansa derajat kepastian. Penelitian **PRE-02** mengisi celah ini dengan merekayasa model yang menghasilkan probabilitas numerik kontinu $[0, 1]$ yang teruji kalibrasinya.
+    Sebagian besar penelitian terdahulu mengklasifikasikan keterlambatan ke dalam kelas kategorial (misalnya tingkat keterlambatan pada Gondia et al., 2020). Choetkiertikul et al. (2017) sudah memprediksi peluang keterlambatan, tetapi tanpa mengevaluasi apakah peluang tersebut terkalibrasi. Penelitian **PRE-02** mengisi celah ini dengan merekayasa model yang menghasilkan probabilitas numerik kontinu $[0, 1]$ yang teruji kalibrasinya.
 2.  **Kesenjangan Konteks Interdependensi Multiproyek:**
-    Banyak model prediktif terdahulu dievaluasi pada proyek perangkat lunak tunggal (*isolated single projects*). PRE-02 menempatkan objek kajian pada ekosistem multiproyek berskala *enterprise* (**Super ERP Farm Nation Enterprise 2026**), di mana faktor *resource utilization rate*, jumlah *predecessor*, skor risiko, dan frekuensi *change request* saling berinteraksi lintas 8 sub-proyek.
+    Banyak model prediktif terdahulu dievaluasi pada proyek perangkat lunak tunggal (*isolated single projects*). PRE-02 menempatkan objek kajian pada ekosistem multiproyek berskala *enterprise* (**Super ERP Farm Nation Enterprise 2026**), di mana faktor *resource utilization rate*, pergeseran *dependency*, risiko yang belum dimitigasi, dan frekuensi *change request* saling berinteraksi lintas 8 sub-proyek.
 3.  **Ketiadaan Pengujian Kalibrasi dan Metrik Brier Score pada EWS Proyek:**
     Evaluasi model ML pada literatur manajemen proyek hampir selalu terbatas pada akurasi dan AUC, tanpa memverifikasi apakah probabilitas tersebut mencerminkan probabilitas empiris riil. PRE-02 secara eksplisit menjadikan *Brier Score*, *Log Loss*, *ECE*, dan *Calibration Curves* sebagai tolok ukur utama dalam menyeleksi algoritma terbaik untuk operasionalisasi *early warning system*.
