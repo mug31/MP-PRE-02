@@ -9,7 +9,7 @@ PRE-02: Susun naskah paper Jurnal Pustaka Data dari naskah_sumber.md.
 3. Gambar dan tabel diberi nomor (Gambar n. / Tabel n.).
 4. Luaran: Paper_PRE02_Pustaka_Data.md dan Paper_PRE02_Pustaka_Data.docx (gaya template: Times New Roman 10 pt,
    judul 15 pt, A4 margin 25 mm, abstrak satu kolom lalu isi dua kolom, keterangan tabel/gambar 8 pt).
-Kebutuhan: pandoc, python-docx
+Kebutuhan: pandoc, python-docx, pillow (+ font Liberation Serif)
 """
 
 import re
@@ -70,6 +70,18 @@ def nomori_sitasi(teks):
         return '[' + ', '.join(str(urutan.index(k) + 1) for k in kunci) + ']'
 
     return pola.sub(ganti, teks), urutan
+
+
+_FONT_UKUR = None
+
+
+def lebar_teks(teks_):
+    """Lebar teks Times New Roman 8 pt dalam twip, diukur dengan Liberation Serif (metriknya sama)."""
+    global _FONT_UKUR
+    if _FONT_UKUR is None:
+        from PIL import ImageFont
+        _FONT_UKUR = ImageFont.truetype('LiberationSerif-Regular.ttf', 160)
+    return _FONT_UKUR.getlength(teks_) / 160 * 8 * 20 * 1.06   # +6% cadangan untuk huruf miring/tebal
 
 
 def nomori_gambar_tabel(teks):
@@ -324,19 +336,53 @@ def isi_template(polos, keluaran, gambar):
     antrian_gambar = list(gambar)
     nomor_rumus = [0]
     for el in sp[mulai:]:
-        if el.tag == qn('w:sectPr'):
-            continue
+        if el.tag not in (qn('w:p'), qn('w:tbl')):         # sectPr dan penanda bookmark pandoc antarparagraf
+            continue                                        # (bila ikut, jadi 2 paragraf kosong sebelum tiap judul)
         if el.tag == qn('w:tbl'):
             baru = deepcopy(el)
             lama = baru.find(qn('w:tblPr'))
             baru.replace(lama, deepcopy(tblpr_t))
+            # lebar kolom dari isi: minimal selebar kata terpanjang (agar kata tidak terpotong),
+            # sisa lebar kolom halaman dibagi menurut panjang isi sel terpanjang
+            lebar_kolom_hal = 4252                             # (11906 − 2×1418 − 566) / 2 twip
+            margin_sel = 2 * 72                                # margin kiri + kanan sel (twip)
+            mar = baru.find(qn('w:tblPr')).find(qn('w:tblCellMar'))
+            if mar is not None:
+                for sisi in ('start', 'end', 'left', 'right'):
+                    m_ = mar.find(qn('w:' + sisi))
+                    if m_ is not None:
+                        m_.set(qn('w:w'), '72')
+            isi = [[''.join(x.text or '' for x in tc.iter(qn('w:t'))) for tc in tr.findall(qn('w:tc'))]
+                   for tr in baru.findall(qn('w:tr'))]
+            nkol = max(len(r) for r in isi)
+            kata = [max((lebar_teks(w) for r in isi if j < len(r) for w in r[j].split()), default=100)
+                    for j in range(nkol)]
+            panjang = [max((lebar_teks(r[j]) for r in isi if j < len(r)), default=100) for j in range(nkol)]
+            minimum = [k + margin_sel for k in kata]
+            if sum(minimum) >= lebar_kolom_hal:
+                lebar_k = [m * lebar_kolom_hal / sum(minimum) for m in minimum]
+            else:
+                sisa = lebar_kolom_hal - sum(minimum)
+                ingin = [max(p + margin_sel - m, 0) for p, m in zip(panjang, minimum)]
+                if sum(ingin) <= sisa:                          # semua muat satu baris: sisa dibagi rata
+                    lebar_k = [m + i + (sisa - sum(ingin)) / nkol for m, i in zip(minimum, ingin)]
+                else:
+                    lebar_k = [m + sisa * i / sum(ingin) for m, i in zip(minimum, ingin)]
+            lebar_k = [int(round(w)) for w in lebar_k]
             tw = baru.find(qn('w:tblPr')).find(qn('w:tblW'))
             if tw is not None:
-                tw.set(qn('w:type'), 'pct'); tw.set(qn('w:w'), '5000')
-            for gc in baru.iter(qn('w:gridCol')):
-                gc.attrib.pop(qn('w:w'), None)
-            for tcw in baru.iter(qn('w:tcW')):
-                tcw.set(qn('w:type'), 'auto'); tcw.set(qn('w:w'), '0')
+                tw.set(qn('w:type'), 'dxa'); tw.set(qn('w:w'), str(sum(lebar_k)))
+            for gc, w in zip(baru.iter(qn('w:gridCol')), lebar_k):
+                gc.set(qn('w:w'), str(w))
+            for tr in baru.findall(qn('w:tr')):
+                for tc, w in zip(tr.findall(qn('w:tc')), lebar_k):
+                    tcpr = tc.find(qn('w:tcPr'))
+                    if tcpr is None:
+                        tcpr = tc.makeelement(qn('w:tcPr'), {}); tc.insert(0, tcpr)
+                    tcw = tcpr.find(qn('w:tcW'))
+                    if tcw is None:
+                        tcw = tcpr.makeelement(qn('w:tcW'), {}); tcpr.insert(0, tcw)
+                    tcw.set(qn('w:type'), 'dxa'); tcw.set(qn('w:w'), str(w))
             for pp in baru.iter(qn('w:p')):
                 lama_ppr = pp.find(qn('w:pPr'))
                 jc = lama_ppr.find(qn('w:jc')) if lama_ppr is not None else None
@@ -350,16 +396,48 @@ def isi_template(polos, keluaran, gambar):
                     if jc is not None:
                         np_.append(deepcopy(jc))
                     pp.insert(0, np_)
-                for r in pp.iter(qn('w:r')):
+                # isi sel: Times New Roman 8 pt seperti contoh tabel template (gaya sel bawaannya Arial);
+                # rumus (m:r) juga diberi 8 pt agar tidak tampil 11 pt
+                for r in list(pp.iter(qn('w:r'))) + list(pp.iter(qn('m:r'))):
                     rpr = r.find(qn('w:rPr'))
                     if rpr is None:
-                        rpr = r.makeelement(qn('w:rPr'), {}); r.insert(0, rpr)
+                        rpr = r.makeelement(qn('w:rPr'), {})
+                        r.insert(1 if r.find(qn('m:rPr')) is not None else 0, rpr)
+                    if r.tag == qn('w:r'):
+                        fn = rpr.find(qn('w:rFonts'))
+                        if fn is None:
+                            fn = rpr.makeelement(qn('w:rFonts'), {}); rpr.insert(0, fn)
+                        for a in ('w:ascii', 'w:hAnsi', 'w:cs'):
+                            fn.set(qn(a), 'Times New Roman')
                     for tag in ('w:sz', 'w:szCs'):
                         x = rpr.find(qn(tag))
                         if x is None:
                             x = rpr.makeelement(qn(tag), {}); rpr.append(x)
                         x.set(qn('w:val'), '16')
             baris = baru.findall(qn('w:tr'))
+            # garis tabel gaya template: tebal di atas judul kolom, tipis di bawahnya, tipis di akhir tabel
+            def garis(tc, sisi, tebal):
+                tcpr = tc.find(qn('w:tcPr'))
+                if tcpr is None:
+                    tcpr = tc.makeelement(qn('w:tcPr'), {}); tc.insert(0, tcpr)
+                tb_ = tcpr.find(qn('w:tcBorders'))
+                if tb_ is None:
+                    tb_ = tcpr.makeelement(qn('w:tcBorders'), {})
+                    tw_ = tcpr.find(qn('w:tcW'))
+                    (tw_.addnext(tb_) if tw_ is not None else tcpr.insert(0, tb_))
+                b = tb_.makeelement(qn('w:' + sisi), {qn('w:val'): 'single', qn('w:sz'): tebal,
+                                                       qn('w:space'): '0', qn('w:color'): '000000'})
+                lama_b = tb_.find(qn('w:' + sisi))
+                if lama_b is not None:
+                    tb_.remove(lama_b)
+                if sisi == 'top':
+                    tb_.insert(0, b)
+                else:
+                    tb_.append(b)
+            for tc in baris[0].findall(qn('w:tc')):
+                garis(tc, 'top', '12'); garis(tc, 'bottom', '4')
+            for tc in baris[-1].findall(qn('w:tc')):
+                garis(tc, 'bottom', '4')
             for tr in baris:                                   # baris tabel tidak dipecah antarkolom
                 trpr = tr.find(qn('w:trPr'))
                 if trpr is None:
@@ -373,9 +451,14 @@ def isi_template(polos, keluaran, gambar):
         g = gaya(el)
         if list(el.iter(qn('w:drawing'))):
             baru = el.makeelement(qn('w:p'), {})
-            baru.append(deepcopy(PPR['gambar']))
+            ppr_g = deepcopy(PPR['gambar'])
+            sp_ = ppr_g.find(qn('w:spacing'))                  # jarak 6 pt agar gambar tidak menutupi garis tabel di atasnya
+            if sp_ is None:
+                sp_ = ppr_g.makeelement(qn('w:spacing'), {}); ppr_g.append(sp_)
+            sp_.set(qn('w:before'), '120')
+            baru.append(ppr_g)
             jangkar.addprevious(baru)
-            Paragraph(baru, t._body).add_run().add_picture(str(antrian_gambar.pop(0)), width=Cm(7.6))
+            Paragraph(baru, t._body).add_run().add_picture(str(antrian_gambar.pop(0)), width=Cm(7.5))
             continue
         kunci = {'Heading1': 'h1', 'Heading2': 'h2', 'JudulTabel': 'cap_tabel', 'ImageCaption': 'cap_gambar',
                  'Rujukan': 'rujukan'}.get(g, 'par')

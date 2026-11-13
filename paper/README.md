@@ -16,7 +16,10 @@ Naskah untuk **Jurnal Pustaka Data** (Pustaka Galeri Mandiri, ISSN 2809-7483), m
 ## Cara menjalankan
 
 ```bash
-# naskah (butuh pandoc, LibreOffice, dan python-docx)
+# gambar 1-4 versi satu kolom, panel (a) atas dan (b) bawah, dari CSV hasil eksperimen (butuh numpy, pandas, matplotlib)
+python gambar_paper.py
+
+# naskah (butuh pandoc, LibreOffice, python-docx, pillow, dan font Liberation Serif)
 python susun_paper.py
 
 # slide (butuh node + pptxgenjs; APPLY_THEME = scripts/apply_theme.js dari skill pptx)

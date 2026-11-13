@@ -67,14 +67,14 @@ Tabel 1. Variabel penelitian
 
 | Variabel | Definisi operasional |
 | :--- | :--- |
-| $X_1$ SPI jadwal | $\mathrm{EV}(t)/\mathrm{PV}(t)$ berbasis porsi durasi yang telah dikerjakan |
-| $X_2$ Sisa waktu | $T - t$ (hari kerja) |
-| $X_3$ *Backlog* sisa | $1 - \mathrm{EV}(t)/\sum_i d_i$ |
-| $X_4$ Utilisasi sumber daya | Hari-orang terpakai ÷ hari-orang tersedia sampai $t$ |
-| $X_5$ Risiko belum dimitigasi | Jumlah risiko yang telah terjadi dan aktivitasnya belum selesai |
-| $X_6$ Frekuensi CR | Jumlah CR pada aktivitas yang sudah dimulai |
-| $X_7$ Pergeseran *dependency* | Rata-rata pergeseran hari siap aktivitas akibat pendahulunya |
-| $Y$ Status keterlambatan | 1 jika keterlambatan akhir > 5% dari $T$ |
+| *X*~1~ SPI jadwal | EV(*t*)/PV(*t*) berbasis porsi durasi yang telah dikerjakan |
+| *X*~2~ Sisa waktu | *T* − *t* (hari kerja) |
+| *X*~3~ *Backlog* sisa | 1 − EV(*t*)/Σ*d*~*i*~ |
+| *X*~4~ Utilisasi sumber daya | Hari-orang terpakai ÷ hari-orang tersedia sampai *t* |
+| *X*~5~ Risiko belum dimitigasi | Jumlah risiko yang telah terjadi dan aktivitasnya belum selesai |
+| *X*~6~ Frekuensi CR | Jumlah CR pada aktivitas yang sudah dimulai |
+| *X*~7~ Pergeseran *dependency* | Rata-rata pergeseran hari siap aktivitas akibat pendahulunya |
+| *Y* Status keterlambatan | 1 jika keterlambatan akhir > 5% dari *T* |
 
 ## 2.4. Model, validasi, dan kalibrasi
 
@@ -106,7 +106,7 @@ Sebanyak 44,8% observasi berlabel terlambat, tetapi proporsinya sangat berbeda a
 Tabel 2. Karakteristik keterlambatan per subproyek (1.000 iterasi)
 :::
 
-| Subproyek | $T$ (hari) | Ambang 5% (hari) | Rata-rata keterlambatan (hari) | Terlambat > 5% |
+| Subproyek | *T* (hari) | Ambang 5% (hari) | Rata-rata keterlambatan (hari) | Terlambat > 5% |
 | :--- | ---: | ---: | ---: | ---: |
 | P-FNE-01 | 131 | 6,6 | 6,2 | 40,3% |
 | P-FNE-02 | 232 | 11,6 | 5,9 | 0,4% |
@@ -152,7 +152,7 @@ Tabel 4. ECE setiap kombinasi model dan kalibrasi
 | GB | 0,0560 | 0,0857 | 0,0701 | 0,1718 |
 | NN | 0,2188 | 0,1417 | 0,1840 | 0,2859 |
 
-![Gambar 1. Reliability diagram keempat model tanpa kalibrasi (kiri) dan efek kalibrasi pada Gradient Boosting (kanan)](../04_implemen_desain_eksperimen/hasil_eksperimen/kurva_kalibrasi_probabilitas.png){width=7.6cm}
+![Gambar 1. *Reliability diagram* (a) keempat model tanpa kalibrasi dan (b) efek kalibrasi pada Gradient Boosting](gambar/gambar_1_kalibrasi.png){width=7.6cm}
 
 Ada dua penjelasan yang saling melengkapi. Pertama, Platt scaling pada model yang sudah terkalibrasi justru mendorong probabilitas menjauhi 0 dan 1, dan *isotonic regression* mudah *overfit* bila data kalibrasi sedikit [11]. Kedua, kalibrasi tidak berpindah antarproyek. Platt yang dilatih dari prediksi tujuh subproyek lain menaikkan rata-rata ECE GB per subproyek dari 0,1615 menjadi 0,2046, sedangkan Platt yang dilatih pada subproyek itu sendiri menurunkannya menjadi 0,0271. Hal yang sama terlihat pada LR: di data latih *calibration slope*-nya sekitar 1,00, tetapi *calibration intercept* pada subproyek uji menyebar dari −2,777 (P-FNE-07) sampai 3,361 (P-FNE-04). Miskalibrasi berasal dari perbedaan tingkat keterlambatan dasar antarsubproyek, bukan dari model itu sendiri.
 
@@ -173,7 +173,7 @@ Tabel 5. Keputusan hipotesis
 | H4 NN > LR | Brier NN − LR | 0,0901 [0,0832; 0,0977] | Ditolak |
 | H5 kalibrasi menurunkan ECE | ECE GB Platt − GB | 0,0297 [0,0210; 0,0358] | Ditolak |
 
-![Gambar 2. Selisih Brier score (kiri) dan ECE (kanan) setiap uji dengan selang kepercayaan 95%](../04_implemen_desain_eksperimen/hasil_analisis/grafik_uji_hipotesis.png){width=7.6cm}
+![Gambar 2. Selisih (a) *Brier score* dan (b) ECE setiap uji dengan selang kepercayaan 95%](gambar/gambar_2_uji_hipotesis.png){width=7.6cm}
 
 Keunggulan antarmodel signifikan pada gabungan seluruh iterasi, tetapi tidak konsisten di setiap subproyek. Dari 17 uji, hanya keunggulan ECE GB atas NN yang signifikan pada uji Wilcoxon antarsubproyek ($p$ = 0,039); GB, misalnya, lebih akurat daripada RF hanya pada 5 dari 8 subproyek. Pola ini sejalan dengan temuan bahwa metode kecerdasan buatan hanya unggul bila data latih dan data uji mirip [4]. Kasus paling jelas adalah P-FNE-08, dengan rata-rata prediksi GB 14,7% sedangkan proporsi terlambatnya 54,0% (BSS −0,414). Subproyek ini memiliki *baseline* terpendek dan utilisasi sumber daya terendah (0,048). Utilisasi berkorelasi positif dengan keterlambatan pada data gabungan (ρ = 0,289), tetapi tidak di dalam subproyek (median ρ = −0,054), sehingga model yang belajar bahwa utilisasi rendah berarti aman salah menilai P-FNE-08. Analisis tambahan dengan fitur yang dinormalisasi terhadap *baseline* hanya menggeser BSS P-FNE-08 menjadi −0,377, sehingga penyebabnya bukan skala fitur, melainkan kombinasi kondisi yang berada di luar rentang tujuh subproyek latih.
 
@@ -181,7 +181,7 @@ Keunggulan antarmodel signifikan pada gabungan seluruh iterasi, tetapi tidak kon
 
 Ketepatan prediksi naik seiring kemajuan proyek (Gambar 3). ROC-AUC GB naik dari 0,725 pada titik 25% menjadi 0,782 pada titik 50% dan 0,915 pada titik 75%, sejalan dengan temuan bahwa prediksi keterlambatan makin akurat ketika informasi proyek bertambah [6]. Konsekuensinya, peringatan yang lebih dini memberi waktu bertindak lebih panjang tetapi lebih sering keliru (Tabel 6).
 
-![Gambar 3. ROC-AUC dan Brier score per titik monitoring dengan selang kepercayaan 95%](../04_implemen_desain_eksperimen/hasil_analisis/grafik_metrik_per_titik_ci.png){width=7.6cm}
+![Gambar 3. (a) ROC-AUC dan (b) *Brier score* per titik monitoring dengan selang kepercayaan 95%](gambar/gambar_3_metrik_per_titik.png){width=7.6cm}
 
 ::: {custom-style="Judul Tabel"}
 Tabel 6. Deteksi dini kumulatif dengan model GB
@@ -190,12 +190,12 @@ Tabel 6. Deteksi dini kumulatif dengan model GB
 | Ambang | Terlambat diperingatkan s.d. 25% / 50% / 75% | Tidak pernah diperingatkan | Peringatan palsu s.d. 75% |
 | :--- | ---: | ---: | ---: |
 | 0,35 (batas Kuning) | 67,7% / 80,8% / 84,5% | 15,5% | 50,5% |
-| 0,485 ($\theta^*$ Youden) | 56,7% / 73,6% / 81,0% | 19,0% | 38,0% |
+| 0,485 (*θ*^\*^ Youden) | 56,7% / 73,6% / 81,0% | 19,0% | 38,0% |
 | 0,65 (batas Merah) | 40,0% / 60,4% / 74,4% | 25,6% | 22,0% |
 
 Pada ambang $\theta^*$ = 0,485, *recall* keseluruhan 65,7% dan *specificity* 81,9%. Peringatan palsu umumnya terjadi pada proyek yang nyaris terlambat: proyek tepat waktu yang pernah diperingatkan memiliki median keterlambatan akhir 3,6% dari *baseline*, dibanding 2,8% pada yang tidak pernah diperingatkan. Zona bertingkat cocok dengan pola ini, karena zona Kuning menangkap lebih banyak proyek bermasalah untuk tindakan ringan, sedangkan zona Merah lebih jarang keliru sehingga layak dipakai untuk tindakan mahal seperti penambahan sumber daya. Sebagai ilustrasi, satu iterasi P-FNE-03 sudah berada di zona Merah sejak titik 25% (probabilitas 0,796) dan berakhir terlambat 11,7 hari, sehingga manajer proyek memiliki sekitar 165 hari kerja untuk melakukan tindakan korektif.
 
-![Gambar 4. Persentase kumulatif proyek terlambat yang sudah diperingatkan (kiri) dan proyek tepat waktu yang menerima peringatan palsu (kanan)](../04_implemen_desain_eksperimen/hasil_analisis/grafik_deteksi_dini.png){width=7.6cm}
+![Gambar 4. Persentase kumulatif (a) proyek terlambat yang sudah diperingatkan dan (b) proyek tepat waktu yang menerima peringatan palsu](gambar/gambar_4_deteksi_dini.png){width=7.6cm}
 
 SPI merupakan satu-satunya variabel yang menaikkan *Brier score* GB pada kedelapan lipatan bila nilainya diacak (rata-rata kenaikan 0,0782), sejalan dengan peran sentral indikator kinerja jadwal dalam peramalan durasi [3]. Pergeseran *dependency* tetap berkorelasi dengan keterlambatan di dalam subproyek (median ρ = 0,303), tetapi juga berkorelasi kuat dengan SPI (median ρ = −0,687), sehingga informasinya sudah terkandung dalam SPI. Frekuensi CR menunjukkan paradoks Simpson: korelasinya negatif pada data gabungan (ρ = −0,159) tetapi positif di dalam subproyek (median ρ = 0,324). Risiko belum dimitigasi hanya berhubungan dengan keterlambatan antarproyek (ρ = 0,278) dan hampir tidak di dalam proyek (median ρ = 0,016). Hasil ini tidak membantah pentingnya dependensi sebagai faktor keterlambatan yang dilaporkan penelitian lain [6, 28]; nilai prediktif tambahannya hilang setelah progres aktual teramati karena efeknya sudah tercermin dalam SPI.
 
