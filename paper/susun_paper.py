@@ -367,7 +367,19 @@ def isi_template(polos, keluaran, gambar):
                 if sum(ingin) <= sisa:                          # semua muat satu baris: sisa dibagi rata
                     lebar_k = [m + i + (sisa - sum(ingin)) / nkol for m, i in zip(minimum, ingin)]
                 else:
-                    lebar_k = [m + sisa * i / sum(ingin) for m, i in zip(minimum, ingin)]
+                    # kolom angka (mis. selisih [CI]) diusahakan satu baris lebih dulu, sebab angka yang terpotong
+                    # lebih sulit dibaca daripada teks yang dibungkus; tiap kelompok dibagi dengan water-filling
+                    # (kolom yang butuh sedikit dipenuhi dulu, sisanya dibagi rata ke kolom yang butuh banyak)
+                    def angka(j):
+                        sel = [r[j].strip() for r in isi[1:] if j < len(r) and r[j].strip()]
+                        return bool(sel) and sum(bool(re.match(r'[−\-\d\[]', s)) for s in sel) > len(sel) / 2
+                    lebar_k = list(minimum)
+                    for kelompok in ([j for j in range(nkol) if angka(j)], [j for j in range(nkol) if not angka(j)]):
+                        urut = sorted(kelompok, key=lambda j: ingin[j])
+                        for n_, j in enumerate(urut):
+                            beri = min(ingin[j], sisa / (len(urut) - n_))
+                            lebar_k[j] += beri
+                            sisa -= beri
             lebar_k = [int(round(w)) for w in lebar_k]
             tw = baru.find(qn('w:tblPr')).find(qn('w:tblW'))
             if tw is not None:
@@ -494,6 +506,20 @@ def isi_template(polos, keluaran, gambar):
                     x = r.makeelement(qn('w:t'), {}); x.text = teks_; r.append(x)
                 return r
             baru.append(run_tab()); baru.append(omath); baru.append(run_tab()); baru.append(run_tab(f'({nomor_rumus[0]})'))
+        sebelum = jangkar.getprevious()
+        if kunci == 'par' and sebelum is not None and sebelum.tag == qn('w:tbl'):
+            pp = baru.find(qn('w:pPr'))                        # jarak 6 pt agar teks tidak menempel garis bawah tabel
+            sp_ = pp.find(qn('w:spacing'))
+            if sp_ is None:
+                sp_ = pp.makeelement(qn('w:spacing'), {})
+                urutan_ = [qn('w:pStyle'), qn('w:keepNext'), qn('w:keepLines'), qn('w:pageBreakBefore'),
+                           qn('w:framePr'), qn('w:widowControl'), qn('w:numPr'), qn('w:suppressLineNumbers'),
+                           qn('w:pBdr'), qn('w:shd'), qn('w:tabs'), qn('w:suppressAutoHyphens'), qn('w:kinsoku'),
+                           qn('w:wordWrap'), qn('w:overflowPunct'), qn('w:topLinePunct'), qn('w:autoSpaceDE'),
+                           qn('w:autoSpaceDN'), qn('w:bidi'), qn('w:adjustRightInd'), qn('w:snapToGrid')]
+                posisi = sum(1 for c in pp if c.tag in urutan_)
+                pp.insert(posisi, sp_)
+            sp_.set(qn('w:before'), '120')
         jangkar.addprevious(baru)
     assert not antrian_gambar, 'Jumlah gambar tidak sesuai'
 

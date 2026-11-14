@@ -41,7 +41,17 @@ Unggah `Paper_PRE02_Pustaka_Data.docx` ke Google Drive → klik kanan → **Buka
 
 ## Checklist Pertemuan 8 (`progres_penelitian_MP.md`)
 
-- [x] **Penyusunan paper lengkap (IMRAD):** struktur baku template (Pendahuluan, Metode Penelitian, Hasil dan Pembahasan, Kesimpulan), 7 halaman.
+- [x] **Penyusunan paper lengkap (IMRAD):** struktur baku template (Pendahuluan, Metode Penelitian, Hasil dan Pembahasan, Kesimpulan), 10 halaman setelah revisi A.
 - [x] **Penyempurnaan bahasa ilmiah dan sitasi:** sitasi bernomor sesuai urutan muncul, semua rujukan terverifikasi, tanpa bullet di isi, kesimpulan tanpa sitasi.
-- [x] **Abstrak dan daftar pustaka:** Abstract (196 kata) + Abstrak (177 kata), 28 rujukan.
+- [x] **Abstrak dan daftar pustaka:** Abstract (200 kata, batas template 200) + Abstrak (240 kata, batas ±250), 28 rujukan.
 - [x] **Paper ilmiah final** (draf siap tempel ke template) dan **slide presentasi hasil penelitian**.
+
+## Revisi setelah review (prompt reviewer dosen, `review/`)
+
+- [x] **A. Revisi teks naskah** (tanpa eksperimen baru; semua angka dari CSV hasil yang sudah ada): tabel sintesis literatur
+  (Tabel 1), RQ1–RQ3 dan klaim kebaruan yang diselaraskan dengan metode, detail replikasi, perbaikan Holm/Wilcoxon,
+  keputusan hipotesis dipisah data gabungan vs antarsubproyek (Tabel 6), metrik per subproyek (Tabel 7), klaim
+  "paling terkalibrasi" dibatasi, subbab 3.7 Implikasi dan 3.8 Keterbatasan (Tabel 9 sensitivitas), Kesimpulan per RQ.
+- [ ] **C. Eksperimen tambahan:** pembanding SPI/EVM dan NN dengan *early stopping*.
+- [ ] Review ulang dengan dua reviewer baru memakai prompt dosen.
+

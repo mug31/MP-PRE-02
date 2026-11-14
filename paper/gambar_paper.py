@@ -168,13 +168,14 @@ def gambar_4():
     x = [25, 50, 75]
     for (_, r), m in zip(det.iterrows(), ['Logistic Regression', 'Random Forest', 'Gradient Boosting']):
         ket = r.Keterangan.replace('θ*', r'$\theta^*$')
-        lbl = f'{ket} ({r.Ambang:.2f})'.replace('.', ',')
+        lbl = f'{ket} ({r.Ambang:.3f}'.rstrip('0') + ')'   # 0,485 sama dengan teks dan Tabel 8; 0,35 dan 0,65 tetap
+        lbl = lbl.replace('.', ',')
         for ax, nm in zip(axs, ['Telat', 'Tepat']):
             ax.plot(x, [100 * r[f'{nm}_Diperingatkan_sd_{t}'] for t in x], color=WARNA[m], ls=GARIS[m], lw=1.4,
                     marker='o', ms=3, label=lbl)
-    gaya(axs[0], '(a) Proyek terlambat yang sudah diperingatkan', 'Sampai titik monitoring (% jadwal rencana)',
+    gaya(axs[0], '(a) Iterasi terlambat yang sudah diperingatkan', 'Sampai titik monitoring (% jadwal rencana)',
          '% iterasi (kumulatif)')
-    gaya(axs[1], '(b) Proyek tepat waktu yang menerima peringatan palsu', 'Sampai titik monitoring (% jadwal rencana)',
+    gaya(axs[1], '(b) Iterasi tepat waktu yang menerima peringatan palsu', 'Sampai titik monitoring (% jadwal rencana)',
          '% iterasi (kumulatif)')
     for ax, loc in zip(axs, ['lower right', 'upper left']):
         ax.set_xticks(x)
