@@ -21,6 +21,7 @@ HERE = Path(__file__).resolve().parent
 SUMBER = HERE / 'naskah_sumber.md'
 KELUARAN_MD = HERE / 'Paper_PRE02_Pustaka_Data.md'
 KELUARAN_DOCX = HERE / 'Paper_PRE02_Pustaka_Data.docx'
+KELUARAN_GDOCS = HERE / 'Paper_PRE02_Pustaka_Data_GDocs.docx'   # versi untuk diunggah ke Google Docs
 REFERENSI_DOCX = HERE / 'gaya_pustaka_data.docx'
 
 # Format: nama penulis. tahun. judul. *wadah*. volume(nomor): halaman. DOI (sesuai petunjuk template)
@@ -208,7 +209,58 @@ def _template_docx(sementara):
     return sementara / (TEMPLATE_DOC.stem + '.docx')
 
 
-def isi_template(polos, keluaran, gambar):
+def bungkus_tabel(tbl, judul):
+    """Bungkus judul tabel + tabel dalam tabel satu sel tanpa garis yang barisnya tidak boleh dipecah.
+
+    Google Docs mengabaikan keepNext antarbaris tabel sehingga tabel terbelah antarkolom/halaman, tetapi
+    mematuhi cantSplit pada baris. Dengan satu baris pembungkus, judul dan tabel selalu pindah bersama."""
+    from docx.oxml.ns import qn
+    W = 4252
+    luar = tbl.makeelement(qn('w:tbl'), {})
+    tblpr = luar.makeelement(qn('w:tblPr'), {})
+    for tag, at in (('w:tblW', {'w:w': str(W), 'w:type': 'dxa'}), ('w:jc', {'w:val': 'center'}),
+                    ('w:tblLayout', {'w:type': 'fixed'})):
+        tblpr.append(tblpr.makeelement(qn(tag), {qn(k): v for k, v in at.items()}))
+    mar = tblpr.makeelement(qn('w:tblCellMar'), {})
+    for sisi in ('top', 'left', 'bottom', 'right'):
+        mar.append(mar.makeelement(qn('w:' + sisi), {qn('w:w'): '0', qn('w:type'): 'dxa'}))
+    tblpr.append(mar)
+    luar.append(tblpr)
+    grid = luar.makeelement(qn('w:tblGrid'), {})
+    grid.append(grid.makeelement(qn('w:gridCol'), {qn('w:w'): str(W)}))
+    luar.append(grid)
+    tr = luar.makeelement(qn('w:tr'), {})
+    trpr = tr.makeelement(qn('w:trPr'), {})
+    trpr.append(trpr.makeelement(qn('w:cantSplit'), {}))
+    tr.append(trpr)
+    tc = tr.makeelement(qn('w:tc'), {})
+    tcpr = tc.makeelement(qn('w:tcPr'), {})
+    tcpr.append(tcpr.makeelement(qn('w:tcW'), {qn('w:w'): str(W), qn('w:type'): 'dxa'}))
+    brd = tcpr.makeelement(qn('w:tcBorders'), {})
+    for sisi in ('top', 'left', 'bottom', 'right'):
+        brd.append(brd.makeelement(qn('w:' + sisi), {qn('w:val'): 'nil'}))
+    tcpr.append(brd)
+    tc.append(tcpr)
+    isi_judul = ''.join(x.text or '' for x in judul.iter(qn('w:t'))) if judul is not None else ''
+    if judul is not None and judul.tag == qn('w:p') and isi_judul.startswith('Tabel '):
+        judul.getparent().remove(judul)
+        tc.append(judul)
+    tc.append(tbl)
+    akhir = tc.makeelement(qn('w:p'), {})                      # sel wajib diakhiri paragraf; dibuat 1 pt
+    ppr = akhir.makeelement(qn('w:pPr'), {})
+    ppr.append(ppr.makeelement(qn('w:spacing'), {qn('w:before'): '0', qn('w:after'): '0',
+                                                  qn('w:line'): '20', qn('w:lineRule'): 'exact'}))
+    rpr = ppr.makeelement(qn('w:rPr'), {})
+    rpr.append(rpr.makeelement(qn('w:sz'), {qn('w:val'): '2'}))
+    ppr.append(rpr)
+    akhir.append(ppr)
+    tc.append(akhir)
+    tr.append(tc)
+    luar.append(tr)
+    return luar
+
+
+def isi_template(polos, keluaran, gambar, bungkus=False):
     """Pindahkan isi naskah (docx hasil pandoc) ke dalam template asli Jurnal Pustaka Data.
 
     Kop jurnal, logo, header, footer, dan pemisah kolom dari template dipertahankan; setiap paragraf naskah
@@ -469,6 +521,8 @@ def isi_template(polos, keluaran, gambar):
             for tr in baris[:-1]:                              # seluruh tabel tetap satu blok
                 for pp in tr.iter(qn('w:pPr')):
                     pp.insert(1 if pp.find(qn('w:pStyle')) is not None else 0, pp.makeelement(qn('w:keepNext'), {}))
+            if bungkus:
+                baru = bungkus_tabel(baru, jangkar.getprevious())
             jangkar.addprevious(baru)
             continue
         g = gaya(el)
@@ -571,7 +625,9 @@ def main():
         TEMPLATE_DOCX_SEMENTARA[:] = [_template_docx(tmp)]
         gambar = [HERE / g for g in re.findall(r'!\[[^\]]*\]\(([^)]+)\)', teks)]
         isi_template(polos, KELUARAN_DOCX, gambar)
-    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name} (diisi ke template asli)')
+        isi_template(polos, KELUARAN_GDOCS, gambar, bungkus=True)
+    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name} (diisi ke template asli), '
+          f'{KELUARAN_GDOCS.name} (tabel dibungkus agar tidak terbelah di Google Docs)')
 
 
 if __name__ == '__main__':

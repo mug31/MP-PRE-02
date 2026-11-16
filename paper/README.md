@@ -28,7 +28,10 @@ NODE_PATH=<node_modules berisi pptxgenjs> APPLY_THEME=<path apply_theme.js> node
 
 ## Ke Google Docs
 
-Unggah `Paper_PRE02_Pustaka_Data.docx` ke Google Drive → klik kanan → **Buka dengan → Google Dokumen**.
+Unggah **`Paper_PRE02_Pustaka_Data_GDocs.docx`** (bukan versi biasa) lewat Google Dokumen → File → Buka → Upload.
+Google Docs mengabaikan pengaturan "tetap bersama" antarbaris tabel sehingga tabel terbelah antarkolom; di versi
+GDocs, judul tabel + tabel dibungkus dalam satu sel yang barisnya tidak boleh dipecah, jadi selalu pindah utuh.
+Untuk Word/PDF/submit tetap pakai `Paper_PRE02_Pustaka_Data.docx`.
 
 ## Sebelum submit
 
@@ -43,7 +46,7 @@ Unggah `Paper_PRE02_Pustaka_Data.docx` ke Google Drive → klik kanan → **Buka
 
 - [x] **Penyusunan paper lengkap (IMRAD):** struktur baku template (Pendahuluan, Metode Penelitian, Hasil dan Pembahasan, Kesimpulan), 10 halaman setelah revisi A.
 - [x] **Penyempurnaan bahasa ilmiah dan sitasi:** sitasi bernomor sesuai urutan muncul, semua rujukan terverifikasi, tanpa bullet di isi, kesimpulan tanpa sitasi.
-- [x] **Abstrak dan daftar pustaka:** Abstract (200 kata, batas template 200) + Abstrak (240 kata, batas ±250), 28 rujukan.
+- [x] **Abstrak dan daftar pustaka:** Abstract (200 kata, batas template 200) + Abstrak (194 kata, batas ±250; diringkas agar kata kunci muat di halaman 1), 28 rujukan.
 - [x] **Paper ilmiah final** (draf siap tempel ke template) dan **slide presentasi hasil penelitian**.
 
 ## Revisi setelah review (prompt reviewer dosen, `review/`)
