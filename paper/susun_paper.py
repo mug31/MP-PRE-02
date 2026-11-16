@@ -596,6 +596,14 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
                     p.runs[0].font.superscript = False
                     for r in p.runs[1:]:
                         r.text = ''
+                # header template menulis "Vol . x No. 1"; samakan dengan halaman 1 ("Vol. x No. x"), sesuai review
+                vol = [r for r in p.runs if r.text.strip() in ('Vol', '.') or 'No. 1 (20xx)' in r.text]
+                if any('No. 1 (20xx)' in r.text for r in vol):
+                    i_vol = next(i for i, r in enumerate(p.runs) if r.text == 'Vol')
+                    akhir = next(i for i, r in enumerate(p.runs) if 'No. 1 (20xx)' in r.text)
+                    p.runs[i_vol].text = 'Vol. ' + p.runs[akhir].text.strip().replace('No. 1', 'No. x')
+                    for r in p.runs[i_vol + 1:akhir + 1]:
+                        r.text = ''
     t.save(keluaran)
 
 

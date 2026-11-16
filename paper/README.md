@@ -44,9 +44,9 @@ Untuk Word/PDF/submit tetap pakai `Paper_PRE02_Pustaka_Data.docx`.
 
 ## Checklist Pertemuan 8 (`progres_penelitian_MP.md`)
 
-- [x] **Penyusunan paper lengkap (IMRAD):** struktur baku template (Pendahuluan, Metode Penelitian, Hasil dan Pembahasan, Kesimpulan), 10 halaman setelah revisi A.
+- [x] **Penyusunan paper lengkap (IMRAD):** struktur baku template (Pendahuluan, Metode Penelitian, Hasil dan Pembahasan, Kesimpulan), 11 halaman setelah revisi B.
 - [x] **Penyempurnaan bahasa ilmiah dan sitasi:** sitasi bernomor sesuai urutan muncul, semua rujukan terverifikasi, tanpa bullet di isi, kesimpulan tanpa sitasi.
-- [x] **Abstrak dan daftar pustaka:** Abstract (200 kata, batas template 200) + Abstrak (194 kata, batas ±250; diringkas agar kata kunci muat di halaman 1), 28 rujukan.
+- [x] **Abstrak dan daftar pustaka:** Abstract (200 kata, batas template 200) + Abstrak (196 kata, batas ±250; diringkas agar kata kunci muat di halaman 1), 28 rujukan.
 - [x] **Paper ilmiah final** (draf siap tempel ke template) dan **slide presentasi hasil penelitian**.
 
 ## Revisi setelah review (prompt reviewer dosen, `review/`)
@@ -55,6 +55,11 @@ Untuk Word/PDF/submit tetap pakai `Paper_PRE02_Pustaka_Data.docx`.
   (Tabel 1), RQ1–RQ3 dan klaim kebaruan yang diselaraskan dengan metode, detail replikasi, perbaikan Holm/Wilcoxon,
   keputusan hipotesis dipisah data gabungan vs antarsubproyek (Tabel 6), metrik per subproyek (Tabel 7), klaim
   "paling terkalibrasi" dibatasi, subbab 3.7 Implikasi dan 3.8 Keterbatasan (Tabel 9 sensitivitas), Kesimpulan per RQ.
-- [ ] **C. Eksperimen tambahan:** pembanding SPI/EVM dan NN dengan *early stopping*.
+- [x] **Revisi B (disaring dengan `../judul_dan_progres_penelitian/Deskripsi_Penelitian.md`):** kontribusi utama
+  dikembalikan ke sistem peringatan dini berprobabilitas terkalibrasi; *log loss* masuk Tabel 4 (metrik di deskripsi);
+  penegasan f dipilih dari dokumen PMP-08, bukan kinerja model; variabel *dependency* diukur di dalam subproyek;
+  pemeriksaan NN dengan *early stopping* (`../04_implemen_desain_eksperimen/cek_nn_early_stopping.py`); sistematika
+  penulisan; header "Vol. x No. x"; saran riset (EVM, tuning per subproyek, kalibrasi beta). Pembanding SPI/EVM,
+  Earned Schedule, Monte Carlo murni, tuning bersarang, dan sensitivitas CR sengaja tidak dikerjakan (di luar deskripsi).
 - [ ] Review ulang dengan dua reviewer baru memakai prompt dosen.
 
