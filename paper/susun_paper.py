@@ -347,11 +347,14 @@ def isi_template(polos, keluaran, gambar):
             lebar_kolom_hal = 4252                             # (11906 − 2×1418 − 566) / 2 twip
             margin_sel = 2 * 72                                # margin kiri + kanan sel (twip)
             mar = baru.find(qn('w:tblPr')).find(qn('w:tblCellMar'))
+            # margin sel ditulis sebagai left/right (bukan start/end): Google Docs hanya membaca left/right dan
+            # memakai padding bawaannya yang lebih lebar bila tidak ada, sehingga kolom sempit jadi terpotong
             if mar is not None:
-                for sisi in ('start', 'end', 'left', 'right'):
-                    m_ = mar.find(qn('w:' + sisi))
-                    if m_ is not None:
-                        m_.set(qn('w:w'), '72')
+                mar.getparent().remove(mar)
+            mar = baru.find(qn('w:tblPr')).makeelement(qn('w:tblCellMar'), {})
+            for sisi, w_ in (('top', '0'), ('left', '72'), ('bottom', '0'), ('right', '72')):
+                mar.append(mar.makeelement(qn('w:' + sisi), {qn('w:w'): w_, qn('w:type'): 'dxa'}))
+            baru.find(qn('w:tblPr')).append(mar)
             isi = [[''.join(x.text or '' for x in tc.iter(qn('w:t'))) for tc in tr.findall(qn('w:tc'))]
                    for tr in baru.findall(qn('w:tr'))]
             nkol = max(len(r) for r in isi)
@@ -395,6 +398,13 @@ def isi_template(polos, keluaran, gambar):
                     if tcw is None:
                         tcw = tcpr.makeelement(qn('w:tcW'), {}); tcpr.insert(0, tcw)
                     tcw.set(qn('w:type'), 'dxa'); tcw.set(qn('w:w'), str(w))
+                    lama_m = tcpr.find(qn('w:tcMar'))         # margin juga per sel, untuk aplikasi yang
+                    if lama_m is not None:                     # mengabaikan tblCellMar
+                        tcpr.remove(lama_m)
+                    tcm = tcpr.makeelement(qn('w:tcMar'), {})
+                    for sisi in ('left', 'right'):
+                        tcm.append(tcm.makeelement(qn('w:' + sisi), {qn('w:w'): '72', qn('w:type'): 'dxa'}))
+                    tcw.addnext(tcm)
             for pp in baru.iter(qn('w:p')):
                 lama_ppr = pp.find(qn('w:pPr'))
                 jc = lama_ppr.find(qn('w:jc')) if lama_ppr is not None else None
@@ -405,8 +415,9 @@ def isi_template(polos, keluaran, gambar):
                     old = np_.find(qn('w:jc'))
                     if old is not None:
                         np_.remove(old)
-                    if jc is not None:
-                        np_.append(deepcopy(jc))
+                    if jc is not None:                         # jc harus sebelum rPr (urutan skema pPr)
+                        rpr_p = np_.find(qn('w:rPr'))
+                        (rpr_p.addprevious(deepcopy(jc)) if rpr_p is not None else np_.append(deepcopy(jc)))
                     pp.insert(0, np_)
                 # isi sel: Times New Roman 8 pt seperti contoh tabel template (gaya sel bawaannya Arial);
                 # rumus (m:r) juga diberi 8 pt agar tidak tampil 11 pt
