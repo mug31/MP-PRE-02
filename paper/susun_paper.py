@@ -592,7 +592,8 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
         for h in (s.header, s.first_page_header, s.even_page_header):
             for p in h.paragraphs:
                 if 'Penulis' in p.text and p.runs:
-                    p.runs[0].text = 'Kusbianto, Al Akmal, Ainul Yaqin'
+                    p.runs[0].text = ('Muktibaskara Kusbianto, M. Nailul Ghufran Majid, M. Rafiq Al-Hariri, '
+                                         'Muhammad Ainul Yaqin')
                     p.runs[0].font.superscript = False
                     for r in p.runs[1:]:
                         r.text = ''

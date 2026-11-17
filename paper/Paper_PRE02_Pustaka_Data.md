@@ -6,13 +6,13 @@ title: "Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas"
 
 
 ::: {custom-style="Penulis"}
-Muktibaskara Kusbianto^1^, Muhammad Abdillah Kais Al Akmal^2^, Muhammad Ainul Yaqin^3^
+Muktibaskara Kusbianto^1^, M. Nailul Ghufran Majid^2^, M. Rafiq Al-Hariri^3^, Muhammad Ainul Yaqin^4^
 :::
 
 ::: {custom-style="Afiliasi"}
 Fakultas Sains dan Teknologi, Universitas Islam Negeri Maulana Malik Ibrahim Malang
 
-^1^muktibaskrakusbianto@gmail.com, ^2^abdillahkais1@gmail.com, ^3^yaqinov@ti.uin-malang.ac.id
+^1^muktibaskrakusbianto@gmail.com, ^2^muhammadnailulghufronmajid@gmail.com, ^3^luhalisarafansyah@gmail.com, ^4^yaqinov@ti.uin-malang.ac.id
 :::
 
 **Abstract**
@@ -232,16 +232,16 @@ Ketepatan prediksi naik seiring kemajuan proyek (Gambar 3). ROC-AUC GB naik dari
 ![Gambar 3. (a) ROC-AUC dan (b) *Brier score* per titik *monitoring* dengan selang kepercayaan 95%](gambar/gambar_3_metrik_per_titik.png){width=7.6cm}
 
 ::: {custom-style="Judul Tabel"}
-Tabel 8. Deteksi dini kumulatif dengan model GB
+Tabel 8. Deteksi dini kumulatif model GB per ambang
 :::
 
-| Ambang | Terlambat diperingatkan s.d. 25% / 50% / 75% | Tidak pernah diperingatkan | Peringatan palsu s.d. 75% |
-| :--- | ---: | ---: | ---: |
-| 0,35 (batas Kuning) | 67,7% / 80,8% / 84,5% | 15,5% | 50,5% |
-| 0,485 (*θ*^\*^ Youden) | 56,7% / 73,6% / 81,0% | 19,0% | 38,0% |
-| 0,65 (batas Merah) | 40,0% / 60,4% / 74,4% | 25,6% | 22,0% |
+| Ambang | 25% | 50% | 75% | Luput | Palsu |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| 0,35 | 67,7% | 80,8% | 84,5% | 15,5% | 50,5% |
+| 0,485 | 56,7% | 73,6% | 81,0% | 19,0% | 38,0% |
+| 0,65 | 40,0% | 60,4% | 74,4% | 25,6% | 22,0% |
 
-Pada ambang $\theta^*$ = 0,485, *recall* keseluruhan 65,7% dan *specificity* 81,9%. Peringatan palsu umumnya terjadi pada iterasi yang nyaris terlambat: iterasi tepat waktu yang pernah diperingatkan memiliki median keterlambatan akhir 3,6% dari *baseline*, dibanding 2,8% pada yang tidak pernah diperingatkan. Zona bertingkat cocok dengan pola ini, karena zona Kuning menangkap lebih banyak proyek bermasalah untuk tindakan ringan, sedangkan zona Merah lebih jarang keliru sehingga layak dipakai untuk tindakan mahal seperti penambahan sumber daya. Sebagai ilustrasi, satu iterasi P-FNE-03 sudah berada di zona Merah sejak titik 25% (probabilitas 0,796) dan berakhir terlambat 11,7 hari, sehingga manajer proyek memiliki sekitar 165 hari kerja untuk melakukan tindakan korektif.
+Pada Tabel 8, ambang 0,35 dan 0,65 adalah batas zona Kuning dan Merah, sedangkan 0,485 adalah $\theta^*$ Youden. Kolom 25%, 50%, dan 75% memuat persentase iterasi terlambat yang sudah diperingatkan sampai titik tersebut, kolom Luput memuat iterasi terlambat yang tidak pernah diperingatkan, dan kolom Palsu memuat iterasi tepat waktu yang pernah diperingatkan sampai titik 75%. Pada ambang $\theta^*$ = 0,485, *recall* keseluruhan 65,7% dan *specificity* 81,9%. Peringatan palsu umumnya terjadi pada iterasi yang nyaris terlambat: iterasi tepat waktu yang pernah diperingatkan memiliki median keterlambatan akhir 3,6% dari *baseline*, dibanding 2,8% pada yang tidak pernah diperingatkan. Zona bertingkat cocok dengan pola ini, karena zona Kuning menangkap lebih banyak proyek bermasalah untuk tindakan ringan, sedangkan zona Merah lebih jarang keliru sehingga layak dipakai untuk tindakan mahal seperti penambahan sumber daya. Sebagai ilustrasi, satu iterasi P-FNE-03 sudah berada di zona Merah sejak titik 25% (probabilitas 0,796) dan berakhir terlambat 11,7 hari, sehingga manajer proyek memiliki sekitar 165 hari kerja untuk melakukan tindakan korektif.
 
 ![Gambar 4. Persentase kumulatif (a) iterasi terlambat yang sudah diperingatkan dan (b) iterasi tepat waktu yang menerima peringatan palsu](gambar/gambar_4_deteksi_dini.png){width=7.6cm}
 
