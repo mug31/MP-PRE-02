@@ -182,26 +182,26 @@ Ada dua penjelasan yang saling melengkapi. Pertama, *Platt scaling* pada model y
 
 ## 3.4. Pengujian hipotesis
 
-Tabel 6 merangkum keputusan hipotesis dan Gambar 2 menyajikan selisih metrik setiap uji. Keputusan diambil dari uji *bootstrap* dengan koreksi Holm pada data gabungan, sedangkan kolom Searah menunjukkan jumlah subproyek yang selisihnya searah dengan hipotesis. H2 didukung. H3 didukung pada data gabungan, karena *Brier score* dan ECE GB lebih kecil daripada ketiga model lain pada keenam uji (*p* Holm = 0,0085). H1 didukung sebagian karena LR lebih akurat daripada pembanding naif, tetapi *calibration intercept* LR 0,155 [0,089; 0,220] dan *slope* 0,586 [0,562; 0,610] tidak memuat nilai ideal. H4 ditolak pada konfigurasi awal, meskipun dengan *early stopping* NN lebih akurat daripada LR (subbab 3.2). H5 ditolak untuk LR, RF, dan GB, tetapi didukung untuk NN, yang ECE-nya turun dari 0,2188 menjadi 0,1417 dengan Platt dan 0,1840 dengan Isotonic.
+Tabel 6 merangkum keputusan hipotesis beserta uji wakilnya, sedangkan Gambar 2 menyajikan selisih metrik ketujuh belas uji dengan kode yang sama. Keputusan diambil dari uji *bootstrap* dengan koreksi Holm pada data gabungan, sedangkan kolom Searah menunjukkan jumlah subproyek yang selisihnya searah dengan hipotesis. H2 didukung. H3 didukung pada data gabungan, karena *Brier score* dan ECE GB lebih kecil daripada ketiga model lain pada keenam uji H3a–H3f (*p* Holm = 0,0085). H1 didukung sebagian karena LR lebih akurat daripada pembanding naif, tetapi *calibration intercept* LR 0,155 [0,089; 0,220] dan *slope* 0,586 [0,562; 0,610] tidak memuat nilai ideal. H4 ditolak pada konfigurasi awal, meskipun dengan *early stopping* NN lebih akurat daripada LR (subbab 3.2). H5 ditolak untuk LR, RF, dan GB (H5a–H5f), tetapi didukung untuk NN (H5g dan H5h), yang ECE-nya turun dari 0,2188 menjadi 0,1417 dengan Platt dan 0,1840 dengan Isotonic.
 
 ::: {custom-style="Judul Tabel"}
-Tabel 6. Keputusan hipotesis pada data gabungan
+Tabel 6. Keputusan hipotesis pada data gabungan (kode uji sama dengan Gambar 2)
 :::
 
-| Hipotesis dan uji | Selisih [CI 95%] | Searah |
+| Hipotesis dan kode uji | Selisih [CI 95%] | Searah |
 | :--- | ---: | ---: |
 | *H1: didukung sebagian* | | |
-| Brier LR − naif | −0,0757 [−0,0813; −0,0703] | 6/8 |
+| H1a: Brier LR − Naif | −0,076 [−0,081; −0,070] | 6/8 |
 | *H2: didukung* | | |
-| Brier RF − LR | −0,0197 [−0,0232; −0,0163] | 4/8 |
+| H2: Brier RF − LR | −0,020 [−0,023; −0,016] | 4/8 |
 | *H3: didukung* | | |
-| Brier GB − RF | −0,0043 [−0,0066; −0,0020] | 5/8 |
-| ECE GB − RF | −0,0202 [−0,0306; −0,0078] | 5/8 |
+| H3b: Brier GB − RF | −0,004 [−0,007; −0,002] | 5/8 |
+| H3e: ECE GB − RF | −0,020 [−0,031; −0,008] | 5/8 |
 | *H4: ditolak* | | |
-| Brier NN − LR | 0,0901 [0,0832; 0,0977] | 3/8 |
+| H4: Brier NN − LR | 0,090 [0,083; 0,098] | 3/8 |
 | *H5: ditolak kecuali NN* | | |
-| ECE GB Platt − GB | 0,0297 [0,0210; 0,0358] | 1/8 |
-| ECE NN Platt − NN | −0,0771 [−0,0857; −0,0675] | 5/8 |
+| H5e: ECE GB Platt − GB | 0,030 [0,021; 0,036] | 1/8 |
+| H5g: ECE NN Platt − NN | −0,077 [−0,086; −0,067] | 5/8 |
 
 ![Gambar 2. Selisih (a) *Brier score* dan (b) ECE setiap uji dengan selang kepercayaan 95%](gambar/gambar_2_uji_hipotesis.png){width=7.6cm}
 
