@@ -605,6 +605,18 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
                     p.runs[i_vol].text = 'Vol. ' + p.runs[akhir].text.strip().replace('No. 1', 'No. x')
                     for r in p.runs[i_vol + 1:akhir + 1]:
                         r.text = ''
+
+    # Template menutup isi dua kolom dengan paragraf kosong pembawa sectPr, lalu section satu kolom kosong.
+    # Bila halaman terakhir penuh, paragraf itu terdorong ke halaman baru (halaman kosong, temuan review).
+    # Jadikan section dua kolom sebagai section terakhir dokumen dan buang paragraf kosongnya.
+    body = t.element.body
+    sect_akhir = body.find(qn('w:sectPr'))
+    pemisah = sect_akhir.getprevious()
+    ppr_p = pemisah.find(qn('w:pPr')) if pemisah is not None and pemisah.tag == qn('w:p') else None
+    sect_p = ppr_p.find(qn('w:sectPr')) if ppr_p is not None else None
+    if sect_p is not None and not teks(pemisah).strip():
+        body.replace(sect_akhir, sect_p)
+        body.remove(pemisah)
     t.save(keluaran)
 
 
