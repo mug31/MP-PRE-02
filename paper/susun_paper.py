@@ -592,9 +592,12 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
         for h in (s.header, s.first_page_header, s.even_page_header):
             for p in h.paragraphs:
                 if 'Penulis' in p.text and p.runs:
-                    p.runs[0].text = ('Muktibaskara Kusbianto, M. Nailul Ghufran Majid, M. Rafiq Al-Hariri, '
+                    p.runs[0].text = ('Muktibaskara Kusbianto, Muhammad Nailul Ghufron Majid, Rafiq Alhariri Andriansyah, '
                                          'Muhammad Ainul Yaqin')
                     p.runs[0].font.superscript = False
+                    # 10 pt membuat empat nama lengkap terbungkus dua baris dan mendorong isi ke halaman 11
+                    from docx.shared import Pt
+                    p.runs[0].font.size = Pt(9)
                     for r in p.runs[1:]:
                         r.text = ''
                 # header template menulis "Vol . x No. 1"; samakan dengan halaman 1 ("Vol. x No. x"), sesuai review

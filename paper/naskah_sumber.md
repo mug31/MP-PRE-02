@@ -6,7 +6,7 @@ title: "Prediksi Probabilitas Keterlambatan Proyek Multi Sumber Daya Terbatas"
 Paper_PRE02_Pustaka_Data.md (sitasi bernomor + Daftar Rujukan) dan .docx. Jangan sunting berkas hasil. -->
 
 ::: {custom-style="Penulis"}
-Muktibaskara Kusbianto^1^, M. Nailul Ghufran Majid^2^, M. Rafiq Al-Hariri^3^, Muhammad Ainul Yaqin^4^
+Muktibaskara Kusbianto^1^, Muhammad Nailul Ghufron Majid^2^, Rafiq Alhariri Andriansyah^3^, Muhammad Ainul Yaqin^4^
 :::
 
 ::: {custom-style="Afiliasi"}
