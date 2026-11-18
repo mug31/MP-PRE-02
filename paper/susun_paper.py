@@ -617,6 +617,35 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
     if sect_p is not None and not teks(pemisah).strip():
         body.replace(sect_akhir, sect_p)
         body.remove(pemisah)
+
+    # Tautan repositori kode dijadikan hyperlink aktif: URL panjang terpotong di tanda hubung saat pindah baris,
+    # sehingga pembaca bisa salah menyalinnya.
+    import re as _re
+    from docx.opc.constants import RELATIONSHIP_TYPE as RT
+    for wt in list(body.iter(qn('w:t'))):
+        m = _re.search(r'https://\S+?(?=[.,;)]?(?:\s|$))', wt.text or '')
+        if not m:
+            continue
+        run = wt.getparent()
+        sebelum, url, sesudah = wt.text[:m.start()], m.group(0), wt.text[m.end():]
+        wt.text = sebelum
+        wt.set(qn('xml:space'), 'preserve')
+        r_url, r_akhir = deepcopy(run), deepcopy(run)
+        r_url.find(qn('w:t')).text = url
+        r_akhir.find(qn('w:t')).text = sesudah
+        r_akhir.find(qn('w:t')).set(qn('xml:space'), 'preserve')
+        rpr = r_url.find(qn('w:rPr'))
+        if rpr is None:
+            rpr = r_url.makeelement(qn('w:rPr'), {})
+            r_url.insert(0, rpr)
+        warna = rpr.makeelement(qn('w:color'), {qn('w:val'): '0563C1'})
+        garis = rpr.makeelement(qn('w:u'), {qn('w:val'): 'single'})
+        rpr.append(warna)
+        rpr.append(garis)
+        tautan = run.makeelement(qn('w:hyperlink'), {qn('r:id'): t.part.relate_to(url, RT.HYPERLINK, is_external=True)})
+        tautan.append(r_url)
+        run.addnext(tautan)
+        tautan.addnext(r_akhir)
     t.save(keluaran)
 
 

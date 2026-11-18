@@ -110,7 +110,7 @@ dengan $B_m$ himpunan observasi pada interval probabilitas ke-$m$ dari sepuluh i
 
 Hipotesis diturunkan dari pertanyaan penelitian. Untuk RQ1, H1 menyatakan LR lebih akurat daripada pembanding naif dan terkalibrasi baik, yaitu selang kepercayaan 95% *calibration intercept*-nya memuat 0 dan selang kepercayaan 95% *calibration slope*-nya memuat 1 pada data gabungan [@vancalster], H2 menyatakan RF lebih akurat daripada LR, H3 menyatakan GB memiliki *Brier score* dan ECE terkecil, dan H4 menyatakan NN lebih akurat daripada LR. Untuk RQ2, H5 menyatakan kalibrasi Platt atau Isotonic menurunkan ECE. RQ3 dijawab secara deskriptif. Ketidakpastian setiap metrik diukur dengan *bootstrap* persentil 2.000 replikasi yang mengambil ulang iterasi simulasi secara utuh [@efron]. Selisih antarmodel diuji berpasangan satu arah dengan *bootstrap* yang sama, dan nilai *p*-nya dikoreksi dengan metode Holm atas 17 uji [@holm]; keputusan hipotesis didasarkan pada uji ini. Konsistensi antarsubproyek diperiksa secara deskriptif dengan uji peringkat bertanda Wilcoxon eksak satu arah pada delapan selisih per subproyek [@wilcoxon] tanpa koreksi. Dengan delapan pasangan, *p* terkecil yang mungkin pada uji ini adalah 1/256 ≈ 0,0039, lebih besar daripada batas Holm terketat 0,05/17 ≈ 0,0029.
 
-Kode simulasi, data sintetis, dan skrip analisis tersedia dari penulis atas permintaan.
+Kode simulasi, data sintetis, dan skrip analisis tersedia di https://github.com/mug31/prediksi-keterlambatan-proyek.
 
 # 3. Hasil dan Pembahasan
 
