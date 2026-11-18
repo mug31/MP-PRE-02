@@ -1,14 +1,20 @@
 """
-PRE-02: Susun naskah paper Jurnal Pustaka Data dari naskah_sumber.md.
+PRE-02: Susun naskah paper Jurnal Pustaka Data dari naskah_sumber.md (template 2026).
 
   python susun_paper.py
 
-1. Sitasi [@kunci] diganti nomor [1], [2, 3] sesuai urutan kemunculan pertama (aturan template).
-2. Daftar Rujukan disusun berurutan dari kamus RUJUKAN (metadata dari 02_Studi Literatur/Verifikasi_Literatur.md),
+1. Sitasi [@kunci] diganti nomor [1], [2, 3] sesuai urutan kemunculan pertama (gaya IEEE).
+2. References disusun berurutan dari kamus RUJUKAN (gaya IEEE, DOI berupa hyperlink aktif ke https://doi.org/),
    hanya untuk rujukan yang dikutip. Kunci yang tidak dikenal atau rujukan yang tidak dikutip menghentikan skrip.
 3. Gambar dan tabel diberi nomor (Gambar n. / Tabel n.).
-4. Luaran: Paper_PRE02_Pustaka_Data.md dan Paper_PRE02_Pustaka_Data.docx (gaya template: Times New Roman 10 pt,
-   judul 15 pt, A4 margin 25 mm, abstrak satu kolom lalu isi dua kolom, keterangan tabel/gambar 8 pt).
+4. Isi naskah dipindahkan ke Template_Pustaka_Data_2026.docx (satu kolom, A4, margin 2 cm): kotak tanggal dan
+   lisensi, judul, penulis, afiliasi, abstrak dalam kotak, bagian bernomor, empat pernyataan, dan References.
+5. Luaran:
+   - Paper_PRE02_Pustaka_Data.md                 naskah bernomor (publik)
+   - Paper_PRE02_Pustaka_Data.docx               tanpa nomor WA (publik, untuk repositori)
+   - Paper_PRE02_Pustaka_Data_GDocs.docx         tanpa nomor WA, tabel dibungkus agar tidak terbelah di Google Docs
+   - Paper_PRE02_Pustaka_Data_submit.docx        DENGAN nomor WA dari kontak_wa.txt, untuk dikirim ke jurnal.
+     kontak_wa.txt dan berkas *_submit.docx ada di .gitignore karena repositori ini publik.
 Kebutuhan: pandoc, python-docx, pillow (+ font Liberation Serif)
 """
 
@@ -22,38 +28,48 @@ SUMBER = HERE / 'naskah_sumber.md'
 KELUARAN_MD = HERE / 'Paper_PRE02_Pustaka_Data.md'
 KELUARAN_DOCX = HERE / 'Paper_PRE02_Pustaka_Data.docx'
 KELUARAN_GDOCS = HERE / 'Paper_PRE02_Pustaka_Data_GDocs.docx'   # versi untuk diunggah ke Google Docs
+KELUARAN_SUBMIT = HERE / 'Paper_PRE02_Pustaka_Data_submit.docx' # dengan nomor WA (tidak di-commit)
 REFERENSI_DOCX = HERE / 'gaya_pustaka_data.docx'
+TEMPLATE_DOCX = HERE / 'Template_Pustaka_Data_2026.docx'
+KONTAK_WA = HERE / 'kontak_wa.txt'                               # "Nama: nomor" per baris (tidak di-commit)
 
-# Format: nama penulis. tahun. judul. *wadah*. volume(nomor): halaman. DOI (sesuai petunjuk template)
+PENULIS = ['Muktibaskara Kusbianto', 'Muhammad Nailul Ghufron Majid', 'Rafiq Alhariri Andriansyah',
+           'Muhammad Ainul Yaqin']
+AFILIASI = 'Program Studi Teknik Informatika, Universitas Islam Negeri Maulana Malik Ibrahim Malang, Malang, Indonesia'
+EMAIL_KORESPONDENSI = 'muktibaskrakusbianto@gmail.com'          # penulis pertama = penulis korespondensi
+LEBAR_TEKS = 9638                                                # twip: 21 cm − 2 × 2 cm (template 2026)
+LEBAR_GAMBAR_CM = 14                                             # batas template: lebar gambar ≤ 14 cm
+
+# Gaya IEEE: inisial nama + nama belakang, "judul," *wadah*, vol., no., pp., tahun, doi.
 RUJUKAN = {
-    'ananta': 'Ananta, D., Pamungkas, R. Z. T., & Ainul Yaqin, M. 2026. Analisis domain kinerja stakeholder pada proyek ERP menggunakan social network analysis. *Jurnal Pustaka Data (Pusat Akses Kajian Database, Analisa Teknologi, dan Arsitektur Komputer)*. 6(5): 833–847. doi:10.55382/jurnalpustakadata.v6i5.2152',
-    'browning': 'Browning, T. R. & Yassine, A. A. 2010. Resource-constrained multi-project scheduling: priority rule performance revisited. *International Journal of Production Economics*. 126(2): 212–228. doi:10.1016/j.ijpe.2010.03.009',
-    'batselier': 'Batselier, J. & Vanhoucke, M. 2015. Evaluation of deterministic state-of-the-art forecasting approaches for project duration based on earned value management. *International Journal of Project Management*. 33(7): 1588–1596. doi:10.1016/j.ijproman.2015.04.003',
-    'wauters': 'Wauters, M. & Vanhoucke, M. 2016. A comparative study of artificial intelligence methods for project duration forecasting. *Expert Systems with Applications*. 46: 249–261. doi:10.1016/j.eswa.2015.10.008',
-    'choetkiertikul': 'Choetkiertikul, M., Dam, H. K., Tran, T., & Ghose, A. 2017. Predicting the delay of issues with due dates in software projects. *Empirical Software Engineering*. 22(3): 1223–1263. doi:10.1007/s10664-016-9496-7',
-    'kula': 'Kula, E., Greuter, E., van Deursen, A., & Gousios, G. 2023. Dynamic prediction of delays in software projects using delay patterns and Bayesian modeling. *Proceedings of the 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE 2023)*. San Francisco. 1012–1023. doi:10.1145/3611643.3616328',
-    'haekal': 'Haekal, J., Mu’min, R., Lesmana, S. A., Triana, N. E., Suwandari, Y. D., Rukmayadi, D., & Prihanto, I. G. 2026. A random-forest-based framework for predicting schedule achievement in cloud enterprise resource planning projects using the critical path method and the programme evaluation and review technique. *South African Journal of Industrial Engineering*. 37(2): 74–94',
-    'gondia': 'Gondia, A., Siam, A., El-Dakhakhni, W., & Nassar, A. H. 2020. Machine learning algorithms for construction projects delay risk prediction. *Journal of Construction Engineering and Management*. 146(1): 04019085. doi:10.1061/(ASCE)CO.1943-7862.0001736',
-    'mandapatti': 'Mandapatti, J. K. 2026. Machine learning models for predicting software project delays in large development teams. *Journal of Scalable Data Engineering and Intelligent Computing*. 3(2): 65–69',
-    'impivaara': 'Impivaara, V. 2025. *Machine learning for predicting delivery delays in manufacturing*. Tesis Magister. Lappeenranta: LUT University. urn:nbn:fi-fe20251215119518',
-    'niculescu': 'Niculescu-Mizil, A. & Caruana, R. 2005. Predicting good probabilities with supervised learning. *Proceedings of the 22nd International Conference on Machine Learning (ICML 2005)*. Bonn. 625–632. doi:10.1145/1102351.1102430',
-    'guo': 'Guo, C., Pleiss, G., Sun, Y., & Weinberger, K. Q. 2017. On calibration of modern neural networks. *Proceedings of the 34th International Conference on Machine Learning (ICML 2017), PMLR*. 70: 1321–1330',
-    'cabanillas': 'Cabanillas, C., Di Ciccio, C., Mendling, J., & Baumgrass, A. 2014. Predictive task monitoring for business processes. *Business Process Management (BPM 2014), Lecture Notes in Computer Science*. 8659: 424–432. doi:10.1007/978-3-319-10172-9_31',
-    'fitzsimmons': 'Fitzsimmons, J. P., Lu, R., Hong, Y., & Brilakis, I. 2022. Construction schedule risk analysis – a hybrid machine learning approach. *Journal of Information Technology in Construction*. 27: 70–93. doi:10.36680/j.itcon.2022.004',
-    'friedman': 'Friedman, J. H. 2001. Greedy function approximation: a gradient boosting machine. *The Annals of Statistics*. 29(5): 1189–1232. doi:10.1214/aos/1013203451',
-    'pedregosa': 'Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., et al. 2011. Scikit-learn: machine learning in Python. *Journal of Machine Learning Research*. 12: 2825–2830',
-    'platt': 'Platt, J. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. dalam: Smola, A. J., Bartlett, P., Schölkopf, B., & Schuurmans, D. (Eds). 1999. *Advances in Large Margin Classifiers*. Cambridge: MIT Press',
-    'zadrozny': 'Zadrozny, B. & Elkan, C. 2002. Transforming classifier scores into accurate multiclass probability estimates. *Proceedings of the 8th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*. Edmonton. 694–699. doi:10.1145/775047.775151',
-    'brier': 'Brier, G. W. 1950. Verification of forecasts expressed in terms of probability. *Monthly Weather Review*. 78(1): 1–3. doi:10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2',
-    'vancalster': 'Van Calster, B., Nieboer, D., Vergouwe, Y., De Cock, B., Pencina, M. J., & Steyerberg, E. W. 2016. A calibration hierarchy for risk models was defined: from utopia to empirical data. *Journal of Clinical Epidemiology*. 74: 167–176. doi:10.1016/j.jclinepi.2015.12.005',
-    'murphy': 'Murphy, A. H. 1973. A new vector partition of the probability score. *Journal of Applied Meteorology*. 12(4): 595–600. doi:10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2',
-    'youden': 'Youden, W. J. 1950. Index for rating diagnostic tests. *Cancer*. 3(1): 32–35. doi:10.1002/1097-0142(1950)3:1<32::AID-CNCR2820030106>3.0.CO;2-3',
-    'efron': 'Efron, B. & Tibshirani, R. J. 1993. *An Introduction to the Bootstrap*. New York: Chapman & Hall. doi:10.1201/9780429246593',
-    'holm': 'Holm, S. 1979. A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*. 6(2): 65–70',
-    'wilcoxon': 'Wilcoxon, F. 1945. Individual comparisons by ranking methods. *Biometrics Bulletin*. 1(6): 80–83. doi:10.2307/3001968',
-    'grzelak': 'Grzelak, M., Voicu, D., Stoica, R.-M., & Vilau, R. 2026. Predictive maintenance in logistics fleets: a comparative evaluation of random forest, XGBoost and logistic regression. *Logistics*. 10(8): 183. doi:10.3390/logistics10080183',
-    'kannan': 'Kannan, R., Abdul Halim, H. A., Ramakrishnan, K., Ismail, S., & Wijaya, D. R. 2022. Machine learning approach for predicting production delays: a quarry company case study. *Journal of Big Data*. 9(1): 94. doi:10.1186/s40537-022-00644-w',
-    'sivakumar': 'Sivakumar, V. & Sobika, R. 2026. AI-driven predictive analytics for improving project planning: a task-level analysis of interdependencies and decision making. *International Journal of Scientific Research in Engineering and Management*. 10(7). doi:10.55041/IJSREM65902',
+    'ananta': 'D. Ananta, R. Z. T. Pamungkas, and M. Ainul Yaqin, "Analisis domain kinerja stakeholder pada proyek ERP menggunakan social network analysis," *Jurnal Pustaka Data (Pusat Akses Kajian Database, Analisa Teknologi, dan Arsitektur Komputer)*, vol. 6, no. 5, pp. 833–847, 2026, doi: 10.55382/jurnalpustakadata.v6i5.2152',
+    'browning': 'T. R. Browning and A. A. Yassine, "Resource-constrained multi-project scheduling: priority rule performance revisited," *International Journal of Production Economics*, vol. 126, no. 2, pp. 212–228, 2010, doi: 10.1016/j.ijpe.2010.03.009',
+    'batselier': 'J. Batselier and M. Vanhoucke, "Evaluation of deterministic state-of-the-art forecasting approaches for project duration based on earned value management," *International Journal of Project Management*, vol. 33, no. 7, pp. 1588–1596, 2015, doi: 10.1016/j.ijproman.2015.04.003',
+    'wauters': 'M. Wauters and M. Vanhoucke, "A comparative study of artificial intelligence methods for project duration forecasting," *Expert Systems with Applications*, vol. 46, pp. 249–261, 2016, doi: 10.1016/j.eswa.2015.10.008',
+    'choetkiertikul': 'M. Choetkiertikul, H. K. Dam, T. Tran, and A. Ghose, "Predicting the delay of issues with due dates in software projects," *Empirical Software Engineering*, vol. 22, no. 3, pp. 1223–1263, 2017, doi: 10.1007/s10664-016-9496-7',
+    'kula': 'E. Kula, E. Greuter, A. van Deursen, and G. Gousios, "Dynamic prediction of delays in software projects using delay patterns and Bayesian modeling," in *Proceedings of the 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE 2023)*, San Francisco, 2023, pp. 1012–1023, doi: 10.1145/3611643.3616328',
+    'haekal': 'J. Haekal et al., "A random-forest-based framework for predicting schedule achievement in cloud enterprise resource planning projects using the critical path method and the programme evaluation and review technique," *South African Journal of Industrial Engineering*, vol. 37, no. 2, pp. 74–94, 2026',
+    'gondia': 'A. Gondia, A. Siam, W. El-Dakhakhni, and A. H. Nassar, "Machine learning algorithms for construction projects delay risk prediction," *Journal of Construction Engineering and Management*, vol. 146, no. 1, Art. no. 04019085, 2020, doi: 10.1061/(ASCE)CO.1943-7862.0001736',
+    'mandapatti': 'J. K. Mandapatti, "Machine learning models for predicting software project delays in large development teams," *Journal of Scalable Data Engineering and Intelligent Computing*, vol. 3, no. 2, pp. 65–69, 2026',
+    'impivaara': 'V. Impivaara, "Machine learning for predicting delivery delays in manufacturing," Master\'s thesis, LUT University, Lappeenranta, 2025, urn:nbn:fi-fe20251215119518',
+    'niculescu': 'A. Niculescu-Mizil and R. Caruana, "Predicting good probabilities with supervised learning," in *Proceedings of the 22nd International Conference on Machine Learning (ICML 2005)*, Bonn, 2005, pp. 625–632, doi: 10.1145/1102351.1102430',
+    'guo': 'C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger, "On calibration of modern neural networks," in *Proceedings of the 34th International Conference on Machine Learning (ICML 2017)*, PMLR, vol. 70, 2017, pp. 1321–1330',
+    'cabanillas': 'C. Cabanillas, C. Di Ciccio, J. Mendling, and A. Baumgrass, "Predictive task monitoring for business processes," in *Business Process Management (BPM 2014)*, Lecture Notes in Computer Science, vol. 8659, 2014, pp. 424–432, doi: 10.1007/978-3-319-10172-9_31',
+    'fitzsimmons': 'J. P. Fitzsimmons, R. Lu, Y. Hong, and I. Brilakis, "Construction schedule risk analysis – a hybrid machine learning approach," *Journal of Information Technology in Construction*, vol. 27, pp. 70–93, 2022, doi: 10.36680/j.itcon.2022.004',
+    'friedman': 'J. H. Friedman, "Greedy function approximation: a gradient boosting machine," *The Annals of Statistics*, vol. 29, no. 5, pp. 1189–1232, 2001, doi: 10.1214/aos/1013203451',
+    'pedregosa': 'F. Pedregosa et al., "Scikit-learn: machine learning in Python," *Journal of Machine Learning Research*, vol. 12, pp. 2825–2830, 2011',
+    'platt': 'J. Platt, "Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods," in *Advances in Large Margin Classifiers*, A. J. Smola, P. Bartlett, B. Schölkopf, and D. Schuurmans, Eds. Cambridge: MIT Press, 1999',
+    'zadrozny': 'B. Zadrozny and C. Elkan, "Transforming classifier scores into accurate multiclass probability estimates," in *Proceedings of the 8th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, Edmonton, 2002, pp. 694–699, doi: 10.1145/775047.775151',
+    'brier': 'G. W. Brier, "Verification of forecasts expressed in terms of probability," *Monthly Weather Review*, vol. 78, no. 1, pp. 1–3, 1950, doi: 10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2',
+    'vancalster': 'B. Van Calster, D. Nieboer, Y. Vergouwe, B. De Cock, M. J. Pencina, and E. W. Steyerberg, "A calibration hierarchy for risk models was defined: from utopia to empirical data," *Journal of Clinical Epidemiology*, vol. 74, pp. 167–176, 2016, doi: 10.1016/j.jclinepi.2015.12.005',
+    'murphy': 'A. H. Murphy, "A new vector partition of the probability score," *Journal of Applied Meteorology*, vol. 12, no. 4, pp. 595–600, 1973, doi: 10.1175/1520-0450(1973)012<0595:ANVPOT>2.0.CO;2',
+    'youden': 'W. J. Youden, "Index for rating diagnostic tests," *Cancer*, vol. 3, no. 1, pp. 32–35, 1950, doi: 10.1002/1097-0142(1950)3:1<32::AID-CNCR2820030106>3.0.CO;2-3',
+    'efron': 'B. Efron and R. J. Tibshirani, *An Introduction to the Bootstrap*. New York: Chapman & Hall, 1993, doi: 10.1201/9780429246593',
+    'holm': 'S. Holm, "A simple sequentially rejective multiple test procedure," *Scandinavian Journal of Statistics*, vol. 6, no. 2, pp. 65–70, 1979',
+    'wilcoxon': 'F. Wilcoxon, "Individual comparisons by ranking methods," *Biometrics Bulletin*, vol. 1, no. 6, pp. 80–83, 1945, doi: 10.2307/3001968',
+    'grzelak': 'M. Grzelak, D. Voicu, R.-M. Stoica, and R. Vilau, "Predictive maintenance in logistics fleets: a comparative evaluation of random forest, XGBoost and logistic regression," *Logistics*, vol. 10, no. 8, Art. no. 183, 2026, doi: 10.3390/logistics10080183',
+    'kannan': 'R. Kannan, H. A. Abdul Halim, K. Ramakrishnan, S. Ismail, and D. R. Wijaya, "Machine learning approach for predicting production delays: a quarry company case study," *Journal of Big Data*, vol. 9, no. 1, Art. no. 94, 2022, doi: 10.1186/s40537-022-00644-w',
+    'sivakumar': 'V. Sivakumar and R. Sobika, "AI-driven predictive analytics for improving project planning: a task-level analysis of interdependencies and decision making," *International Journal of Scientific Research in Engineering and Management*, vol. 10, no. 7, 2026, doi: 10.55041/IJSREM65902',
 }
 
 
@@ -76,146 +92,61 @@ def nomori_sitasi(teks):
 _FONT_UKUR = None
 
 
-def lebar_teks(teks_):
-    """Lebar teks Times New Roman 8 pt dalam twip, diukur dengan Liberation Serif (metriknya sama)."""
+def lebar_teks(teks_, pt=9):
+    """Lebar teks Times New Roman dalam twip, diukur dengan Liberation Serif (metriknya sama)."""
     global _FONT_UKUR
     if _FONT_UKUR is None:
         from PIL import ImageFont
         _FONT_UKUR = ImageFont.truetype('LiberationSerif-Regular.ttf', 160)
-    return _FONT_UKUR.getlength(teks_) / 160 * 8 * 20 * 1.06   # +6% cadangan untuk huruf miring/tebal
+    return _FONT_UKUR.getlength(teks_) / 160 * pt * 20 * 1.06   # +6% cadangan untuk huruf miring/tebal
 
 
 def nomori_gambar_tabel(teks):
     n = iter(range(1, 100))
-    teks = re.sub(r'!\[([^\]]+)\]\(([^)]+)\)', lambda m: f'![Gambar {next(n)}. {m.group(1)}]({m.group(2)}){{width=7.6cm}}', teks)
-    # judul tabel: paragraf "Tabel n. ..." diberi gaya khusus (rata tengah, 8 pt, di atas tabel)
+    teks = re.sub(r'!\[([^\]]+)\]\(([^)]+)\)',
+                  lambda m: f'![Gambar {next(n)}. {m.group(1)}]({m.group(2)}){{width={LEBAR_GAMBAR_CM}cm}}', teks)
+    # judul tabel: paragraf "Tabel n. ..." diberi gaya khusus (di atas tabel)
     teks = re.sub(r'^(Tabel \d+\. .+)$', r'::: {custom-style="Judul Tabel"}\n\1\n:::', teks, flags=re.M)
     return teks
 
 
 def buat_gaya():
-    """Dokumen referensi pandoc dengan gaya mengikuti template Jurnal Pustaka Data."""
+    """Dokumen referensi pandoc (hanya menentukan nama gaya; tata letak akhir diambil dari template)."""
     from docx import Document
-    from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.enum.style import WD_STYLE_TYPE
-    from docx.shared import Pt, Mm
 
     subprocess.run(['pandoc', '-o', str(REFERENSI_DOCX), '--print-default-data-file', 'reference.docx'], check=True)
     d = Document(REFERENSI_DOCX)
-    sec = d.sections[0]
-    sec.page_width, sec.page_height = Mm(210), Mm(297)
-    for sisi in ('top_margin', 'bottom_margin', 'left_margin', 'right_margin'):
-        setattr(sec, sisi, Mm(25))
-
-    def atur(nama, ukuran, tebal=False, miring=False, rata=WD_ALIGN_PARAGRAPH.JUSTIFY, sebelum=0, sesudah=4):
+    for nama in ('Penulis', 'Afiliasi', 'Judul Tabel', 'Rujukan'):
         try:
-            st = d.styles[nama]
+            d.styles[nama]
         except KeyError:
-            st = d.styles.add_style(nama, WD_STYLE_TYPE.PARAGRAPH)
-        f = st.font
-        f.name, f.size, f.bold, f.italic = 'Times New Roman', Pt(ukuran), tebal, miring
-        f.color.rgb = None
-        rpr = st.element.get_or_add_rPr()
-        rfonts = rpr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rFonts')
-        if rfonts is not None:
-            for a in list(rfonts.attrib):
-                if 'Theme' in a:
-                    del rfonts.attrib[a]
-        pf = st.paragraph_format
-        pf.alignment, pf.space_before, pf.space_after, pf.line_spacing = rata, Pt(sebelum), Pt(sesudah), 1.0
-
-    C, L = WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT
-    for nama in ('Normal', 'Body Text', 'First Paragraph', 'Compact'):
-        atur(nama, 10)
-    atur('Title', 15, rata=C, sesudah=8)
-    atur('Penulis', 10, tebal=True, rata=C, sesudah=0)
-    atur('Afiliasi', 9, rata=C, sesudah=8)
-    atur('Heading 1', 10, tebal=True, rata=L, sebelum=8, sesudah=4)
-    atur('Heading 2', 10, rata=L, sebelum=6, sesudah=3)
-    atur('Heading 3', 10, miring=True, rata=L, sebelum=4, sesudah=2)
-    atur('Judul Tabel', 8, rata=C, sebelum=6, sesudah=2)
-    atur('Image Caption', 8, rata=C, sesudah=6)
-    atur('Captioned Figure', 10, rata=C)
-    atur('Rujukan', 8, rata=L, sesudah=2)
+            d.styles.add_style(nama, WD_STYLE_TYPE.PARAGRAPH)
     d.save(REFERENSI_DOCX)
 
 
-def rapikan_docx():
-    """Abstrak satu kolom, isi dua kolom (pemisah setelah paragraf 'Kata kunci'); tabel 8 pt."""
-    from copy import deepcopy
-    from docx import Document
-    from docx.oxml.ns import qn
-    from docx.oxml import OxmlElement
-    from docx.shared import Pt
-
-    d = Document(KELUARAN_DOCX)
-    for t in d.tables:
-        tblpr = t._tbl.tblPr
-        lebar = tblpr.find(qn('w:tblW'))
-        if lebar is None:
-            lebar = OxmlElement('w:tblW')
-            tblpr.append(lebar)
-        lebar.set(qn('w:type'), 'pct')
-        lebar.set(qn('w:w'), '5000')
-        tata = tblpr.find(qn('w:tblLayout'))
-        if tata is None:
-            tata = OxmlElement('w:tblLayout')
-            tblpr.append(tata)
-        tata.set(qn('w:type'), 'autofit')
-        grid = t._tbl.find(qn('w:tblGrid'))
-        if grid is not None:
-            for gc in grid.findall(qn('w:gridCol')):
-                gc.attrib.pop(qn('w:w'), None)
-        for sel in t._tbl.iter(qn('w:tcW')):
-            sel.set(qn('w:type'), 'auto')
-            sel.set(qn('w:w'), '0')
-        for baris in t.rows:
-            for sel in baris.cells:
-                for par in sel.paragraphs:
-                    for run in par.runs:
-                        run.font.size = Pt(8)
-                        run.font.name = 'Times New Roman'
-    kunci = [p for p in d.paragraphs if p.text.startswith('Kata kunci:')]
-    assert kunci, 'Paragraf "Kata kunci" tidak ditemukan'
-    body_sect = d.element.body.find(qn('w:sectPr'))
-    sect_satu = deepcopy(body_sect)
-    cols = sect_satu.find(qn('w:cols'))
-    if cols is None:
-        cols = OxmlElement('w:cols')
-        sect_satu.append(cols)
-    cols.set(qn('w:num'), '1')
-    ppr = kunci[0]._p.get_or_add_pPr()
-    ppr.append(sect_satu)
-    cols2 = body_sect.find(qn('w:cols'))
-    if cols2 is None:
-        cols2 = OxmlElement('w:cols')
-        body_sect.append(cols2)
-    cols2.set(qn('w:num'), '2')
-    cols2.set(qn('w:space'), '425')
-    jenis = OxmlElement('w:type')
-    jenis.set(qn('w:val'), 'continuous')
-    body_sect.insert(0, jenis)
-    d.save(KELUARAN_DOCX)
-
-
-TEMPLATE_DOC = HERE / 'Template_Pustaka_Data.doc'
-
-
-def _template_docx(sementara):
-    """Ubah template .doc asli ke .docx (LibreOffice) agar bisa diisi."""
-    profil = sementara / 'lo-profil'
-    subprocess.run(['soffice', f'-env:UserInstallation=file://{profil}', '--headless', '--convert-to', 'docx',
-                    '--outdir', str(sementara), str(TEMPLATE_DOC)], check=True, capture_output=True)
-    return sementara / (TEMPLATE_DOC.stem + '.docx')
+def baca_wa():
+    """Nomor WA per penulis dari kontak_wa.txt; kosong bila berkas tidak ada."""
+    if not KONTAK_WA.exists():
+        return {}
+    wa = {}
+    for baris in KONTAK_WA.read_text(encoding='utf-8').splitlines():
+        if baris.strip() and not baris.startswith('#') and ':' in baris:
+            nama, nomor = baris.split(':', 1)
+            wa[nama.strip()] = nomor.strip()
+    kurang = [p for p in PENULIS if p not in wa]
+    if kurang:
+        sys.exit(f'Nomor WA belum ada di {KONTAK_WA.name}: {kurang}')
+    return wa
 
 
 def bungkus_tabel(tbl, judul):
     """Bungkus judul tabel + tabel dalam tabel satu sel tanpa garis yang barisnya tidak boleh dipecah.
 
-    Google Docs mengabaikan keepNext antarbaris tabel sehingga tabel terbelah antarkolom/halaman, tetapi
+    Google Docs mengabaikan keepNext antarbaris tabel sehingga tabel terbelah antarhalaman, tetapi
     mematuhi cantSplit pada baris. Dengan satu baris pembungkus, judul dan tabel selalu pindah bersama."""
     from docx.oxml.ns import qn
-    W = 4252
+    W = LEBAR_TEKS
     luar = tbl.makeelement(qn('w:tbl'), {})
     tblpr = luar.makeelement(qn('w:tblPr'), {})
     for tag, at in (('w:tblW', {'w:w': str(W), 'w:type': 'dxa'}), ('w:jc', {'w:val': 'center'}),
@@ -260,63 +191,101 @@ def bungkus_tabel(tbl, judul):
     return luar
 
 
-def isi_template(polos, keluaran, gambar, bungkus=False):
-    """Pindahkan isi naskah (docx hasil pandoc) ke dalam template asli Jurnal Pustaka Data.
+# urutan anak pPr menurut skema OOXML (elemen yang disisipkan harus di posisi yang benar)
+URUTAN_PPR = ['pStyle', 'keepNext', 'keepLines', 'pageBreakBefore', 'framePr', 'widowControl', 'numPr',
+              'suppressLineNumbers', 'pBdr', 'shd', 'tabs', 'suppressAutoHyphens', 'kinsoku', 'wordWrap',
+              'overflowPunct', 'topLinePunct', 'autoSpaceDE', 'autoSpaceDN', 'bidi', 'adjustRightInd', 'snapToGrid',
+              'spacing', 'ind', 'contextualSpacing', 'mirrorIndents', 'suppressOverlap', 'jc', 'textDirection',
+              'textAlignment', 'textboxTightWrap', 'outlineLvl', 'divId', 'cnfStyle', 'rPr', 'sectPr', 'pPrChange']
 
-    Kop jurnal, logo, header, footer, dan pemisah kolom dari template dipertahankan; setiap paragraf naskah
-    memakai gaya paragraf template (Heading1 tanpa nomor otomatis, Heading2, Normal, Caption, Rujukan)."""
+
+def isi_template(polos, keluaran, gambar, wa=None, bungkus=False):
+    """Pindahkan isi naskah (docx hasil pandoc) ke dalam Template_Pustaka_Data_2026.docx.
+
+    Kotak tanggal/lisensi, header, dan footer template dipertahankan; judul, penulis, afiliasi, abstrak, dan
+    kata kunci diisi di tempat contohnya; isi contoh dari "1. Pendahuluan" sampai daftar periksa diganti isi
+    naskah dengan format paragraf contoh template (Heading1 bergaris, paragraf menjorok, tabel dan keterangan
+    9 pt, rujukan [n] menggantung)."""
     from copy import deepcopy
+    from urllib.parse import quote
     from docx import Document
     from docx.oxml.ns import qn
     from docx.shared import Cm
     from docx.text.paragraph import Paragraph
+    from docx.opc.constants import RELATIONSHIP_TYPE as RT
 
-    t = Document(TEMPLATE_DOCX_SEMENTARA[0])
+    t = Document(TEMPLATE_DOCX)
     src = Document(polos)
-    tb = list(t.element.body.iterchildren())
+    body = t.element.body
+    tb = list(body.iterchildren())
 
     def teks(el):
         return ''.join(x.text or '' for x in el.iter(qn('w:t')))
 
-    def cari(awal, syarat):
+    def cari(awal, syarat, tag='w:p'):
         for i, el in enumerate(tb):
-            if i >= awal and el.tag == qn('w:p') and syarat(teks(el)):
+            if i >= awal and el.tag == qn(tag) and syarat(teks(el)):
                 return i
         raise SystemExit('Penanda template tidak ditemukan')
 
+    def sisip_ppr(pp, el):
+        """Sisipkan el ke pPr pp di posisi skema yang benar (menggantikan elemen bertag sama)."""
+        nama = el.tag.split('}')[1]
+        lama = pp.find(el.tag)
+        if lama is not None:
+            pp.replace(lama, el)
+            return
+        idx = URUTAN_PPR.index(nama)
+        for c in pp:
+            n_ = c.tag.split('}')[1]
+            if n_ in URUTAN_PPR and URUTAN_PPR.index(n_) > idx:
+                c.addprevious(el)
+                return
+        pp.append(el)
+
     i_judul = cari(0, lambda x: x.startswith('Judul Ditulis'))
-    i_penulis, i_afil1, i_afil2, i_email = i_judul + 1, i_judul + 2, i_judul + 3, i_judul + 4
-    i_abs = cari(i_judul, lambda x: x.startswith('The abstract is'))
-    i_kw = cari(i_abs, lambda x: x.startswith('Keywords'))
-    i_abk = cari(i_kw, lambda x: x.startswith('Isi abstrak'))
-    i_kk = cari(i_abk, lambda x: x.startswith('Kata kunci'))
-    i_cr = cari(i_kk, lambda x: x.startswith('©'))
-    i_pend = cari(i_cr, lambda x: x.strip().startswith('Pendahuluan'))
-    i_h1 = cari(i_pend, lambda x: x.startswith('3.') and 'Hasil' in x)       # Heading1 bernomor manual
-    i_h2 = cari(i_pend, lambda x: x.startswith('2.1.'))
+    i_penulis = i_judul + 1
+    i_afil = [i_judul + 2, i_judul + 3, i_judul + 4]
+    i_email = cari(i_judul, lambda x: x.startswith('* Penulis Korespondensi'))
+    i_abs = cari(i_email, lambda x: x.startswith('Abstract'), 'w:tbl')
+    i_pend = cari(i_abs, lambda x: x.strip() == '1. Pendahuluan')
     i_par = i_pend + 1
-    i_cap_tabel = next(i for i in range(i_pend, len(tb) - 1) if tb[i + 1].tag == qn('w:tbl'))
+    i_cap_tabel = cari(i_pend, lambda x: x.startswith('Tabel 1.'))
     i_tabel = i_cap_tabel + 1
     assert tb[i_tabel].tag == qn('w:tbl')
-    i_cap_gambar = cari(i_tabel, lambda x: x.startswith('Gambar 1'))
-    i_gambar = i_cap_gambar - 1
-    i_rujukan = cari(i_cap_gambar, lambda x: x.startswith('Ikhsan'))
-    i_sect2 = next(i for i in range(i_rujukan, len(tb)) if tb[i].tag == qn('w:p') and tb[i].find(qn('w:pPr')) is not None
-                   and tb[i].find(qn('w:pPr')).find(qn('w:sectPr')) is not None)
+    i_gambar = next(i for i in range(i_tabel, len(tb)) if list(tb[i].iter(qn('w:drawing'))))
+    i_cap_gambar = cari(i_gambar, lambda x: x.startswith('Figure 1'))
+    i_ref = cari(i_cap_gambar, lambda x: x.strip() == 'References')
+    i_rujukan = cari(i_ref, lambda x: x.startswith('[1]'))
 
-    ppr = lambda i: deepcopy(tb[i].find(qn('w:pPr')))
-    PPR = {'h1': ppr(i_h1), 'h2': ppr(i_h2), 'par': ppr(i_par), 'cap_tabel': ppr(i_cap_tabel),
-           'cap_gambar': ppr(i_cap_gambar), 'gambar': ppr(i_gambar), 'rujukan': ppr(i_rujukan)}
-    kn = PPR['cap_tabel'].makeelement(qn('w:keepNext'), {})
-    PPR['cap_tabel'].insert(1, kn)
-    tblpr_t = deepcopy(tb[i_tabel].find(qn('w:tblPr')))
-    sel_t = tb[i_tabel].find('.//' + qn('w:tc'))
-    ppr_sel = deepcopy(sel_t.find('.//' + qn('w:pPr'))) if sel_t.find('.//' + qn('w:pPr')) is not None else None
+    def ppr(i):
+        return deepcopy(tb[i].find(qn('w:pPr')))
 
-    def rpr_contoh(el):
-        r = el.find(qn('w:r'))
-        x = r.find(qn('w:rPr')) if r is not None else None
+    def rpr_run(el, k=0):
+        rs = el.findall(qn('w:r'))
+        x = rs[k].find(qn('w:rPr')) if len(rs) > k else None
         return deepcopy(x) if x is not None else None
+
+    PPR = {'h1': ppr(i_pend), 'par': ppr(i_par), 'cap_tabel': ppr(i_cap_tabel), 'cap_gambar': ppr(i_cap_gambar),
+           'gambar': ppr(i_gambar), 'rujukan': ppr(i_rujukan)}
+    RPR = {'h1': rpr_run(tb[i_pend]), 'par': rpr_run(tb[i_par]), 'cap_label': rpr_run(tb[i_cap_tabel]),
+           'cap': rpr_run(tb[i_cap_gambar], 2), 'rujukan': rpr_run(tb[i_rujukan])}
+    sisip_ppr(PPR['cap_tabel'], PPR['cap_tabel'].makeelement(qn('w:keepNext'), {}))
+    sisip_ppr(PPR['gambar'], PPR['gambar'].makeelement(qn('w:keepNext'), {}))
+    for x in PPR['gambar'].findall(qn('w:pBdr')):                # bingkai abu-abu hanya penanda contoh template
+        PPR['gambar'].remove(x)
+    # Heading2 tidak dicontohkan template: gaya Heading2 template + huruf Times New Roman 10 pt tebal hitam
+    PPR['h2'] = PPR['h1'].makeelement(qn('w:pPr'), {})
+    sisip_ppr(PPR['h2'], PPR['h2'].makeelement(qn('w:pStyle'), {qn('w:val'): 'Heading2'}))
+    sisip_ppr(PPR['h2'], PPR['h2'].makeelement(qn('w:keepNext'), {}))
+    sisip_ppr(PPR['h2'], PPR['h2'].makeelement(qn('w:spacing'), {qn('w:before'): '160', qn('w:after'): '80'}))
+    RPR['h2'] = deepcopy(RPR['par'])
+    for tag in ('w:b', 'w:bCs'):
+        RPR['h2'].append(RPR['h2'].makeelement(qn(tag), {}))
+    for tag in ('w:sz', 'w:szCs'):
+        RPR['h2'].append(RPR['h2'].makeelement(qn(tag), {qn('w:val'): '20'}))
+    sisip_ppr(PPR['h1'], PPR['h1'].makeelement(qn('w:keepNext'), {}))
+    tblpr_t = deepcopy(tb[i_tabel].find(qn('w:tblPr')))
 
     def gabung_rpr(r, dasar):
         """rPr run = rPr contoh template + atribut khas dari naskah (miring, tebal, superskrip)."""
@@ -324,11 +293,11 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
             return
         lama = r.find(qn('w:rPr'))
         baru = deepcopy(dasar)
-        for tag in ('w:i', 'w:b', 'w:vertAlign'):
+        for tag in ('w:i', 'w:iCs', 'w:b', 'w:bCs', 'w:vertAlign'):
             for x in baru.findall(qn(tag)):
                 baru.remove(x)
         if lama is not None:
-            for tag in ('w:i', 'w:iCs', 'w:b', 'w:bCs', 'w:vertAlign'):
+            for tag in ('w:b', 'w:bCs', 'w:i', 'w:iCs', 'w:vertAlign'):
                 for x in lama.findall(qn(tag)):
                     baru.append(deepcopy(x))
             r.remove(lama)
@@ -336,7 +305,7 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
 
     def isi_runs(tujuan, asal, dasar='auto'):
         if dasar == 'auto':
-            dasar = rpr_contoh(tujuan)
+            dasar = rpr_run(tujuan)
         for c in list(tujuan):
             if c.tag != qn('w:pPr'):
                 tujuan.remove(c)
@@ -344,69 +313,128 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
             if c.tag != qn('w:pPr'):
                 salinan = deepcopy(c)
                 gabung_rpr(salinan, dasar)
+                for r in salinan.iter(qn('w:r')):          # run di dalam hyperlink dan sejenisnya
+                    if r is not salinan:
+                        gabung_rpr(r, dasar)
                 tujuan.append(salinan)
 
-    RPR = {'h1': rpr_contoh(tb[i_h1]), 'h2': rpr_contoh(tb[i_h2]), 'par': None, 'cap_tabel': None, 'cap_gambar': None,
-           'rujukan': None}
+    def run(p, teks_, rpr, atas=False):
+        r = p.makeelement(qn('w:r'), {})
+        if rpr is not None:
+            rp = deepcopy(rpr)
+            if atas:
+                for x in rp.findall(qn('w:sz')) + rp.findall(qn('w:szCs')):
+                    rp.remove(x)
+                rp.append(rp.makeelement(qn('w:vertAlign'), {qn('w:val'): 'superscript'}))
+            r.append(rp)
+        if teks_ == '\t':
+            r.append(r.makeelement(qn('w:tab'), {}))
+        else:
+            x = r.makeelement(qn('w:t'), {qn('xml:space'): 'preserve'})
+            x.text = teks_
+            r.append(x)
+        p.append(r)
+        return r
 
-    sp = [el for el in src.element.body.iterchildren()]
+    def kosongkan(p):
+        for c in list(p):
+            if c.tag != qn('w:pPr'):
+                p.remove(c)
+
+    def label_tebal(p, rpr_label):
+        """Pisahkan "Tabel n." / "Gambar n." di awal keterangan menjadi run tebal (gaya template)."""
+        r0 = p.find(qn('w:r'))
+        t0 = r0.find(qn('w:t')) if r0 is not None else None
+        m = re.match(r'((?:Tabel|Gambar) \d+\.)(.*)', t0.text or '', re.S) if t0 is not None else None
+        assert m, 'Keterangan tidak diawali "Tabel n." / "Gambar n."'
+        t0.text = m.group(2)
+        t0.set(qn('xml:space'), 'preserve')
+        lbl = r0.makeelement(qn('w:r'), {})
+        lbl.append(deepcopy(rpr_label))
+        x = lbl.makeelement(qn('w:t'), {})
+        x.text = m.group(1)
+        lbl.append(x)
+        r0.addprevious(lbl)
+
+    sp = list(src.element.body.iterchildren())
+
     def gaya(el):
         pp = el.find(qn('w:pPr'))
         st = pp.find(qn('w:pStyle')) if pp is not None else None
         return st.get(qn('w:val')) if st is not None else ''
+
     para = [el for el in sp if el.tag == qn('w:p')]
     cari_src = lambda f: next(el for el in para if f(el))
-    isi_runs(tb[i_judul], cari_src(lambda e: gaya(e) == 'Title'))
-    for r_ in tb[i_judul].iter(qn('w:r')):                 # template: judul 15 pt tidak cetak tebal
-        rpr_ = r_.find(qn('w:rPr'))
-        if rpr_ is None:
-            rpr_ = r_.makeelement(qn('w:rPr'), {}); r_.insert(0, rpr_)
-        for tag in ('w:b', 'w:bCs'):
-            for x in rpr_.findall(qn(tag)):
-                rpr_.remove(x)
-            el_ = rpr_.makeelement(qn(tag), {qn('w:val'): '0'})
-            rpr_.insert(0, el_)
-    penulis = [el for el in para if gaya(el) == 'Penulis']
-    afil = [el for el in para if gaya(el) == 'Afiliasi']
-    isi_runs(tb[i_penulis], penulis[0])
-    isi_runs(tb[i_afil1], afil[0])
-    isi_runs(tb[i_email], afil[1])
-    t.element.body.remove(tb[i_afil2])
-    isi_runs(tb[i_abs], cari_src(lambda e: teks(e).startswith('Project managers')))
-    isi_runs(tb[i_kw], cari_src(lambda e: teks(e).startswith('Keywords')))
-    isi_runs(tb[i_abk], cari_src(lambda e: teks(e).startswith('Manajer proyek')))
-    isi_runs(tb[i_kk], cari_src(lambda e: teks(e).startswith('Kata kunci')))
-    for r in tb[i_cr].iter(qn('w:t')):
-        r.text = r.text.replace('20xx', '2026')
 
-    # buang isi contoh template (dari Pendahuluan sampai sebelum pemisah kolom) dan halaman petunjuk referensi
-    for el in tb[i_pend:i_sect2] + [x for x in tb[i_sect2 + 1:] if x.tag != qn('w:sectPr')]:
-        t.element.body.remove(el)
-    jangkar = tb[i_sect2]
+    # --- judul, penulis, afiliasi, penulis korespondensi
+    isi_runs(tb[i_judul], cari_src(lambda e: gaya(e) == 'Title'))
+    p = tb[i_penulis]
+    r_nama, r_sup = rpr_run(p, 0), rpr_run(p, 1)
+    kosongkan(p)
+    for k, nama in enumerate(PENULIS, 1):
+        run(p, (', ' if k > 1 else '') + nama, r_nama)
+        run(p, f'{k}' + ('*' if k == 1 else ''), r_sup, atas=True)
+    contoh = tb[i_afil[0]]
+    r_no, r_af = rpr_run(contoh, 0), rpr_run(contoh, 1)
+    for k, nama in enumerate(PENULIS, 1):
+        baru = deepcopy(contoh)
+        kosongkan(baru)
+        run(baru, f'{k}', r_no, atas=True)
+        run(baru, ' ' + AFILIASI + (f', {wa[nama]}' if wa else ''), r_af)
+        tb[i_afil[0]].addprevious(baru)
+    for i in i_afil:
+        body.remove(tb[i])
+    p = tb[i_email]
+    r_a, r_b = rpr_run(p, 0), rpr_run(p, len(p.findall(qn('w:r'))) - 1)
+    kosongkan(p)
+    run(p, '* Penulis Korespondensi: ', r_a)
+    run(p, EMAIL_KORESPONDENSI, r_b)
+
+    # --- abstrak dan kata kunci (dalam kotak abstrak template)
+    kotak = tb[i_abs]
+    kp = list(kotak.iter(qn('w:p')))
+    cari_k = lambda f: next(x for x in kp if f(teks(x)))
+
+    def isi_kata_kunci(p, nilai):
+        rs = p.findall(qn('w:r'))
+        j = next(i for i, r in enumerate(rs) if ''.join(x.text or '' for x in r.iter(qn('w:t'))).rstrip().endswith(':'))
+        rpr_nilai = rpr_run(p, len(rs) - 1)
+        for r in rs[j + 1:]:
+            p.remove(r)
+        label = ''.join(x.text or '' for r in rs[:j + 1] for x in r.iter(qn('w:t')))
+        run(p, ('' if label.endswith(' ') else ' ') + nilai, rpr_nilai)
+
+    isi_runs(cari_k(lambda x: x.startswith('Write your abstract')), cari_src(lambda e: teks(e).startswith('Project managers')))
+    isi_runs(cari_k(lambda x: x.startswith('Tuliskan abstrak')), cari_src(lambda e: teks(e).startswith('Manajer proyek')))
+    kw_en = teks(cari_src(lambda e: teks(e).startswith('Keywords:'))).split(':', 1)[1].strip()
+    kw_id = teks(cari_src(lambda e: teks(e).startswith('Kata kunci:'))).split(':', 1)[1].strip()
+    isi_kata_kunci(cari_k(lambda x: x.startswith('Keywords:')), kw_en)
+    isi_kata_kunci(cari_k(lambda x: x.startswith('Kata Kunci:')), kw_id)
+
+    # --- buang isi contoh template: dari "1. Pendahuluan" sampai akhir (termasuk daftar periksa), kecuali sectPr
+    for el in tb[i_pend:]:
+        if el.tag != qn('w:sectPr'):
+            body.remove(el)
+    jangkar = body.find(qn('w:sectPr'))
 
     mulai = next(i for i, el in enumerate(sp) if el.tag == qn('w:p') and teks(el).startswith('1. Pendahuluan'))
     antrian_gambar = list(gambar)
     nomor_rumus = [0]
+    M = '{http://schemas.openxmlformats.org/officeDocument/2006/math}'
     for el in sp[mulai:]:
         if el.tag not in (qn('w:p'), qn('w:tbl')):         # sectPr dan penanda bookmark pandoc antarparagraf
-            continue                                        # (bila ikut, jadi 2 paragraf kosong sebelum tiap judul)
+            continue
         if el.tag == qn('w:tbl'):
             baru = deepcopy(el)
-            lama = baru.find(qn('w:tblPr'))
-            baru.replace(lama, deepcopy(tblpr_t))
-            # lebar kolom dari isi: minimal selebar kata terpanjang (agar kata tidak terpotong),
-            # sisa lebar kolom halaman dibagi menurut panjang isi sel terpanjang
-            lebar_kolom_hal = 4252                             # (11906 − 2×1418 − 566) / 2 twip
-            margin_sel = 2 * 72                                # margin kiri + kanan sel (twip)
-            mar = baru.find(qn('w:tblPr')).find(qn('w:tblCellMar'))
-            # margin sel ditulis sebagai left/right (bukan start/end): Google Docs hanya membaca left/right dan
-            # memakai padding bawaannya yang lebih lebar bila tidak ada, sehingga kolom sempit jadi terpotong
-            if mar is not None:
-                mar.getparent().remove(mar)
-            mar = baru.find(qn('w:tblPr')).makeelement(qn('w:tblCellMar'), {})
+            baru.replace(baru.find(qn('w:tblPr')), deepcopy(tblpr_t))
+            tblpr = baru.find(qn('w:tblPr'))
+            # margin sel ditulis sebagai left/right (bukan start/end): Google Docs hanya membaca left/right
+            mar = tblpr.makeelement(qn('w:tblCellMar'), {})
             for sisi, w_ in (('top', '0'), ('left', '72'), ('bottom', '0'), ('right', '72')):
                 mar.append(mar.makeelement(qn('w:' + sisi), {qn('w:w'): w_, qn('w:type'): 'dxa'}))
-            baru.find(qn('w:tblPr')).append(mar)
+            tblpr.append(mar)
+            # lebar kolom dari isi: minimal selebar kata terpanjang, sisa lebar halaman dibagi menurut isi terpanjang
+            margin_sel = 2 * 72
             isi = [[''.join(x.text or '' for x in tc.iter(qn('w:t'))) for tc in tr.findall(qn('w:tc'))]
                    for tr in baru.findall(qn('w:tr'))]
             nkol = max(len(r) for r in isi)
@@ -414,17 +442,15 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
                     for j in range(nkol)]
             panjang = [max((lebar_teks(r[j]) for r in isi if j < len(r)), default=100) for j in range(nkol)]
             minimum = [k + margin_sel for k in kata]
-            if sum(minimum) >= lebar_kolom_hal:
-                lebar_k = [m * lebar_kolom_hal / sum(minimum) for m in minimum]
+            if sum(minimum) >= LEBAR_TEKS:
+                lebar_k = [m * LEBAR_TEKS / sum(minimum) for m in minimum]
             else:
-                sisa = lebar_kolom_hal - sum(minimum)
-                ingin = [max(p + margin_sel - m, 0) for p, m in zip(panjang, minimum)]
+                sisa = LEBAR_TEKS - sum(minimum)
+                ingin = [max(p_ + margin_sel - m, 0) for p_, m in zip(panjang, minimum)]
                 if sum(ingin) <= sisa:                          # semua muat satu baris: sisa dibagi rata
                     lebar_k = [m + i + (sisa - sum(ingin)) / nkol for m, i in zip(minimum, ingin)]
                 else:
-                    # kolom angka (mis. selisih [CI]) diusahakan satu baris lebih dulu, sebab angka yang terpotong
-                    # lebih sulit dibaca daripada teks yang dibungkus; tiap kelompok dibagi dengan water-filling
-                    # (kolom yang butuh sedikit dipenuhi dulu, sisanya dibagi rata ke kolom yang butuh banyak)
+                    # kolom angka diusahakan satu baris lebih dulu (water-filling per kelompok)
                     def angka(j):
                         sel = [r[j].strip() for r in isi[1:] if j < len(r) and r[j].strip()]
                         return bool(sel) and sum(bool(re.match(r'[−\-\d\[]', s)) for s in sel) > len(sel) / 2
@@ -436,91 +462,78 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
                             lebar_k[j] += beri
                             sisa -= beri
             lebar_k = [int(round(w)) for w in lebar_k]
-            tw = baru.find(qn('w:tblPr')).find(qn('w:tblW'))
-            if tw is not None:
-                tw.set(qn('w:type'), 'dxa'); tw.set(qn('w:w'), str(sum(lebar_k)))
-            for gc, w in zip(baru.iter(qn('w:gridCol')), lebar_k):
-                gc.set(qn('w:w'), str(w))
-            for tr in baru.findall(qn('w:tr')):
+            tw = tblpr.find(qn('w:tblW'))
+            tw.set(qn('w:type'), 'dxa'); tw.set(qn('w:w'), str(sum(lebar_k)))
+            grid = baru.find(qn('w:tblGrid'))
+            for gc in list(grid):
+                grid.remove(gc)
+            for w in lebar_k:
+                grid.append(grid.makeelement(qn('w:gridCol'), {qn('w:w'): str(w)}))
+            baris = baru.findall(qn('w:tr'))
+            for nb, tr in enumerate(baris):
                 for tc, w in zip(tr.findall(qn('w:tc')), lebar_k):
                     tcpr = tc.find(qn('w:tcPr'))
                     if tcpr is None:
                         tcpr = tc.makeelement(qn('w:tcPr'), {}); tc.insert(0, tcpr)
-                    tcw = tcpr.find(qn('w:tcW'))
-                    if tcw is None:
-                        tcw = tcpr.makeelement(qn('w:tcW'), {}); tcpr.insert(0, tcw)
-                    tcw.set(qn('w:type'), 'dxa'); tcw.set(qn('w:w'), str(w))
-                    lama_m = tcpr.find(qn('w:tcMar'))         # margin juga per sel, untuk aplikasi yang
-                    if lama_m is not None:                     # mengabaikan tblCellMar
-                        tcpr.remove(lama_m)
-                    tcm = tcpr.makeelement(qn('w:tcMar'), {})
+                    for x in list(tcpr):
+                        if x.tag in (qn('w:tcW'), qn('w:tcMar'), qn('w:tcBorders')):
+                            tcpr.remove(x)
+                    tcw = tcpr.makeelement(qn('w:tcW'), {qn('w:w'): str(w), qn('w:type'): 'dxa'})
+                    tcpr.insert(0, tcw)
+                    # garis gaya template: di atas dan di bawah judul kolom, dan di bawah baris terakhir
+                    brd = tcpr.makeelement(qn('w:tcBorders'), {})
+                    for sisi, ada in (('top', nb == 0), ('bottom', nb == 0 or nb == len(baris) - 1)):
+                        if ada:
+                            brd.append(brd.makeelement(qn('w:' + sisi), {qn('w:val'): 'single', qn('w:sz'): '4',
+                                                                          qn('w:space'): '0', qn('w:color'): '000000'}))
+                    tcw.addnext(brd)
+                    tcm = tcpr.makeelement(qn('w:tcMar'), {})       # margin juga per sel
                     for sisi in ('left', 'right'):
                         tcm.append(tcm.makeelement(qn('w:' + sisi), {qn('w:w'): '72', qn('w:type'): 'dxa'}))
-                    tcw.addnext(tcm)
-            for pp in baru.iter(qn('w:p')):
-                lama_ppr = pp.find(qn('w:pPr'))
-                jc = lama_ppr.find(qn('w:jc')) if lama_ppr is not None else None
-                if lama_ppr is not None:
-                    pp.remove(lama_ppr)
-                if ppr_sel is not None:
-                    np_ = deepcopy(ppr_sel)
-                    old = np_.find(qn('w:jc'))
-                    if old is not None:
-                        np_.remove(old)
-                    if jc is not None:                         # jc harus sebelum rPr (urutan skema pPr)
-                        rpr_p = np_.find(qn('w:rPr'))
-                        (rpr_p.addprevious(deepcopy(jc)) if rpr_p is not None else np_.append(deepcopy(jc)))
-                    pp.insert(0, np_)
-                # isi sel: Times New Roman 8 pt seperti contoh tabel template (gaya sel bawaannya Arial);
-                # rumus (m:r) juga diberi 8 pt agar tidak tampil 11 pt
-                for r in list(pp.iter(qn('w:r'))) + list(pp.iter(qn('m:r'))):
-                    rpr = r.find(qn('w:rPr'))
-                    if rpr is None:
-                        rpr = r.makeelement(qn('w:rPr'), {})
-                        r.insert(1 if r.find(qn('m:rPr')) is not None else 0, rpr)
-                    if r.tag == qn('w:r'):
-                        fn = rpr.find(qn('w:rFonts'))
-                        if fn is None:
-                            fn = rpr.makeelement(qn('w:rFonts'), {}); rpr.insert(0, fn)
-                        for a in ('w:ascii', 'w:hAnsi', 'w:cs'):
-                            fn.set(qn(a), 'Times New Roman')
-                    for tag in ('w:sz', 'w:szCs'):
-                        x = rpr.find(qn(tag))
-                        if x is None:
-                            x = rpr.makeelement(qn(tag), {}); rpr.append(x)
-                        x.set(qn('w:val'), '16')
-            baris = baru.findall(qn('w:tr'))
-            # garis tabel gaya template: tebal di atas judul kolom, tipis di bawahnya, tipis di akhir tabel
-            def garis(tc, sisi, tebal):
-                tcpr = tc.find(qn('w:tcPr'))
-                if tcpr is None:
-                    tcpr = tc.makeelement(qn('w:tcPr'), {}); tc.insert(0, tcpr)
-                tb_ = tcpr.find(qn('w:tcBorders'))
-                if tb_ is None:
-                    tb_ = tcpr.makeelement(qn('w:tcBorders'), {})
-                    tw_ = tcpr.find(qn('w:tcW'))
-                    (tw_.addnext(tb_) if tw_ is not None else tcpr.insert(0, tb_))
-                b = tb_.makeelement(qn('w:' + sisi), {qn('w:val'): 'single', qn('w:sz'): tebal,
-                                                       qn('w:space'): '0', qn('w:color'): '000000'})
-                lama_b = tb_.find(qn('w:' + sisi))
-                if lama_b is not None:
-                    tb_.remove(lama_b)
-                if sisi == 'top':
-                    tb_.insert(0, b)
-                else:
-                    tb_.append(b)
-            for tc in baris[0].findall(qn('w:tc')):
-                garis(tc, 'top', '12'); garis(tc, 'bottom', '4')
-            for tc in baris[-1].findall(qn('w:tc')):
-                garis(tc, 'bottom', '4')
-            for tr in baris:                                   # baris tabel tidak dipecah antarkolom
+                    brd.addnext(tcm)
+                    for pp in tc.iter(qn('w:p')):
+                        lama_ppr = pp.find(qn('w:pPr'))
+                        jc = lama_ppr.find(qn('w:jc')) if lama_ppr is not None else None
+                        if lama_ppr is not None:
+                            pp.remove(lama_ppr)
+                        np_ = pp.makeelement(qn('w:pPr'), {})
+                        np_.append(np_.makeelement(qn('w:spacing'), {qn('w:before'): '20', qn('w:after'): '20'}))
+                        np_.append(deepcopy(jc) if jc is not None else
+                                   np_.makeelement(qn('w:jc'), {qn('w:val'): 'center' if nb == 0 else 'left'}))
+                        pp.insert(0, np_)
+                        # isi sel: Times New Roman 9 pt seperti contoh tabel template; judul kolom tebal
+                        for r in list(pp.iter(qn('w:r'))) + list(pp.iter(M + 'r')):
+                            rpr = r.find(qn('w:rPr'))
+                            if rpr is None:
+                                rpr = r.makeelement(qn('w:rPr'), {})
+                                r.insert(1 if r.find(M + 'rPr') is not None else 0, rpr)
+                            if r.tag == qn('w:r'):
+                                fn = rpr.find(qn('w:rFonts'))
+                                if fn is None:
+                                    fn = rpr.makeelement(qn('w:rFonts'), {}); rpr.insert(0, fn)
+                                for a in ('w:ascii', 'w:hAnsi', 'w:cs'):
+                                    fn.set(qn(a), 'Times New Roman')
+                                if nb == 0 and rpr.find(qn('w:b')) is None:
+                                    fn.addnext(rpr.makeelement(qn('w:b'), {}))
+                            for tag in ('w:color',):
+                                x = rpr.find(qn(tag))
+                                if x is None:
+                                    x = rpr.makeelement(qn(tag), {}); rpr.append(x)
+                                x.set(qn('w:val'), '000000')
+                            for tag in ('w:sz', 'w:szCs'):
+                                x = rpr.find(qn(tag))
+                                if x is None:
+                                    x = rpr.makeelement(qn(tag), {}); rpr.append(x)
+                                x.set(qn('w:val'), '18')
                 trpr = tr.find(qn('w:trPr'))
                 if trpr is None:
                     trpr = tr.makeelement(qn('w:trPr'), {}); tr.insert(0, trpr)
-                trpr.append(trpr.makeelement(qn('w:cantSplit'), {}))
+                trpr.append(trpr.makeelement(qn('w:cantSplit'), {}))      # baris tabel tidak dipecah
+                if nb == 0:
+                    trpr.append(trpr.makeelement(qn('w:tblHeader'), {}))
             for tr in baris[:-1]:                              # seluruh tabel tetap satu blok
                 for pp in tr.iter(qn('w:pPr')):
-                    pp.insert(1 if pp.find(qn('w:pStyle')) is not None else 0, pp.makeelement(qn('w:keepNext'), {}))
+                    sisip_ppr(pp, pp.makeelement(qn('w:keepNext'), {}))
             if bungkus:
                 baru = bungkus_tabel(baru, jangkar.getprevious())
             jangkar.addprevious(baru)
@@ -528,131 +541,86 @@ def isi_template(polos, keluaran, gambar, bungkus=False):
         g = gaya(el)
         if list(el.iter(qn('w:drawing'))):
             baru = el.makeelement(qn('w:p'), {})
-            ppr_g = deepcopy(PPR['gambar'])
-            sp_ = ppr_g.find(qn('w:spacing'))                  # jarak 6 pt agar gambar tidak menutupi garis tabel di atasnya
-            if sp_ is None:
-                sp_ = ppr_g.makeelement(qn('w:spacing'), {}); ppr_g.append(sp_)
-            sp_.set(qn('w:before'), '120')
-            baru.append(ppr_g)
+            baru.append(deepcopy(PPR['gambar']))
             jangkar.addprevious(baru)
-            Paragraph(baru, t._body).add_run().add_picture(str(antrian_gambar.pop(0)), width=Cm(7.5))
+            Paragraph(baru, t._body).add_run().add_picture(str(antrian_gambar.pop(0)), width=Cm(LEBAR_GAMBAR_CM))
             continue
         kunci = {'Heading1': 'h1', 'Heading2': 'h2', 'JudulTabel': 'cap_tabel', 'ImageCaption': 'cap_gambar',
                  'Rujukan': 'rujukan'}.get(g, 'par')
         baru = el.makeelement(qn('w:p'), {})
         baru.append(deepcopy(PPR[kunci]))
-        isi_runs(baru, el, RPR.get(kunci))
-        if kunci == 'rujukan':                       # nomor [n] dibuat otomatis oleh gaya Rujukan template
+        isi_runs(baru, el, RPR.get({'cap_tabel': 'cap', 'cap_gambar': 'cap'}.get(kunci, kunci)))
+        if kunci in ('cap_tabel', 'cap_gambar'):
+            label_tebal(baru, RPR['cap_label'])
+        if kunci == 'h1' and teks(baru).strip() == 'Daftar Rujukan':
             for x in baru.iter(qn('w:t')):
-                x.text = re.sub(r'^\[\d+\]\s*', '', x.text or '')
-                break
-        M = '{http://schemas.openxmlformats.org/officeDocument/2006/math}'
+                x.text = ''
+            next(baru.iter(qn('w:t'))).text = 'References'
+        if kunci == 'rujukan':                        # "[n]" + tab + isi, seperti contoh rujukan template
+            r0 = baru.find(qn('w:r'))
+            t0 = r0.find(qn('w:t'))
+            m = re.match(r'(\[\d+\])\s*(.*)', t0.text or '', re.S)
+            t0.text = m.group(2)
+            nomor = r0.makeelement(qn('w:r'), {}); nomor.append(deepcopy(RPR['rujukan']))
+            x = nomor.makeelement(qn('w:t'), {}); x.text = m.group(1); nomor.append(x)
+            tab = r0.makeelement(qn('w:r'), {}); tab.append(deepcopy(RPR['rujukan']))
+            tab.append(tab.makeelement(qn('w:tab'), {}))
+            r0.addprevious(nomor); r0.addprevious(tab)
         mpara = baru.find('.//' + M + 'oMathPara')
-        if kunci == 'par' and mpara is not None and teks(el).strip() == '' :
-            nomor_rumus[0] += 1
+        if kunci == 'par' and mpara is not None and teks(el).strip() == '':
+            nomor_rumus[0] += 1                        # rumus di tengah, nomor (n) rata kanan
             pp = baru.find(qn('w:pPr'))
             for tag in ('w:ind', 'w:jc', 'w:tabs'):
                 for x in pp.findall(qn(tag)):
                     pp.remove(x)
             tabs = pp.makeelement(qn('w:tabs'), {})
-            for jenis, pos in (('center', '2160'), ('right', '4320')):
-                tab = tabs.makeelement(qn('w:tab'), {qn('w:val'): jenis, qn('w:pos'): pos})
-                tabs.append(tab)
-            pp.append(tabs)
+            for jenis, pos in (('center', str(LEBAR_TEKS // 2)), ('right', str(LEBAR_TEKS))):
+                tabs.append(tabs.makeelement(qn('w:tab'), {qn('w:val'): jenis, qn('w:pos'): pos}))
+            sisip_ppr(pp, tabs)
             omath = deepcopy(mpara.find(M + 'oMath'))
-            for c in list(baru):
-                if c.tag != qn('w:pPr'):
-                    baru.remove(c)
-            def run_tab(teks_=None):
-                r = baru.makeelement(qn('w:r'), {})
-                if teks_ is None:
-                    r.append(r.makeelement(qn('w:tab'), {}))
-                else:
-                    x = r.makeelement(qn('w:t'), {}); x.text = teks_; r.append(x)
-                return r
-            baru.append(run_tab()); baru.append(omath); baru.append(run_tab()); baru.append(run_tab(f'({nomor_rumus[0]})'))
+            kosongkan(baru)
+            run(baru, '\t', RPR['par']); baru.append(omath)
+            run(baru, '\t', RPR['par']); run(baru, f'({nomor_rumus[0]})', RPR['par'])
         sebelum = jangkar.getprevious()
-        if kunci == 'par' and sebelum is not None and sebelum.tag == qn('w:tbl'):
-            pp = baru.find(qn('w:pPr'))                        # jarak 6 pt agar teks tidak menempel garis bawah tabel
+        if kunci in ('par', 'h1', 'h2') and sebelum is not None and sebelum.tag == qn('w:tbl'):
+            pp = baru.find(qn('w:pPr'))                # jarak 6 pt agar teks tidak menempel garis bawah tabel
             sp_ = pp.find(qn('w:spacing'))
             if sp_ is None:
                 sp_ = pp.makeelement(qn('w:spacing'), {})
-                urutan_ = [qn('w:pStyle'), qn('w:keepNext'), qn('w:keepLines'), qn('w:pageBreakBefore'),
-                           qn('w:framePr'), qn('w:widowControl'), qn('w:numPr'), qn('w:suppressLineNumbers'),
-                           qn('w:pBdr'), qn('w:shd'), qn('w:tabs'), qn('w:suppressAutoHyphens'), qn('w:kinsoku'),
-                           qn('w:wordWrap'), qn('w:overflowPunct'), qn('w:topLinePunct'), qn('w:autoSpaceDE'),
-                           qn('w:autoSpaceDN'), qn('w:bidi'), qn('w:adjustRightInd'), qn('w:snapToGrid')]
-                posisi = sum(1 for c in pp if c.tag in urutan_)
-                pp.insert(posisi, sp_)
-            sp_.set(qn('w:before'), '120')
+                sisip_ppr(pp, sp_)
+            sp_.set(qn('w:before'), '160')
         jangkar.addprevious(baru)
     assert not antrian_gambar, 'Jumlah gambar tidak sesuai'
 
-    for s in t.sections:
-        for h in (s.header, s.first_page_header, s.even_page_header):
-            for p in h.paragraphs:
-                if 'Penulis' in p.text and p.runs:
-                    p.runs[0].text = ('Muktibaskara Kusbianto, Muhammad Nailul Ghufron Majid, Rafiq Alhariri Andriansyah, '
-                                         'Muhammad Ainul Yaqin')
-                    p.runs[0].font.superscript = False
-                    # 10 pt membuat empat nama lengkap terbungkus dua baris dan mendorong isi ke halaman 11
-                    from docx.shared import Pt
-                    p.runs[0].font.size = Pt(9)
-                    for r in p.runs[1:]:
-                        r.text = ''
-                # header template menulis "Vol . x No. 1"; samakan dengan halaman 1 ("Vol. x No. x"), sesuai review
-                vol = [r for r in p.runs if r.text.strip() in ('Vol', '.') or 'No. 1 (20xx)' in r.text]
-                if any('No. 1 (20xx)' in r.text for r in vol):
-                    i_vol = next(i for i, r in enumerate(p.runs) if r.text == 'Vol')
-                    akhir = next(i for i, r in enumerate(p.runs) if 'No. 1 (20xx)' in r.text)
-                    p.runs[i_vol].text = 'Vol. ' + p.runs[akhir].text.strip().replace('No. 1', 'No. x')
-                    for r in p.runs[i_vol + 1:akhir + 1]:
-                        r.text = ''
-
-    # Template menutup isi dua kolom dengan paragraf kosong pembawa sectPr, lalu section satu kolom kosong.
-    # Bila halaman terakhir penuh, paragraf itu terdorong ke halaman baru (halaman kosong, temuan review).
-    # Jadikan section dua kolom sebagai section terakhir dokumen dan buang paragraf kosongnya.
-    body = t.element.body
-    sect_akhir = body.find(qn('w:sectPr'))
-    pemisah = sect_akhir.getprevious()
-    ppr_p = pemisah.find(qn('w:pPr')) if pemisah is not None and pemisah.tag == qn('w:p') else None
-    sect_p = ppr_p.find(qn('w:sectPr')) if ppr_p is not None else None
-    if sect_p is not None and not teks(pemisah).strip():
-        body.replace(sect_akhir, sect_p)
-        body.remove(pemisah)
-
-    # Tautan repositori kode dijadikan hyperlink aktif: URL panjang terpotong di tanda hubung saat pindah baris,
-    # sehingga pembaca bisa salah menyalinnya.
-    import re as _re
-    from docx.opc.constants import RELATIONSHIP_TYPE as RT
+    # URL dan DOI dijadikan hyperlink aktif (syarat template: DOI harus bisa diklik)
+    pola = re.compile(r'https://\S+?(?=[.,;)]?(?:\s|$))|(?<=doi: )10\.\S+?(?=\.?(?:\s|$))')
     for wt in list(body.iter(qn('w:t'))):
-        m = _re.search(r'https://\S+?(?=[.,;)]?(?:\s|$))', wt.text or '')
+        m = pola.search(wt.text or '')
         if not m:
             continue
-        run = wt.getparent()
-        sebelum, url, sesudah = wt.text[:m.start()], m.group(0), wt.text[m.end():]
+        r_asal = wt.getparent()
+        sebelum, isi_url, sesudah = wt.text[:m.start()], m.group(0), wt.text[m.end():]
+        url = isi_url if isi_url.startswith('https://') else 'https://doi.org/' + quote(isi_url, safe="/:;()-._")
         wt.text = sebelum
         wt.set(qn('xml:space'), 'preserve')
-        r_url, r_akhir = deepcopy(run), deepcopy(run)
-        r_url.find(qn('w:t')).text = url
+        r_url, r_akhir = deepcopy(r_asal), deepcopy(r_asal)
+        r_url.find(qn('w:t')).text = isi_url
         r_akhir.find(qn('w:t')).text = sesudah
         r_akhir.find(qn('w:t')).set(qn('xml:space'), 'preserve')
         rpr = r_url.find(qn('w:rPr'))
         if rpr is None:
             rpr = r_url.makeelement(qn('w:rPr'), {})
             r_url.insert(0, rpr)
-        warna = rpr.makeelement(qn('w:color'), {qn('w:val'): '0563C1'})
-        garis = rpr.makeelement(qn('w:u'), {qn('w:val'): 'single'})
-        rpr.append(warna)
-        rpr.append(garis)
-        tautan = run.makeelement(qn('w:hyperlink'), {qn('r:id'): t.part.relate_to(url, RT.HYPERLINK, is_external=True)})
+        for tag in ('w:color', 'w:u'):
+            for x in rpr.findall(qn(tag)):
+                rpr.remove(x)
+        rpr.append(rpr.makeelement(qn('w:color'), {qn('w:val'): '0563C1'}))
+        rpr.append(rpr.makeelement(qn('w:u'), {qn('w:val'): 'single'}))
+        tautan = r_asal.makeelement(qn('w:hyperlink'), {qn('r:id'): t.part.relate_to(url, RT.HYPERLINK, is_external=True)})
         tautan.append(r_url)
-        run.addnext(tautan)
+        r_asal.addnext(tautan)
         tautan.addnext(r_akhir)
     t.save(keluaran)
-
-
-TEMPLATE_DOCX_SEMENTARA = []
 
 
 def main():
@@ -664,9 +632,10 @@ def main():
         sys.exit(f'Rujukan di kamus tetapi tidak dikutip: {tidak_dikutip}')
     teks = nomori_gambar_tabel(teks)
     daftar = '\n\n'.join(f'::: {{custom-style="Rujukan"}}\n[{i}] {RUJUKAN[k]}.\n:::' for i, k in enumerate(urutan, 1))
-    teks = teks.rstrip() + '\n\n# Daftar Rujukan {.unnumbered}\n\n' + daftar + '\n'
+    teks = teks.rstrip() + '\n\n# References {.unnumbered}\n\n' + daftar + '\n'
     teks = teks.replace('---\n\n', '---\n\n<!-- Dihasilkan otomatis oleh susun_paper.py dari naskah_sumber.md. Jangan disunting. -->\n\n', 1)
     KELUARAN_MD.write_text(teks, encoding='utf-8')
+    wa = baca_wa()
     import tempfile
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
@@ -675,12 +644,13 @@ def main():
         subprocess.run(['pandoc', str(KELUARAN_MD.name), '-o', str(polos), f'--reference-doc={REFERENSI_DOCX.name}',
                         '--resource-path=.'], cwd=HERE, check=True)
         REFERENSI_DOCX.unlink()
-        TEMPLATE_DOCX_SEMENTARA[:] = [_template_docx(tmp)]
         gambar = [HERE / g for g in re.findall(r'!\[[^\]]*\]\(([^)]+)\)', teks)]
         isi_template(polos, KELUARAN_DOCX, gambar)
         isi_template(polos, KELUARAN_GDOCS, gambar, bungkus=True)
-    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name} (diisi ke template asli), '
-          f'{KELUARAN_GDOCS.name} (tabel dibungkus agar tidak terbelah di Google Docs)')
+        if wa:
+            isi_template(polos, KELUARAN_SUBMIT, gambar, wa=wa)
+    print(f'{len(urutan)} rujukan dikutip; luaran: {KELUARAN_MD.name}, {KELUARAN_DOCX.name}, {KELUARAN_GDOCS.name}'
+          + (f', {KELUARAN_SUBMIT.name} (dengan nomor WA)' if wa else f' ({KONTAK_WA.name} tidak ada: versi submit dilewati)'))
 
 
 if __name__ == '__main__':

@@ -1,9 +1,8 @@
-"""Gambar 1-4 naskah paper, versi satu kolom jurnal.
+"""Gambar 1-4 naskah paper, versi template 2026 (lebar 14 cm).
 
-Gambar di folder eksperimen dibuat untuk slide: dua panel berdampingan, label bahasa Inggris, dan
-terlalu kecil bila dimuat ke satu kolom jurnal (7,6 cm). Skrip ini menggambar ulang keempatnya dari
-CSV hasil yang sudah ada (tanpa menjalankan ulang eksperimen) dengan panel (a) di atas dan (b) di
-bawah, huruf lebih besar, label berbahasa Indonesia, dan desimal koma.
+Skrip ini menggambar ulang keempat gambar dari CSV hasil yang sudah ada (tanpa menjalankan ulang
+eksperimen) untuk template Jurnal Pustaka Data 2026 (satu kolom, lebar gambar ≤ 14 cm): panel (a) dan (b)
+berdampingan selebar 14 cm, label berbahasa Indonesia, dan desimal koma.
 
 Masukan : ../04_implemen_desain_eksperimen/hasil_eksperimen/tabel_prediksi_oof.csv
           ../04_implemen_desain_eksperimen/hasil_analisis/tabel_uji_hipotesis.csv
@@ -36,7 +35,7 @@ WARNA = {'Logistic Regression': '#2a78d6', 'Random Forest': '#eb6834',
 GARIS = {'Logistic Regression': '-', 'Random Forest': '--', 'Gradient Boosting': '-.',
          'MLP Neural Network': ':', NAIF: (0, (1, 2))}
 TINTA, TINTA_2 = '#111111', '#444444'
-LEBAR = 3.15                                        # inci; dimuat 7,6 cm sehingga huruf hampir 1:1
+LEBAR = 5.5                                         # inci; dimuat 14 cm (template 2026, satu kolom) sehingga huruf 1:1
 
 plt.rcParams.update({
     'font.family': 'serif', 'font.serif': ['Times New Roman', 'Liberation Serif', 'DejaVu Serif'],
@@ -81,7 +80,7 @@ def gambar_1():
     d = pd.read_csv(EKSP / 'hasil_eksperimen' / 'tabel_prediksi_oof.csv')
     y = d['Telat_Lebih_5_Persen'].to_numpy(float)
     kol = lambda m, k: f'P_{m.replace(" ", "_")}_{k}'
-    fig, axs = plt.subplots(2, 1, figsize=(LEBAR, 5.6))
+    fig, axs = plt.subplots(1, 2, figsize=(LEBAR, 2.9))
     for ax in axs:
         ax.plot([0, 1], [0, 1], color=WARNA[NAIF], ls=GARIS[NAIF], lw=1, label='Kalibrasi sempurna')
     for m in MODEL:
@@ -97,7 +96,7 @@ def gambar_1():
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.legend(frameon=False, loc='upper left', handlelength=2.6)
-    fig.tight_layout(h_pad=1.2)
+    fig.tight_layout(w_pad=1.5)
     simpan(fig, 'gambar_1_kalibrasi.png')
 
 
@@ -112,7 +111,7 @@ def gambar_2():
     uji = pd.read_csv(EKSP / 'hasil_analisis' / 'tabel_uji_hipotesis.csv')
     bag = [('Brier', '(a) Selisih Brier score (A − B)'), ('ECE', '(b) Selisih ECE (A − B)')]
     n = [int((uji.Metrik == m).sum()) for m, _ in bag]
-    fig, axs = plt.subplots(2, 1, figsize=(LEBAR, 0.19 * sum(n) + 2.0), gridspec_kw={'height_ratios': n})
+    fig, axs = plt.subplots(1, 2, figsize=(LEBAR, 0.19 * max(n) + 1.3))
     biru = WARNA['Logistic Regression']
     for ax, (m, judul) in zip(axs, bag):
         s = uji[uji.Metrik == m].iloc[::-1]
@@ -133,14 +132,14 @@ def gambar_2():
     h = [plt.Line2D([], [], marker='o', ms=4, ls='-', color=biru, mfc=biru, label='Signifikan (Holm, α = 0,05)'),
          plt.Line2D([], [], marker='X', ms=5, ls='-', color=biru, label='Signifikan berlawanan arah'),
          plt.Line2D([], [], marker='o', ms=4, ls='-', color=biru, mfc='white', label='Tidak signifikan')]
-    fig.tight_layout(h_pad=1.2, rect=(0, 0.05, 1, 1))
-    fig.legend(handles=h, loc='lower center', ncol=2, frameon=False, columnspacing=1.0, handlelength=1.8)
+    fig.tight_layout(w_pad=1.5, rect=(0, 0.08, 1, 1))
+    fig.legend(handles=h, loc='lower center', ncol=3, frameon=False, columnspacing=1.0, handlelength=1.8)
     simpan(fig, 'gambar_2_uji_hipotesis.png')
 
 
 def gambar_3():
     ci = pd.read_csv(EKSP / 'hasil_analisis' / 'tabel_ci_per_titik.csv')
-    fig, axs = plt.subplots(2, 1, figsize=(LEBAR, 5.2))
+    fig, axs = plt.subplots(1, 2, figsize=(LEBAR, 2.7))
     geser = dict(zip(MODEL, [-2.4, -0.8, 0.8, 2.4]))
     for m in MODEL:
         s = ci[(ci.Model == m) & (ci.Kalibrasi == 'Raw')].sort_values('Titik_Monitoring')
@@ -156,15 +155,16 @@ def gambar_3():
     for ax in axs:
         ax.set_xticks([25, 50, 75])
         ax.set_xlim(15, 85)
-    axs[0].legend(frameon=False, loc='lower right', ncol=2, handlelength=2.6)
-    axs[1].legend(frameon=False, loc='lower left', ncol=3, handlelength=2.6)
-    fig.tight_layout(h_pad=1.2)
+    # satu legenda di bawah kedua panel: di dalam panel (b) legenda menutupi titik NN
+    h, l = axs[1].get_legend_handles_labels()
+    fig.tight_layout(w_pad=1.5, rect=(0, 0.07, 1, 1))
+    fig.legend(h, l, loc='lower center', ncol=5, frameon=False, handlelength=2.6)
     simpan(fig, 'gambar_3_metrik_per_titik.png')
 
 
 def gambar_4():
     det = pd.read_csv(EKSP / 'hasil_analisis' / 'tabel_deteksi_dini.csv')
-    fig, axs = plt.subplots(2, 1, figsize=(LEBAR, 5.0))
+    fig, axs = plt.subplots(1, 2, figsize=(LEBAR, 2.7))
     x = [25, 50, 75]
     for (_, r), m in zip(det.iterrows(), ['Logistic Regression', 'Random Forest', 'Gradient Boosting']):
         ket = r.Keterangan.replace('θ*', r'$\theta^*$')
@@ -175,13 +175,13 @@ def gambar_4():
                     marker='o', ms=3, label=lbl)
     gaya(axs[0], '(a) Iterasi terlambat yang sudah diperingatkan', 'Sampai titik monitoring (% jadwal rencana)',
          '% iterasi (kumulatif)')
-    gaya(axs[1], '(b) Iterasi tepat waktu yang menerima peringatan palsu', 'Sampai titik monitoring (% jadwal rencana)',
+    gaya(axs[1], '(b) Iterasi tepat waktu dengan peringatan palsu', 'Sampai titik monitoring (% jadwal rencana)',
          '% iterasi (kumulatif)')
     for ax, loc in zip(axs, ['lower right', 'upper left']):
         ax.set_xticks(x)
         ax.set_ylim(0, 100)
         ax.legend(frameon=False, loc=loc, handlelength=2.6)
-    fig.tight_layout(h_pad=1.2)
+    fig.tight_layout(w_pad=1.5)
     simpan(fig, 'gambar_4_deteksi_dini.png')
 
 

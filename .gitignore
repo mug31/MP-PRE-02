@@ -1,2 +1,5 @@
 .claude/
 __pycache__/
+# nomor WA penulis dan naskah versi submit yang memuatnya (repositori publik)
+paper/kontak_wa.txt
+paper/*_submit.docx
